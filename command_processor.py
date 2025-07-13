@@ -1,6 +1,6 @@
-"""
-Обробник команд від користувача через Codex
-"""
+"""Command processor for NIMDA Agent.
+
+Handles text commands from Codex."""
 
 import re
 from typing import Dict, List, Any, Optional, Tuple
@@ -9,16 +9,7 @@ import logging
 
 
 class CommandProcessor:
-    """
-    Обробник команд для NIMDA Agent
-
-    Підтримувані команди:
-    - "допрацюй девплан" - робота тільки з планом
-    - "виконай задачу номер X" - виконання конкретної задачі
-    - "виконай весь ДЕВ" - виконання всього плану
-    - "статус" - отримання статусу
-    - "синхронізація" - синхронізація з Git
-    """
+    """Process user commands received via Codex."""
 
     def __init__(self, agent):
         """
@@ -30,7 +21,7 @@ class CommandProcessor:
         self.agent = agent
         self.logger = logging.getLogger('CommandProcessor')
 
-        # Шаблони команд
+        # Command patterns
         self.command_patterns = {
             "update_plan": [
                 r"допрацюй девплан",
@@ -50,6 +41,7 @@ class CommandProcessor:
                 r"виконай.*повний.*план",
                 r"зроби.*все",
                 r"run.*full.*plan"
+                r"run full dev",
             ],
             "status": [
                 r"статус",
@@ -90,28 +82,28 @@ class CommandProcessor:
         Обробка команди від користувача
 
         Args:
-            command: Команда від користувача
+            command: User command
 
         Returns:
-            Результат виконання команди
+            Command result
         """
         try:
-            # Нормалізація команди
+            # Command normalization
             normalized_command = command.lower().strip()
 
             self.logger.info(f"Обробка команди: {command}")
 
-            # Визначення типу команди
+            # Detect command type
             command_type, params = self._identify_command(normalized_command)
 
             if not command_type:
                 return self._handle_unknown_command(command)
 
-            # Виконання команди
+            # Execute the command
             return self._execute_command(command_type, params, command)
 
         except Exception as e:
-            self.logger.error(f"Помилка обробки команди: {e}")
+            self.logger.error(f"Error processing command: {e}")
             return {
                 "success": False,
                 "error": str(e),
