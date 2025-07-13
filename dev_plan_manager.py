@@ -1,6 +1,4 @@
-"""
-Менеджер DEV_PLAN.md - читання, аналіз та виконання плану розробки
-"""
+"""DEV_PLAN.md manager - reading, parsing and executing the development plan"""
 
 import re
 import os
@@ -11,22 +9,20 @@ import logging
 
 
 class DevPlanManager:
-    """
-    Менеджер для роботи з файлом DEV_PLAN.md
+    """Manager for handling DEV_PLAN.md
 
-    Функції:
-    - Читання та парсинг DEV_PLAN.md
-    - Виконання задач згідно плану
-    - Відстеження прогресу
-    - Розширення плану при необхідності
+    Features:
+    - Read and parse DEV_PLAN.md
+    - Execute tasks from the plan
+    - Track progress
+    - Expand the plan when needed
     """
 
     def __init__(self, project_path: Path, max_retries: int = 3):
-        """
-        Ініціалізація менеджера
+        """Initialize the manager
 
         Args:
-            project_path: Шлях до проекту
+            project_path: Path to the project
         """
         self.project_path = project_path
         self.max_retries = max(1, max_retries)
@@ -48,7 +44,7 @@ class DevPlanManager:
     def _load_plan(self):
         """Завантаження плану з файлу DEV_PLAN.md"""
         if not self.dev_plan_file.exists():
-            self.logger.warning("DEV_PLAN.md не знайдено. Створюю шаблон.")
+            self.logger.warning("DEV_PLAN.md not found. Creating template.")
             self._create_template()
             return
 
@@ -57,61 +53,61 @@ class DevPlanManager:
                 content = f.read()
 
             self.plan_structure = self._parse_plan(content)
-            self.logger.info(f"DEV_PLAN.md завантажено. Знайдено {len(self.plan_structure['tasks'])} задач.")
+            self.logger.info(f"DEV_PLAN.md loaded. Found {len(self.plan_structure['tasks'])} tasks.")
 
         except Exception as e:
-            self.logger.error(f"Помилка завантаження DEV_PLAN.md: {e}")
+            self.logger.error(f"Error loading DEV_PLAN.md: {e}")
             self._create_template()
 
     def _create_template(self):
-        """Створення шаблону DEV_PLAN.md"""
-        template = """# План розробки проекту
+        """Create a DEV_PLAN.md template"""
+        template = """# Project Development Plan
 
-## Опис проекту
-Опишіть тут ваш проект та його цілі.
+## Project Description
+Describe your project and its goals here.
 
-## Головні задачі
+## Main Tasks
 
-### 1. Ініціалізація проекту
-- [ ] Створення базової структури
-- [ ] Налаштування середовища розробки
-- [ ] Створення документації
+### 1. Project initialization
+- [ ] Create basic structure
+- [ ] Configure development environment
+- [ ] Create documentation
 
-### 2. Розробка основної функціональності
-- [ ] Реалізація ключових функцій
-- [ ] Написання тестів
-- [ ] Оптимізація продуктивності
+### 2. Core functionality development
+- [ ] Implement key features
+- [ ] Write tests
+- [ ] Optimize performance
 
-### 3. Тестування та деплой
-- [ ] Комплексне тестування
-- [ ] Виправлення помилок
-- [ ] Підготовка до релізу
+### 3. Testing and deployment
+- [ ] Comprehensive testing
+- [ ] Fix bugs
+- [ ] Prepare for release
 
-## Метадані
-- **Створено**: {date}
-- **Статус**: В процесі
-- **Пріоритет**: Високий
+## Metadata
+- **Created**: {date}
+- **Status**: In progress
+- **Priority**: High
 """.format(date=datetime.now().strftime('%Y-%m-%d'))
 
         try:
             with open(self.dev_plan_file, 'w', encoding='utf-8') as f:
                 f.write(template)
 
-            self.logger.info("Створено шаблон DEV_PLAN.md")
+            self.logger.info("DEV_PLAN.md template created")
             self._load_plan()
 
         except Exception as e:
-            self.logger.error(f"Помилка створення шаблону: {e}")
+            self.logger.error(f"Error creating template: {e}")
 
     def _parse_plan(self, content: str) -> Dict[str, Any]:
         """
-        Парсинг вмісту DEV_PLAN.md
+        Parse the contents of DEV_PLAN.md
 
         Args:
-            content: Вміст файлу
+            content: File contents
 
         Returns:
-            Структурована інформація про план
+            Structured plan information
         """
         plan = {
             "title": "",
@@ -235,17 +231,17 @@ class DevPlanManager:
             if not target_task:
                 return {
                     "success": False,
-                    "message": f"Задачу #{task_number} не знайдено в плані"
+                    "message": f"Task #{task_number} not found in the plan"
                 }
 
             if target_task["completed"]:
                 return {
                     "success": True,
-                    "message": f"Задача #{task_number} вже виконана",
+                    "message": f"Task #{task_number} already completed",
                     "task": target_task
                 }
 
-            self.logger.info(f"Виконання задачі #{task_number}: {target_task['title']}")
+            self.logger.info(f"Executing task #{task_number}: {target_task['title']}")
 
             # Виконання підзадач з повторами
             executed_subtasks = []
@@ -264,7 +260,7 @@ class DevPlanManager:
                         attempts += 1
                         if attempts < self.max_retries:
                             self.logger.warning(
-                                f"Повтор {attempts} для підзадачі: {subtask['text']}"
+                                f"Retry {attempts} for subtask: {subtask['text']}"
                             )
 
                 if not subtask["completed"]:
@@ -284,9 +280,9 @@ class DevPlanManager:
             return {
                 "success": task_success,
                 "message": (
-                    f"Задача #{task_number} успішно виконана"
+                    f"Task #{task_number} completed successfully"
                     if task_success
-                    else f"Не виконано {len(failed_subtasks)} підзадач"
+                    else f"{len(failed_subtasks)} subtasks not completed"
                 ),
                 "task": target_task,
                 "executed_subtasks": executed_subtasks,
@@ -294,11 +290,11 @@ class DevPlanManager:
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка виконання задачі #{task_number}: {e}")
+            self.logger.error(f"Error executing task #{task_number}: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": f"Помилка виконання задачі #{task_number}"
+                "message": f"Error executing task #{task_number}"
             }
 
     def execute_full_plan(self) -> Dict[str, Any]:
@@ -309,7 +305,7 @@ class DevPlanManager:
             Результат виконання всього плану
         """
         try:
-            self.logger.info("Початок виконання повного DEV_PLAN.md")
+            self.logger.info("Starting full DEV_PLAN.md execution")
 
             executed_tasks = []
             failed_tasks = []
@@ -329,7 +325,7 @@ class DevPlanManager:
                     else:
                         failed_tasks.append({
                             "task": task,
-                            "error": result.get("error", "Невідома помилка")
+                            "error": result.get("error", "Unknown error")
                         })
                         if result.get("executed_subtasks") or result.get("failed_subtasks"):
                             progress = True
@@ -352,11 +348,11 @@ class DevPlanManager:
             }
 
         except Exception as e:
-            self.logger.error(f"Критична помилка виконання плану: {e}")
+            self.logger.error(f"Critical error executing plan: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Критична помилка виконання плану"
+                "message": "Critical error executing plan"
             }
 
     def _execute_subtask(self, subtask: Dict[str, Any], parent_task: Dict[str, Any]) -> bool:
@@ -368,10 +364,10 @@ class DevPlanManager:
             parent_task: Батьківська задача
 
         Returns:
-            True якщо підзадача виконана успішно
+            True if the subtask completed successfully
         """
         try:
-            self.logger.info(f"Виконання підзадачі: {subtask['text']}")
+            self.logger.info(f"Executing subtask: {subtask['text']}")
 
             # Тут буде логіка виконання конкретних підзадач
             # На основі тексту підзадачі визначати що саме потрібно зробити
@@ -400,52 +396,52 @@ class DevPlanManager:
 
             # За замовчуванням вважаємо виконаним
             else:
-                self.logger.info(f"Підзадача '{subtask['text']}' позначена як виконана")
+                self.logger.info(f"Subtask '{subtask['text']}' marked as completed")
                 return True
 
         except Exception as e:
-            self.logger.error(f"Помилка виконання підзадачі: {e}")
+            self.logger.error(f"Error executing subtask: {e}")
             return False
 
     def _handle_file_creation(self, task_text: str) -> bool:
-        """Обробка задач створення файлів"""
+        """Handle file creation tasks"""
         # Логіка створення файлів
-        self.logger.info(f"Створення файлів для: {task_text}")
+        self.logger.info(f"Creating files for: {task_text}")
         return True
 
     def _handle_setup(self, task_text: str) -> bool:
-        """Обробка задач налаштування"""
+        """Handle setup tasks"""
         # Логіка налаштування
-        self.logger.info(f"Налаштування для: {task_text}")
+        self.logger.info(f"Setup for: {task_text}")
         return True
 
     def _handle_implementation(self, task_text: str) -> bool:
-        """Обробка задач розробки"""
+        """Handle implementation tasks"""
         # Логіка реалізації
-        self.logger.info(f"Реалізація для: {task_text}")
+        self.logger.info(f"Implementation for: {task_text}")
         return True
 
     def _handle_testing(self, task_text: str) -> bool:
-        """Обробка задач тестування"""
+        """Handle testing tasks"""
         # Логіка тестування
-        self.logger.info(f"Тестування для: {task_text}")
+        self.logger.info(f"Testing for: {task_text}")
         return True
 
     def _handle_documentation(self, task_text: str) -> bool:
-        """Обробка задач документації"""
+        """Handle documentation tasks"""
         # Логіка документації
-        self.logger.info(f"Документація для: {task_text}")
+        self.logger.info(f"Documentation for: {task_text}")
         return True
 
     def update_and_expand_plan(self) -> Dict[str, Any]:
         """
-        Оновлення та розширення плану розробки
+        Update and expand the development plan
 
         Returns:
-            Результат оновлення
+            Update result
         """
         try:
-            self.logger.info("Аналіз та розширення DEV_PLAN.md")
+            self.logger.info("Analyzing and expanding DEV_PLAN.md")
 
             # Аналіз поточного стану проекту
             current_files = list(self.project_path.glob("**/*"))
@@ -467,24 +463,24 @@ class DevPlanManager:
 
             return {
                 "success": True,
-                "message": f"План розширено на {len(added_tasks)} нових задач",
+                "message": f"Plan expanded with {len(added_tasks)} new tasks",
                 "added_tasks": added_tasks,
                 "suggestions": suggestions
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка оновлення плану: {e}")
+            self.logger.error(f"Error updating plan: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка оновлення плану розробки"
+                "message": "Error updating development plan"
             }
 
     def _analyze_project_and_suggest_tasks(self, files: List[Path]) -> List[Dict[str, Any]]:
-        """Аналіз проекту та пропозиції нових задач"""
+        """Analyze the project and suggest new tasks"""
         suggestions = []
 
-        # Аналіз файлової структури
+        # Analyze file structure
         has_tests = any("test" in str(f).lower() for f in files)
         has_docs = any("doc" in str(f).lower() or f.suffix == ".md" for f in files)
         has_config = any("config" in str(f).lower() for f in files)
@@ -492,24 +488,24 @@ class DevPlanManager:
         if not has_tests:
             suggestions.append({
                 "type": "testing",
-                "title": "Створення системи тестування",
-                "description": "Відсутня система тестування проекту",
+                "title": "Create testing system",
+                "description": "Project lacks a testing framework",
                 "priority": "high"
             })
 
         if not has_docs:
             suggestions.append({
                 "type": "documentation",
-                "title": "Створення документації",
-                "description": "Відсутня детальна документація проекту",
+                "title": "Create documentation",
+                "description": "No detailed project docs",
                 "priority": "medium"
             })
 
         if not has_config:
             suggestions.append({
                 "type": "configuration",
-                "title": "Налаштування конфігурації",
-                "description": "Відсутні конфігураційні файли",
+                "title": "Add configuration",
+                "description": "Configuration files missing",
                 "priority": "medium"
             })
 
@@ -578,7 +574,7 @@ class DevPlanManager:
             self.logger.info("DEV_PLAN.md успішно збережено")
 
         except Exception as e:
-            self.logger.error(f"Помилка збереження плану: {e}")
+            self.logger.error(f"Error saving plan: {e}")
 
     def _generate_plan_content(self) -> str:
         """Генерація вмісту файлу DEV_PLAN.md"""
@@ -609,11 +605,11 @@ class DevPlanManager:
 
             content.append("")
 
-        # Метадані
+        # Metadata
         status = self.get_plan_status()
-        content.append("## Метадані")
-        content.append(f"- **Прогрес**: {status['completed_subtasks']}/{status['total_subtasks']} підзадач ({status['progress_percentage']}%)")
-        content.append(f"- **Останнє оновлення**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        content.append("## Metadata")
+        content.append(f"- **Progress**: {status['completed_subtasks']}/{status['total_subtasks']} subtasks ({status['progress_percentage']}%)")
+        content.append(f"- **Last update**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         content.append("")
 
         return "\n".join(content)

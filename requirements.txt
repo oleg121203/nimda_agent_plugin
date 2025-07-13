@@ -1,49 +1,49 @@
 # NIMDA Agent Plugin Requirements
-# Мінімальні залежності для роботи плагіна
+# Minimal dependencies for the plugin
 
-# Основні бібліотеки Python (зазвичай вже встановлені)
+# Core Python libraries (usually already installed)
 pathlib2>=2.3.7; python_version<"3.4"
 
-# HTTP запити для GitHub API та інших сервісів
+# HTTP requests for GitHub API and other services
 requests>=2.28.0
 
-# Робота з змінними середовища
+# Environment variable handling
 python-dotenv>=1.0.0
 
-# Робота з YAML файлами (codex.yaml, workflows)
+# Working with YAML files (codex.yaml, workflows)
 PyYAML>=6.0
 
-# Покращена робота з JSON
+# Better JSON utilities
 jsonschema>=4.0.0
 
-# Дата та час (зазвичай вбудовано, але для сумісності)
+# Date and time utilities (for compatibility)
 python-dateutil>=2.8.0
 
-# Опціональні залежності для розширеної функціональності
+# Optional dependencies for extended functionality
 
-# Git операції (якщо системний git недоступний)
+# Git operations (if system git is unavailable)
 # GitPython>=3.1.0
 
-# Розширене логування
+# Advanced logging
 # colorlog>=6.0.0
 
-# Прогрес бари для довгих операцій
+# Progress bars for long operations
 # tqdm>=4.64.0
 
-# Робота з конфігураційними файлами
-# configparser>=5.0.0  # Вбудовано в Python 3.8+
+# Configuration file handling
+# configparser>=5.0.0  # Built into Python 3.8+
 
-# Валідація та парсинг markdown
+# Markdown validation and parsing
 # markdown>=3.4.0
 
-# Асинхронна робота (для майбутніх версій)
-# asyncio  # Вбудовано в Python 3.8+
+# Async support (for future versions)
+# asyncio  # Built into Python 3.8+
 
-# Тестування (для розробки плагіна)
+# Testing (for plugin development)
 # pytest>=7.0.0
 # pytest-cov>=4.0.0
 
-# Лінтинг та форматування (для розробки)
+# Linting and formatting (for development)
 # black>=22.0.0
 # flake8>=5.0.0
 # mypy>=0.991

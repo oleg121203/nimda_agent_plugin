@@ -1,6 +1,4 @@
-"""
-Git менеджер - управління локальним та віддаленим репозиторієм
-"""
+"""Git manager - handles local and remote repositories"""
 
 import os
 import subprocess
@@ -12,15 +10,14 @@ import logging
 
 
 class GitManager:
-    """
-    Менеджер для роботи з Git репозиторієм
+    """Manager for working with a Git repository
 
-    Функції:
-    - Управління локальним Git репозиторієм
-    - Синхронізація з GitHub
-    - Автоматичні коміти та пуші
-    - Резолюція конфліктів
-    - Управління гілками
+    Features:
+    - Manage a local Git repository
+    - Synchronize with GitHub
+    - Automatic commits and pushes
+    - Resolve conflicts
+    - Branch management
     """
 
     def __init__(self, project_path: Path):

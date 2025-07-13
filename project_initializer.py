@@ -1,6 +1,4 @@
-"""
-Ініціалізатор проекту - створення необхідних файлів та структури
-"""
+"""Project initializer - creates required files and structure"""
 
 import json
 import logging
