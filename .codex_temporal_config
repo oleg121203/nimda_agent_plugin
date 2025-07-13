@@ -1,0 +1,34 @@
+# Codex Temporal Priority Configuration
+# This file controls the temporal logic for merge priority decisions
+
+# Time synchronization settings
+TIME_SYNC_ENABLED=true
+TIME_SYNC_SERVERS=("time.apple.com" "time.nist.gov" "pool.ntp.org")
+TIME_SYNC_TIMEOUT=10
+
+# Temporal priority settings
+TEMPORAL_THRESHOLD=60           # seconds - if local changes are newer by this amount, prioritize local
+TEMPORAL_PRIORITY_ENABLED=true  # enable/disable temporal priority logic
+CODEX_DEFAULT_PRIORITY=true     # default to Codex priority when timestamps are unclear
+
+# Merge strategy settings
+LOCAL_PRIORITY_STRATEGY="ours"    # git merge strategy for local priority
+CODEX_PRIORITY_STRATEGY="theirs"  # git merge strategy for Codex priority
+
+# Logging settings
+TEMPORAL_LOG_LEVEL="info"         # debug, info, warn, error
+TEMPORAL_LOG_FILE=".codex_temporal.log"
+
+# Time zone settings
+FORCE_UTC_COMPARISON=true        # always compare timestamps in UTC
+TIME_ZONE_TOLERANCE=3600         # 1 hour tolerance for timezone differences
+
+# Advanced settings
+AUTO_RESOLVE_CONFLICTS=true      # automatically resolve conflicts based on priority
+MANUAL_REVIEW_THRESHOLD=10       # number of conflicts before requiring manual review
+BACKUP_BEFORE_MERGE=true         # create backup branch before complex merges
+
+# Recovery settings
+RECOVERY_ENABLED=true            # enable automatic recovery mechanisms
+RECOVERY_MAX_ATTEMPTS=5          # maximum recovery attempts
+RECOVERY_COOLDOWN=300            # seconds between recovery attempts
