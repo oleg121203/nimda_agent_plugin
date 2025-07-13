@@ -1,0 +1,139 @@
+name: Codex Priority Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+jobs:
+  codex-priority-merge:
+    if: contains(github.head_ref, 'codex') || contains(github.head_ref, 'bgrzdn-codex')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "Codex Priority Bot"
+        git config --global user.email "codex-priority@noreply.github.com"
+
+    - name: Setup Codex priority merge strategy
+      run: |
+        echo "Setting up merge strategy with Codex priority..."
+        git fetch origin ${{ github.base_ref }}
+        git fetch origin ${{ github.head_ref }}
+        git checkout ${{ github.base_ref }}
+
+    - name: Perform merge with Codex priority
+      run: |
+        echo "Attempting merge of ${{ github.head_ref }} into ${{ github.base_ref }}..."
+        
+        if git merge origin/${{ github.head_ref }} --no-commit --no-ff; then
+          echo "Clean merge successful"
+          git commit -m "Auto-merge: Clean merge of Codex branch - ${{ github.head_ref }}"
+          echo "MERGE_STATUS=clean" >> $GITHUB_ENV
+        else
+          echo "Conflicts detected. Applying Codex priority resolution..."
+          
+          # Resolve conflicts in favor of Codex branch (theirs)
+          git status --porcelain | grep "^UU" | while read -r line; do
+            file=$(echo "$line" | cut -c4-)
+            echo "Resolving conflict in $file with Codex priority"
+            git checkout --theirs "$file"
+            git add "$file"
+          done
+          
+          # Handle add/delete conflicts
+          git status --porcelain | grep "^DU\|^UD\|^AU\|^UA" | while read -r line; do
+            file=$(echo "$line" | cut -c4-)
+            echo "Resolving add/delete conflict in $file with Codex priority"
+            git checkout --theirs "$file" 2>/dev/null || git rm "$file" 2>/dev/null || true
+            git add "$file" 2>/dev/null || true
+          done
+          
+          git commit -m "Auto-merge: Codex priority resolution - ${{ github.head_ref }}"
+          echo "MERGE_STATUS=resolved" >> $GITHUB_ENV
+        fi
+
+    - name: Comment on merge result
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const mergeStatus = process.env.MERGE_STATUS;
+          let message;
+          
+          if (mergeStatus === 'clean') {
+            message = `🤖 **Clean merge without conflicts**
+            
+            📋 Branch: \`${{ github.head_ref }}\`
+            ✅ No conflict resolution needed`;
+          } else {
+            message = `🤖 **Merge completed with Codex priority**
+            
+            📋 Branch: \`${{ github.head_ref }}\`
+            🎯 Strategy: Codex changes take precedence over main branch
+            ✅ All conflicts resolved in favor of Codex implementation`;
+          }
+          
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: message
+          });
+
+    - name: Push merged changes
+      run: |
+        git push origin ${{ github.base_ref }}
+
+    - name: Close pull request
+      uses: actions/github-script@v7
+      with:
+        script: |
+          await github.rest.pulls.update({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+            state: 'closed'
+          });
+          
+          const finalMessage = `🤖 **Auto-merged with Codex Priority**
+          
+          ✅ This Codex branch has been automatically merged into main with priority resolution.
+          📋 All conflicts were resolved in favor of the Codex implementation.
+          🎯 Branch: \`${{ github.head_ref }}\`
+          
+          The merge strategy ensures that Codex-generated changes take precedence over existing code.`;
+          
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: finalMessage
+          });
+
+  label-codex-pr:
+    if: contains(github.head_ref, 'codex') || contains(github.head_ref, 'bgrzdn-codex')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    
+    steps:
+    - name: Add Codex priority labels
+      uses: actions/github-script@v7
+      with:
+        script: |
+          await github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            labels: ['codex-priority', 'auto-merge', 'priority-resolution']
+          });
