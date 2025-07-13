@@ -20,7 +20,12 @@ python nimda_agent_plugin/run_nimda_agent.py --init
 
 # execute the full development plan
 python nimda_agent_plugin/run_nimda_agent.py --command "run full dev"
+
+# or use the shorter command
+python nimda_agent_plugin/run_nimda_agent.py --command "run dev"
 ```
+
+You can also send the command **`run dev`** directly in the Codex chat to perform the entire development plan in your mobile app.
 
 For a completely automated cycle, use **`auto_dev_runner.py`**:
 
