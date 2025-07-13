@@ -1,0 +1,18 @@
+# Git attributes for merge strategies
+# Priority for Codex branches over main branch
+
+# For documentation files, prefer Codex branch changes
+README.md merge=union
+CHANGELOG.md merge=union
+*.md merge=union
+
+# For code files, use recursive strategy with Codex priority
+*.py merge=recursive -Xtheirs
+*.js merge=recursive -Xtheirs
+*.ts merge=recursive -Xtheirs
+
+# For configuration files, manual merge required
+*.json merge=union
+*.yml merge=union
+*.yaml merge=union
+requirements.txt merge=union
