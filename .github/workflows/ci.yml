@@ -21,7 +21,7 @@ jobs:
     - name: Detect project environment
       id: detect
       run: |
-        # Детекція Python версії з віртуального середовища
+        # Detect Python version from the virtual environment
         if [ -f "nimda_env/pyvenv.cfg" ]; then
           python_version=$(grep "version" nimda_env/pyvenv.cfg | cut -d'=' -f2 | tr -d ' ' | cut -d'.' -f1,2)
           echo "python-version=$python_version" >> $GITHUB_OUTPUT
@@ -29,7 +29,7 @@ jobs:
           echo "python-version=3.11" >> $GITHUB_OUTPUT
         fi
         
-        # Перевірка файлів
+        # Check required files
         echo "has-requirements=$([ -f requirements.txt ] && echo true || echo false)" >> $GITHUB_OUTPUT
         echo "has-tests=$([ -d tests ] && echo true || echo false)" >> $GITHUB_OUTPUT
         echo "has-nimda=$([ -f nimda_agent_plugin/run_nimda_agent.py ] && echo true || echo false)" >> $GITHUB_OUTPUT
@@ -68,9 +68,9 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        # Зупинитися на помилках синтаксису або невизначених іменах
+        # Fail on syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # Показати попередження
+        # Show warnings
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Format check with black
@@ -89,7 +89,7 @@ jobs:
       if: needs.detect-environment.outputs.has-nimda == 'true'
       run: |
         cd nimda_agent_plugin
-        python run_nimda_agent.py --command "статус" || echo "NIMDA Agent test completed"
+        python run_nimda_agent.py --command "status" || echo "NIMDA Agent test completed"
 
     - name: Upload coverage
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
@@ -105,20 +105,20 @@ jobs:
     - name: Test VS Code compatibility
       run: |
         echo "🔍 Checking VS Code workspace configuration..."
-        
-        # Перевірка .vscode файлів
+
+        # Check .vscode files
         if [ -d ".vscode" ]; then
           echo "✅ VS Code workspace detected"
           ls -la .vscode/
         fi
         
-        # Перевірка tasks.json
+        # Check tasks.json
         if [ -f ".vscode/tasks.json" ]; then
           echo "✅ Tasks configuration found"
           cat .vscode/tasks.json
         fi
         
-        # Перевірка settings.json
+        # Check settings.json
         if [ -f ".vscode/settings.json" ]; then
           echo "✅ Workspace settings found"
         fi

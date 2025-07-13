@@ -1,13 +1,11 @@
-"""
-NIMDA Agent Plugin - Універсальний автономний агент розробки
-Може бути доданий до будь-якого проекту як окремий плагін.
-"""
+"""NIMDA Agent Plugin - Universal autonomous development agent.
+Can be added to any project as a standalone plugin."""
 
-# Версія плагіна
+# Plugin version
 __version__ = "1.0.0"
 __author__ = "NIMDA Development Team"
 
-# Список компонентів що будуть доступні при імпорті
+# Components exported on import
 __all__ = [
     'NIMDAAgent',
     'CommandProcessor',
@@ -17,48 +15,47 @@ __all__ = [
     'ChangelogManager'
 ]
 
-# Lazy import для уникнення циклічних залежностей
+# Lazy imports to avoid circular dependencies
 def get_nimda_agent():
-    """Отримати клас NIMDAAgent"""
+    """Get the NIMDAAgent class"""
     from .agent import NIMDAAgent
     return NIMDAAgent
 
 def get_command_processor():
-    """Отримати клас CommandProcessor"""
+    """Get the CommandProcessor class"""
     from .command_processor import CommandProcessor
     return CommandProcessor
 
 def get_dev_plan_manager():
-    """Отримати клас DevPlanManager"""
+    """Get the DevPlanManager class"""
     from .dev_plan_manager import DevPlanManager
     return DevPlanManager
 
 def get_git_manager():
-    """Отримати клас GitManager"""
+    """Get the GitManager class"""
     from .git_manager import GitManager
     return GitManager
 
 def get_project_initializer():
-    """Отримати клас ProjectInitializer"""
+    """Get the ProjectInitializer class"""
     from .project_initializer import ProjectInitializer
     return ProjectInitializer
 
 def get_changelog_manager():
-    """Отримати клас ChangelogManager"""
+    """Get the ChangelogManager class"""
     from .changelog_manager import ChangelogManager
     return ChangelogManager
 
-# Головна функція для зручного запуску
+# Convenience function for running the agent
 def run_agent(project_path=None, command=None):
-    """
-    Зручна функція для запуску NIMDA Agent
+    """Simple helper to run NIMDA Agent
 
     Args:
-        project_path: Шлях до проекту
-        command: Команда для виконання
+        project_path: Path to the project
+        command: Command to execute
 
     Returns:
-        Результат виконання або агент для подальшої роботи
+        Execution result or the agent instance
     """
     agent_class = get_nimda_agent()
     agent = agent_class(project_path)
