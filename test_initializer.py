@@ -8,7 +8,8 @@ import tempfile
 from pathlib import Path
 
 # Додаємо шлях до модуля
-sys.path.insert(0, "/Users/dev/Documents/NIMDA/NIMDA-CLI/nimda_agent_plugin")
+CURRENT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(CURRENT_DIR))
 from project_initializer_clean import ProjectInitializer
 
 

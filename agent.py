@@ -228,6 +228,35 @@ class NIMDAAgent:
                 "message": "Критична помилка виконання плану розробки"
             }
 
+    def run_full_dev_cycle(self) -> Dict[str, Any]:
+        """Повний цикл виконання DEV_PLAN з автоматичною синхронізацією GitHub"""
+        try:
+            self.logger.info("🔄 Початок повного циклу DEV")
+
+            pre_sync = self.git_manager.sync_with_remote()
+
+            plan_result = self.execute_dev_plan()
+
+            commit_result = self.git_manager.commit_changes("Автоматичне виконання DEV_PLAN")
+
+            push_result = (self.git_manager.push_changes() if commit_result.get("success") else None)
+
+            return {
+                "success": plan_result.get("success", False) and commit_result.get("success", True) and (push_result.get("success", True) if push_result else True),
+                "plan": plan_result,
+                "commit": commit_result,
+                "push": push_result,
+                "pre_sync": pre_sync,
+            }
+
+        except Exception as e:
+            self.logger.error(f"Помилка автоматичного циклу DEV: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "message": "Помилка автоматичного циклу DEV",
+            }
+
     def update_dev_plan(self) -> Dict[str, Any]:
         """
         Оновлення та розширення DEV_PLAN.md
