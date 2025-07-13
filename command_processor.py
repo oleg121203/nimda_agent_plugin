@@ -261,19 +261,23 @@ class CommandProcessor:
         if not backup_result["success"]:
             self.logger.warning("Не вдалося створити резервну копію")
 
-        # Виконання плану
-        result = self.agent.execute_dev_plan()
+        # Виконання плану з повною синхронізацією
+        cycle_result = self.agent.run_full_dev_cycle()
 
-        if result["success"]:
-            executed_count = len(result.get("executed_tasks", []))
-            total_count = result.get("total_tasks", 0)
-            result["user_message"] = f"✅ План виконано: {executed_count}/{total_count} задач"
+        plan_info = cycle_result.get("plan", {})
+
+        if plan_info.get("success"):
+            executed_count = len(plan_info.get("executed_tasks", []))
+            total_count = plan_info.get("total_tasks", 0)
+            cycle_result["user_message"] = (
+                f"✅ План виконано: {executed_count}/{total_count} задач"
+            )
         else:
-            result["user_message"] = "❌ Помилка виконання плану розробки"
+            cycle_result["user_message"] = "❌ Помилка виконання плану розробки"
 
-        result["backup_created"] = backup_result["success"]
+        cycle_result["backup_created"] = backup_result["success"]
 
-        return result
+        return cycle_result
 
     def _handle_status(self) -> Dict[str, Any]:
         """Обробка команди статусу"""
