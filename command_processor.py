@@ -12,11 +12,10 @@ class CommandProcessor:
     """Process user commands received via Codex."""
 
     def __init__(self, agent):
-        """
-        Ініціалізація обробника команд
+        """Initialize the command processor
 
         Args:
-            agent: Екземпляр NIMDAAgent
+            agent: Instance of NIMDAAgent
         """
         self.agent = agent
         self.logger = logging.getLogger('CommandProcessor')
@@ -107,7 +106,7 @@ class CommandProcessor:
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка обробки команди",
+                "message": "Command processing error",
                 "command": command
             }
 
@@ -116,10 +115,10 @@ class CommandProcessor:
         Визначення типу команди за шаблонами
 
         Args:
-            command: Нормалізована команда
+            command: Normalized command string
 
         Returns:
-            Тип команди та параметри
+            Command type and parameters
         """
         for command_type, patterns in self.command_patterns.items():
             for pattern in patterns:
@@ -138,18 +137,18 @@ class CommandProcessor:
 
     def _execute_command(self, command_type: str, params: Dict[str, Any], original_command: str) -> Dict[str, Any]:
         """
-        Виконання конкретної команди
+        Execute a specific command
 
         Args:
-            command_type: Тип команди
-            params: Параметри команди
-            original_command: Оригінальна команда
+            command_type: Command type
+            params: Command parameters
+            original_command: Original command text
 
         Returns:
-            Результат виконання
+            Execution result
         """
         try:
-            self.logger.info(f"Виконання команди типу: {command_type}")
+            self.logger.info(f"Executing command of type: {command_type}")
 
             if command_type == "update_plan":
                 return self._handle_update_plan()
@@ -189,30 +188,30 @@ class CommandProcessor:
                 }
 
         except Exception as e:
-            self.logger.error(f"Помилка виконання команди {command_type}: {e}")
+            self.logger.error(f"Command execution error {command_type}: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": f"Помилка виконання команди {command_type}"
+                "message": f"Command execution error {command_type}"
             }
 
     def _handle_update_plan(self) -> Dict[str, Any]:
-        """Обробка команди оновлення плану"""
-        self.logger.info("Виконання оновлення DEV_PLAN.md")
+        """Handle update plan command"""
+        self.logger.info("Running DEV_PLAN.md update")
 
         result = self.agent.update_dev_plan()
 
         if result["success"]:
             # Додаткова інформація для користувача
-            result["user_message"] = "✅ DEV_PLAN.md успішно оновлено та розширено"
+            result["user_message"] = "✅ DEV_PLAN.md updated and expanded"
         else:
-            result["user_message"] = "❌ Помилка оновлення DEV_PLAN.md"
+            result["user_message"] = "❌ Error updating DEV_PLAN.md"
 
         return result
 
     def _handle_execute_task(self, task_number: int) -> Dict[str, Any]:
         """Обробка команди виконання конкретної задачі"""
-        self.logger.info(f"Виконання задачі #{task_number}")
+        self.logger.info(f"Executing task #{task_number}")
 
         # Перевірка існування задачі
         plan_status = self.agent.dev_plan_manager.get_plan_status()
@@ -220,22 +219,22 @@ class CommandProcessor:
         if task_number > plan_status["total_tasks"] or task_number <= 0:
             return {
                 "success": False,
-                "message": f"Задача #{task_number} не існує. Доступно {plan_status['total_tasks']} задач",
-                "user_message": f"❌ Задача #{task_number} не знайдена"
+                "message": f"Task #{task_number} does not exist. {plan_status['total_tasks']} tasks available",
+                "user_message": f"❌ Task #{task_number} not found"
             }
 
         result = self.agent.execute_dev_plan(task_number=task_number)
 
         if result["success"]:
-            result["user_message"] = f"✅ Задача #{task_number} успішно виконана"
+            result["user_message"] = f"✅ Task #{task_number} completed successfully"
         else:
-            result["user_message"] = f"❌ Помилка виконання задачі #{task_number}"
+            result["user_message"] = f"❌ Error executing task #{task_number}"
 
         return result
 
     def _handle_execute_full_plan(self) -> Dict[str, Any]:
-        """Обробка команди виконання всього плану"""
-        self.logger.info("Виконання повного DEV_PLAN.md")
+        """Handle command to execute the full plan"""
+        self.logger.info("Executing full DEV_PLAN.md")
 
         # Попередження користувача
         plan_status = self.agent.dev_plan_manager.get_plan_status()
@@ -243,15 +242,15 @@ class CommandProcessor:
         if plan_status["total_tasks"] == 0:
             return {
                 "success": False,
-                "message": "DEV_PLAN.md порожній або не містить задач",
-                "user_message": "❌ Немає задач для виконання"
+                "message": "DEV_PLAN.md is empty or has no tasks",
+                "user_message": "❌ No tasks to execute"
             }
 
         # Створення резервної копії перед виконанням
         backup_result = self.agent.git_manager.create_backup_branch()
 
         if not backup_result["success"]:
-            self.logger.warning("Не вдалося створити резервну копію")
+            self.logger.warning("Failed to create backup")
 
         # Виконання плану з повною синхронізацією
         cycle_result = self.agent.run_full_dev_cycle()
@@ -262,10 +261,10 @@ class CommandProcessor:
             executed_count = len(plan_info.get("executed_tasks", []))
             total_count = plan_info.get("total_tasks", 0)
             cycle_result["user_message"] = (
-                f"✅ План виконано: {executed_count}/{total_count} задач"
+                f"✅ Plan executed: {executed_count}/{total_count} tasks"
             )
         else:
-            cycle_result["user_message"] = "❌ Помилка виконання плану розробки"
+            cycle_result["user_message"] = "❌ Error executing development plan"
 
         cycle_result["backup_created"] = backup_result["success"]
 
@@ -283,26 +282,26 @@ class CommandProcessor:
             git_status = status["git"]
 
             status_message = f"""
-📊 **Статус NIMDA Agent**
+📊 **NIMDA Agent Status**
 
-🎯 **План розробки:**
-- Прогрес: {plan_status['completed_subtasks']}/{plan_status['total_subtasks']} підзадач ({plan_status['progress_percentage']}%)
-- Виконано задач: {plan_status['completed_tasks']}/{plan_status['total_tasks']}
+🎯 **Development plan:**
+- Progress: {plan_status['completed_subtasks']}/{plan_status['total_subtasks']} subtasks ({plan_status['progress_percentage']}%)
+- Completed tasks: {plan_status['completed_tasks']}/{plan_status['total_tasks']}
 
-🔧 **Git репозиторій:**
-- Поточна гілка: {git_status.get('current_branch', 'невідома')}
-- Локальні зміни: {'Так' if git_status.get('has_changes') else 'Ні'}
-- Файлів змінено: {git_status.get('total_files', 0)}
+🔧 **Git repository:***
+- Current branch: {git_status.get('current_branch', 'unknown')}
+- Local changes: {'Yes' if git_status.get('has_changes') else 'No'}
+- Files changed: {git_status.get('total_files', 0)}
 
-🤖 **Агент:**
-- Статус: {'Працює' if status['agent_running'] else 'Простоює'}
-- Поточна задача: {status.get('current_task') or 'Немає'}
-- Проект: {status['project_path']}
+🤖 **Agent:***
+- Status: {'Running' if status['agent_running'] else 'Idle'}
+- Current task: {status.get('current_task') or 'None'}
+- Project: {status['project_path']}
 """
 
             return {
                 "success": True,
-                "message": "Статус отримано",
+                "message": "Status retrieved",
                 "user_message": status_message.strip(),
                 "raw_status": status
             }
@@ -311,37 +310,37 @@ class CommandProcessor:
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка отримання статусу",
-                "user_message": "❌ Помилка отримання статусу"
+                "message": "Error fetching status",
+                "user_message": "❌ Error fetching status"
             }
 
     def _handle_sync(self) -> Dict[str, Any]:
-        """Обробка команди синхронізації"""
-        self.logger.info("Виконання синхронізації з Git")
+        """Handle sync command"""
+        self.logger.info("Performing Git synchronization")
 
         result = self.agent.git_manager.sync_with_remote()
 
         if result["success"]:
             operations = result.get("operations", [])
             operations_summary = ", ".join([op[0] for op in operations if op[1]["success"]])
-            result["user_message"] = f"✅ Синхронізація завершена: {operations_summary}"
+            result["user_message"] = f"✅ Sync complete: {operations_summary}"
         else:
-            result["user_message"] = "❌ Помилка синхронізації з віддаленим репозиторієм"
+            result["user_message"] = "❌ Error synchronizing with remote repository"
 
         return result
 
     def _handle_fix_errors(self) -> Dict[str, Any]:
-        """Обробка команди виправлення помилок"""
-        self.logger.info("Виконання автоматичного виправлення помилок")
+        """Handle auto-fix errors command"""
+        self.logger.info("Running automatic error correction")
 
         result = self.agent.auto_fix_errors()
 
         if result["success"]:
             fixed_count = result.get("fixed_count", 0)
             total_errors = result.get("total_errors", 0)
-            result["user_message"] = f"✅ Виправлено {fixed_count} з {total_errors} помилок"
+            result["user_message"] = f"✅ Fixed {fixed_count} of {total_errors} errors"
         else:
-            result["user_message"] = "❌ Помилка автоматичного виправлення"
+            result["user_message"] = "❌ Automatic fix failed"
 
         return result
 
@@ -354,65 +353,65 @@ class CommandProcessor:
         if result:
             return {
                 "success": True,
-                "message": "Проект ініціалізовано",
-                "user_message": "✅ Проект успішно ініціалізовано"
+                "message": "Project initialized",
+                "user_message": "✅ Project initialized successfully"
             }
         else:
             return {
                 "success": False,
-                "message": "Помилка ініціалізації проекту",
-                "user_message": "❌ Помилка ініціалізації проекту"
+                "message": "Project initialization error",
+                "user_message": "❌ Project initialization error"
             }
 
     def _handle_help(self) -> Dict[str, Any]:
         """Обробка команди допомоги"""
         help_message = """
-🤖 **NIMDA Agent - Доступні команди:**
+🤖 **NIMDA Agent - Available commands:**
 
-📋 **Робота з планом:**
-- `допрацюй девплан` - оновити та розширити DEV_PLAN.md
-- `виконай задачу номер X` - виконати конкретну задачу
-- `виконай весь ДЕВ` - виконати весь план повністю
+📋 **Plan management:**
+- `update devplan` - update and expand DEV_PLAN.md
+- `execute task number X` - run a specific task
+- `run full dev` - execute the entire plan
 
-📊 **Статус та інформація:**
-- `статус` - поточний статус агента та прогрес
-- `допомога` - показати цю довідку
+📊 **Status and info:**
+- `status` - current agent status
+- `help` - show this help
 
-🔧 **Git та синхронізація:**
-- `синхронізація` - синхронізація з віддаленим репозиторієм
-- `виправити помилки` - автоматичне виправлення помилок
+🔧 **Git and sync:**
+- `sync` - synchronize with the remote repository
+- `fix errors` - automatically fix problems
 
-🚀 **Ініціалізація:**
-- `ініціалізація` - створити базову структуру проекту
+🚀 **Initialization:**
+- `initialize` - create basic project structure
 
-💡 **Приклади використання:**
-- "допрацюй девплан і додай нові задачі"
-- "виконай задачу номер 3"
-- "виконай весь ДЕВ план від початку до кінця"
-- "покажи статус виконання"
+💡 **Usage examples:**
+- "update devplan and add new tasks"
+- "execute task number 3"
+- "run full dev plan from start to finish"
+- "show current status"
 """
 
         return {
             "success": True,
-            "message": "Довідка відображена",
+            "message": "Help displayed",
             "user_message": help_message.strip()
         }
 
     def _handle_unknown_command(self, command: str) -> Dict[str, Any]:
         """Обробка невідомої команди"""
-        self.logger.warning(f"Невідома команда: {command}")
+        self.logger.warning(f"Unknown command: {command}")
 
         # Спроба знайти схожі команди
         suggestions = self._suggest_commands(command)
 
         suggestion_text = ""
         if suggestions:
-            suggestion_text = f"\n\n💡 **Можливо ви мали на увазі:**\n" + "\n".join(f"- {s}" for s in suggestions)
+            suggestion_text = f"\n\n💡 **Did you mean:**\n" + "\n".join(f"- {s}" for s in suggestions)
 
         return {
             "success": False,
-            "message": f"Невідома команда: {command}",
-            "user_message": f"❓ Не розумію команду '{command}'{suggestion_text}\n\nНапишіть 'допомога' для списку доступних команд."
+            "message": f"Unknown command: {command}",
+            "user_message": f"❓ Unknown command '{command}'{suggestion_text}\n\nType 'help' to list available commands."
         }
 
     def _suggest_commands(self, command: str) -> List[str]:

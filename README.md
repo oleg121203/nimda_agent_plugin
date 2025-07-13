@@ -17,6 +17,7 @@ The **NIMDA Agent Plugin** provides an automated development assistant that can 
 ```bash
 # initialize a new project
 python nimda_agent_plugin/run_nimda_agent.py --init
+# this creates a folder next to the plugin using the development plan title
 
 # execute the full development plan
 python nimda_agent_plugin/run_nimda_agent.py --command "run full dev"

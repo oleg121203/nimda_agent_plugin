@@ -1,6 +1,4 @@
-"""
-Менеджер журналу змін - ведення CHANGELOG.md
-"""
+"""Changelog manager for maintaining CHANGELOG.md"""
 
 import re
 from typing import Dict, List, Any, Optional
@@ -10,14 +8,13 @@ import logging
 
 
 class ChangelogManager:
-    """
-    Менеджер для ведення журналу змін у файлі CHANGELOG.md
+    """Manager for handling the CHANGELOG.md file
 
-    Функції:
-    - Додавання записів про зміни
-    - Відмітка виконаних задач
-    - Оновлення статусу проекту
-    - Підтримка форматування Keep a Changelog
+    Features:
+    - Add change log entries
+    - Mark completed tasks
+    - Update project status
+    - Keep a Changelog format support
     """
 
     def __init__(self, project_path: Path):

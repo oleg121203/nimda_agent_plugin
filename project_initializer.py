@@ -1,6 +1,4 @@
-"""
-Ініціалізатор проекту - створення необхідних файлів та структури
-"""
+"""Project initializer - creates required files and structure"""
 
 import json
 import logging
@@ -70,6 +68,9 @@ class ProjectInitializer:
         """
         try:
             self.logger.info("Початок ініціалізації проекту")
+
+            # Ensure the base project directory exists
+            self.project_path.mkdir(parents=True, exist_ok=True)
 
             # 1. Визначення типу проекту
             project_type = self._detect_project_type()

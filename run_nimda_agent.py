@@ -1,122 +1,143 @@
 #!/usr/bin/env python3
-"""
-Головний файл запуску NIMDA Agent Plugin
-Універсальний автономний агент розробки
-"""
+"""Main entry file for the NIMDA Agent Plugin.
+Provides a universal autonomous development agent."""
 
 import sys
 import json
 import argparse
+import re
 from pathlib import Path
 from typing import Dict, Any
 
-# Додавання шляху до плагіна
+# Add plugin path to PYTHONPATH
 plugin_dir = Path(__file__).parent
 sys.path.insert(0, str(plugin_dir))
 
 from agent import NIMDAAgent
 
 
+def derive_project_path(custom_path: str | None) -> Path:
+    """Determine the project path.
+
+    If a custom path is provided, use it. Otherwise, create a folder next to the
+    plugin directory using the title of DEV_PLAN.md.
+    """
+    if custom_path:
+        return Path(custom_path).resolve()
+
+    dev_plan_file = plugin_dir / "DEV_PLAN.md"
+    title = "project"
+    if dev_plan_file.exists():
+        for line in dev_plan_file.read_text(encoding="utf-8").splitlines():
+            if line.startswith("# "):
+                title = line[2:].strip()
+                break
+
+    name = re.sub(r"[^a-zA-Z0-9_-]+", "_", title).strip("_").lower() or "nimda_project"
+    return (plugin_dir.parent / name).resolve()
+
+
 def main():
-    """Головна функція запуску NIMDA Agent"""
+    """Main function for running NIMDA Agent"""
 
     parser = argparse.ArgumentParser(
-        description="NIMDA Agent - Універсальний автономний агент розробки",
+        description="NIMDA Agent - Universal autonomous development agent",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Приклади використання:
+Usage examples:
 
-  # Запуск у інтерактивному режимі
+  # Start in interactive mode
   python run_nimda_agent.py
 
-  # Виконання конкретної команди
-  python run_nimda_agent.py --command "статус"
-  python run_nimda_agent.py --command "виконай задачу номер 1"
-  python run_nimda_agent.py --command "виконай весь ДЕВ"
+  # Execute a specific command
+  python run_nimda_agent.py --command "status"
+  python run_nimda_agent.py --command "execute task number 1"
+  python run_nimda_agent.py --command "run full dev"
 
-  # Ініціалізація нового проекту
+  # Initialize a new project
   python run_nimda_agent.py --init
 
-  # Запуск у демон режимі
+  # Run as a daemon
   python run_nimda_agent.py --daemon
 
-  # Налаштування GitHub репозиторію
+  # Configure GitHub repository
   python run_nimda_agent.py --setup-github https://github.com/user/repo.git
 
-Підтримувані команди:
-- "статус" - поточний статус агента
-- "допрацюй девплан" - оновлення плану розробки
-- "виконай задачу номер X" - виконання конкретної задачі
-- "виконай весь ДЕВ" - виконання всього плану
-- "синхронізація" - синхронізація з Git
-- "виправити помилки" - автоматичне виправлення
-- "ініціалізація" - створення структури проекту
-- "допомога" - список команд
+Supported commands:
+- "status" - show current agent status
+- "update devplan" - update the development plan
+- "execute task number X" - run a specific task
+- "run full dev" - execute the entire plan
+- "sync" - synchronize with Git
+- "fix errors" - automatically fix issues
+- "initialize" - create project structure
+- "help" - list available commands
         """
     )
 
     parser.add_argument(
         "--project-path",
         type=str,
-        default=".",
-        help="Шлях до проекту (за замовчуванням: поточна директорія)"
+        default=None,
+        help="Path to the project. If omitted, a folder will be created "
+             "next to the plugin based on the DEV_PLAN title"
     )
 
     parser.add_argument(
         "--command",
         type=str,
-        help="Команда для виконання"
+        help="Command to execute"
     )
 
     parser.add_argument(
         "--init",
         action="store_true",
-        help="Ініціалізація нового проекту"
+        help="Initialize a new project"
     )
 
     parser.add_argument(
         "--daemon",
         action="store_true",
-        help="Запуск у режимі демона (очікування команд)"
+        help="Run in daemon mode (waiting for commands)"
     )
 
     parser.add_argument(
         "--setup-github",
         type=str,
         metavar="URL",
-        help="Налаштування GitHub репозиторію"
+        help="Configure GitHub repository"
     )
 
     parser.add_argument(
         "--config",
         type=str,
-        help="Шлях до файлу конфігурації"
+        help="Path to configuration file"
     )
 
     parser.add_argument(
         "--verbose",
         action="store_true",
-        help="Детальний вивід"
+        help="Verbose output"
     )
 
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Вивід у форматі JSON"
+        help="Output in JSON format"
     )
 
     args = parser.parse_args()
 
     try:
-        # Ініціалізація агента
-        project_path = Path(args.project_path).resolve()
+        # Determine project path
+        project_path = derive_project_path(args.project_path)
 
         if args.verbose:
-            print(f"🤖 Ініціалізація NIMDA Agent для проекту: {project_path}")
+            print(f"🤖 Initializing NIMDA Agent for project: {project_path}")
 
         agent = NIMDAAgent(str(project_path))
 
-        # Обробка аргументів
+        # Argument handling
         if args.init:
             handle_init(agent, args)
         elif args.setup_github:
@@ -129,10 +150,10 @@ def main():
             handle_interactive_mode(agent, args)
 
     except KeyboardInterrupt:
-        print("\n🛑 Перервано користувачем")
+        print("\n🛑 Interrupted by user")
         sys.exit(0)
     except Exception as e:
-        print(f"❌ Критична помилка: {e}")
+        print(f"❌ Critical error: {e}")
         if args.verbose:
             import traceback
             traceback.print_exc()
@@ -140,42 +161,42 @@ def main():
 
 
 def handle_init(agent: NIMDAAgent, args):
-    """Обробка ініціалізації проекту"""
-    print("🚀 Ініціалізація нового проекту...")
+    """Handle project initialization"""
+    print("🚀 Initializing new project...")
 
     success = agent.initialize_project()
 
     if success:
         result = {
             "success": True,
-            "message": "Проект успішно ініціалізовано",
+            "message": "Project initialized successfully",
             "project_path": str(agent.project_path)
         }
     else:
         result = {
             "success": False,
-            "message": "Помилка ініціалізації проекту"
+            "message": "Project initialization failed"
         }
 
     output_result(result, args)
 
 
 def handle_github_setup(agent: NIMDAAgent, github_url: str, args):
-    """Обробка налаштування GitHub"""
-    print(f"🔗 Налаштування GitHub репозиторію: {github_url}")
+    """Handle GitHub configuration"""
+    print(f"🔗 Configuring GitHub repository: {github_url}")
 
     result = agent.git_manager.setup_github_remote(github_url)
     output_result(result, args)
 
 
 def handle_command(agent: NIMDAAgent, command: str, args):
-    """Обробка одноразової команди"""
+    """Handle a single command"""
     if args.verbose:
-        print(f"📝 Виконання команди: {command}")
+        print(f"📝 Executing command: {command}")
 
     result = agent.process_command(command)
 
-    # Вивід повідомлення для користувача
+    # Display message for the user
     if "user_message" in result:
         if not args.json:
             print(result["user_message"])
@@ -184,87 +205,87 @@ def handle_command(agent: NIMDAAgent, command: str, args):
 
 
 def handle_daemon_mode(agent: NIMDAAgent, args):
-    """Обробка режиму демона"""
-    print("🔄 Запуск NIMDA Agent у режимі демона...")
-    print("Введіть команди або 'exit' для виходу:")
+    """Handle daemon mode"""
+    print("🔄 Starting NIMDA Agent in daemon mode...")
+    print("Enter commands or 'exit' to quit:")
 
     while True:
         try:
             command = input("\nNIMDA> ").strip()
 
-            if command.lower() in ['exit', 'quit', 'вихід']:
+            if command.lower() in ['exit', 'quit']:
                 break
 
             if not command:
                 continue
 
-            if command.lower() in ['help', 'допомога']:
+            if command.lower() in ['help']:
                 show_help()
                 continue
 
             result = agent.process_command(command)
 
-            # Вивід результату
+            # Output the result
             if "user_message" in result:
                 print(result["user_message"])
             elif result.get("success"):
-                print(f"✅ {result.get('message', 'Команду виконано')}")
+                print(f"✅ {result.get('message', 'Command executed')}")
             else:
-                print(f"❌ {result.get('message', 'Помилка виконання команди')}")
+                print(f"❌ {result.get('message', 'Command failed')}")
 
         except KeyboardInterrupt:
             break
         except Exception as e:
-            print(f"❌ Помилка: {e}")
+            print(f"❌ Error: {e}")
 
-    print("\n👋 NIMDA Agent завершує роботу...")
+    print("\n👋 NIMDA Agent is shutting down...")
     agent.shutdown()
 
 
 def handle_interactive_mode(agent: NIMDAAgent, args):
-    """Обробка інтерактивного режиму"""
-    print("🤖 NIMDA Agent - Універсальний автономний агент розробки")
+    """Handle interactive mode"""
+    print("🤖 NIMDA Agent - Universal autonomous development agent")
     print("=" * 60)
 
-    # Показ статусу
+    # Show status
     status = agent.get_status()
 
     if not args.json:
-        print(f"📁 Проект: {status['project_path']}")
-        print(f"🎯 План: {status['dev_plan']['completed_subtasks']}/{status['dev_plan']['total_subtasks']} підзадач")
-        print(f"🔧 Git: {status['git']['current_branch'] if status['git'].get('current_branch') else 'не ініціалізовано'}")
-        print(f"🤖 Статус: {'Працює' if status['agent_running'] else 'Простоює'}")
+        print(f"📁 Project: {status['project_path']}")
+        print(f"🎯 Plan: {status['dev_plan']['completed_subtasks']}/{status['dev_plan']['total_subtasks']} subtasks")
+        print(f"🔧 Git: {status['git']['current_branch'] if status['git'].get('current_branch') else 'not initialized'}")
+        print(f"🤖 Status: {'Running' if status['agent_running'] else 'Idle'}")
         print()
 
-        # Швидкі команди
-        print("Швидкі команди:")
-        print("1. Показати статус")
-        print("2. Оновити план розробки")
-        print("3. Виконати всі задачі")
-        print("4. Синхронізувати з Git")
-        print("5. Інтерактивний режим")
-        print("0. Вихід")
+        # Quick commands
+        print("Quick commands:")
+        print("1. Show status")
+        print("2. Update development plan")
+        print("3. Run all tasks")
+        print("4. Sync with Git")
+        print("5. Interactive mode")
+        print("0. Exit")
         print()
 
-        choice = input("Виберіть опцію (0-5) або введіть команду: ").strip()
+        choice = input("Choose an option (0-5) or enter a command: ").strip()
 
         if choice == "0":
             return
         elif choice == "1":
-            result = agent.process_command("статус")
+            result = agent.process_command("status")
         elif choice == "2":
-            result = agent.process_command("допрацюй девплан")
+            result = agent.process_command("update devplan")
         elif choice == "3":
-            result = agent.process_command("виконай весь ДЕВ")
+            result = agent.process_command("run full dev")
         elif choice == "4":
-            result = agent.process_command("синхронізація")
+            result = agent.process_command("sync")
         elif choice == "5":
             handle_daemon_mode(agent, args)
             return
         else:
             result = agent.process_command(choice)
 
-        # Вивід результату
+        # Output the result
         if "user_message" in result:
             print(result["user_message"])
     else:
@@ -272,51 +293,51 @@ def handle_interactive_mode(agent: NIMDAAgent, args):
 
 
 def show_help():
-    """Показ довідки"""
+    """Display help message"""
     help_text = """
-🤖 NIMDA Agent - Доступні команди:
+🤖 NIMDA Agent - Available commands:
 
-📋 Робота з планом розробки:
-  • допрацюй девплан          - оновити та розширити DEV_PLAN.md
-  • виконай задачу номер X    - виконати конкретну задачу
-  • виконай весь ДЕВ          - виконати весь план повністю
+📋 Development plan:
+  • update devplan          - update and expand DEV_PLAN.md
+  • execute task number X   - run a specific task
+  • run full dev            - execute the entire plan
 
-📊 Статус та інформація:
-  • статус                    - поточний статус агента та прогрес
-  • допомога                  - показати цю довідку
+📊 Status and info:
+  • status                  - show current progress
+  • help                    - display this message
 
-🔧 Git та синхронізація:
-  • синхронізація             - синхронізація з віддаленим репозиторієм
-  • виправити помилки         - автоматичне виправлення помилок
+🔧 Git and sync:
+  • sync                    - synchronize with the remote repository
+  • fix errors              - automatically fix problems
 
-🚀 Управління проектом:
-  • ініціалізація             - створити базову структуру проекту
+🚀 Project management:
+  • initialize              - create basic project structure
 
-💡 Приклади:
-  • "допрацюй девплан і додай нові задачі"
-  • "виконай задачу номер 3"
-  • "виконай весь ДЕВ план від початку до кінця"
-  • "покажи поточний статус проекту"
+💡 Examples:
+  • "update devplan and add new tasks"
+  • "execute task number 3"
+  • "run full dev plan from start to finish"
+  • "show current project status"
 
-🔧 Системні команди:
-  • exit, quit, вихід         - завершити роботу агента
-  • help, допомога            - показати цю довідку
+🔧 System commands:
+  • exit, quit              - stop the agent
+  • help                    - show this message
 """
     print(help_text)
 
 
 def output_result(result: Dict[str, Any], args):
-    """Вивід результату"""
+    """Output the result"""
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
         if result.get("success"):
-            print(f"✅ {result.get('message', 'Операцію виконано успішно')}")
+            print(f"✅ {result.get('message', 'Operation completed successfully')}")
         else:
-            print(f"❌ {result.get('message', 'Помилка виконання операції')}")
+            print(f"❌ {result.get('message', 'Operation failed')}")
 
             if "error" in result and args.verbose:
-                print(f"Деталі помилки: {result['error']}")
+                print(f"Error details: {result['error']}")
 
 
 if __name__ == "__main__":
