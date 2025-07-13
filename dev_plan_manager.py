@@ -21,7 +21,7 @@ class DevPlanManager:
     - Розширення плану при необхідності
     """
 
-    def __init__(self, project_path: Path):
+    def __init__(self, project_path: Path, max_retries: int = 3):
         """
         Ініціалізація менеджера
 
@@ -29,6 +29,7 @@ class DevPlanManager:
             project_path: Шлях до проекту
         """
         self.project_path = project_path
+        self.max_retries = max(1, max_retries)
         self.dev_plan_file = project_path / "DEV_PLAN.md"
         self.logger = logging.getLogger('DevPlanManager')
 
@@ -246,28 +247,50 @@ class DevPlanManager:
 
             self.logger.info(f"Виконання задачі #{task_number}: {target_task['title']}")
 
-            # Виконання підзадач
+            # Виконання підзадач з повторами
             executed_subtasks = []
+            failed_subtasks = []
             for subtask in target_task["subtasks"]:
-                if not subtask["completed"]:
+                if subtask["completed"]:
+                    continue
+
+                attempts = 0
+                while attempts < self.max_retries and not subtask["completed"]:
                     success = self._execute_subtask(subtask, target_task)
                     if success:
                         subtask["completed"] = True
                         executed_subtasks.append(subtask)
+                    else:
+                        attempts += 1
+                        if attempts < self.max_retries:
+                            self.logger.warning(
+                                f"Повтор {attempts} для підзадачі: {subtask['text']}"
+                            )
+
+                if not subtask["completed"]:
+                    failed_subtasks.append(subtask)
 
             # Перевірка завершення задачі
             if all(st["completed"] for st in target_task["subtasks"]):
                 target_task["completed"] = True
-                self.plan_structure["completed_tasks"].append(target_task)
+                if target_task not in self.plan_structure["completed_tasks"]:
+                    self.plan_structure["completed_tasks"].append(target_task)
 
             # Збереження оновленого плану
             self._save_plan()
 
+            task_success = len(failed_subtasks) == 0
+
             return {
-                "success": True,
-                "message": f"Задача #{task_number} успішно виконана",
+                "success": task_success,
+                "message": (
+                    f"Задача #{task_number} успішно виконана"
+                    if task_success
+                    else f"Не виконано {len(failed_subtasks)} підзадач"
+                ),
                 "task": target_task,
-                "executed_subtasks": executed_subtasks
+                "executed_subtasks": executed_subtasks,
+                "failed_subtasks": failed_subtasks,
             }
 
         except Exception as e:
@@ -291,23 +314,38 @@ class DevPlanManager:
             executed_tasks = []
             failed_tasks = []
 
-            for task in self.plan_structure["tasks"]:
-                if not task["completed"]:
+            attempt = 0
+            while True:
+                progress = False
+                for task in self.plan_structure["tasks"]:
+                    if task["completed"]:
+                        continue
+
                     result = self.execute_task(task["number"])
 
                     if result["success"]:
                         executed_tasks.append(task)
+                        progress = True
                     else:
                         failed_tasks.append({
                             "task": task,
                             "error": result.get("error", "Невідома помилка")
                         })
+                        if result.get("executed_subtasks") or result.get("failed_subtasks"):
+                            progress = True
 
-            success = len(failed_tasks) == 0
+                if all(t["completed"] for t in self.plan_structure["tasks"]):
+                    break
+
+                attempt += 1
+                if not progress or attempt >= self.max_retries:
+                    break
+
+            success = all(t["completed"] for t in self.plan_structure["tasks"])
 
             return {
                 "success": success,
-                "message": f"Виконано {len(executed_tasks)} задач, помилок: {len(failed_tasks)}",
+                "message": f"Виконано {len([t for t in self.plan_structure['tasks'] if t['completed']])}/{len(self.plan_structure['tasks'])} задач",
                 "executed_tasks": executed_tasks,
                 "failed_tasks": failed_tasks,
                 "total_tasks": len(self.plan_structure["tasks"])

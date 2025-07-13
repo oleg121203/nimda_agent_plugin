@@ -53,7 +53,9 @@ class NIMDAAgent:
         self._setup_logging()
 
         # Ініціалізація компонентів
-        self.dev_plan_manager = DevPlanManager(self.project_path)
+        self.dev_plan_manager = DevPlanManager(
+            self.project_path, max_retries=self.config.get("max_retries", 3)
+        )
         self.git_manager = GitManager(self.project_path)
         self.command_processor = CommandProcessor(self)
         self.project_initializer = ProjectInitializer(self.project_path)
