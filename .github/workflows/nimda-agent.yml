@@ -2,24 +2,24 @@ name: NIMDA Agent Auto-Development
 
 on:
   schedule:
-    # Запуск кожні 6 годин
+    # Run every 6 hours
     - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       command:
         description: 'NIMDA Agent Command'
         required: true
-        default: 'статус'
+        default: 'status'
         type: choice
         options:
-          - 'статус'
+          - 'status'
           - 'допрацюй девплан'
           - 'виконай весь ДЕВ'
           - 'синхронізація'
 
 jobs:
   nimda-agent:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - name: Checkout repository
@@ -41,23 +41,23 @@ jobs:
     - name: Run NIMDA Agent
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NIMDA_COMMAND: ${{ github.event.inputs.command || 'статус' }}
+        NIMDA_COMMAND: ${{ github.event.inputs.command || 'status' }}
       run: |
-        echo "🤖 Запуск NIMDA Agent з командою: $NIMDA_COMMAND"
-        # Тут буде код для запуску NIMDA Agent
+        echo "🤖 Running NIMDA Agent with command: $NIMDA_COMMAND"
+        # Placeholder for NIMDA Agent execution
         python -c "
 import os
-print(f'🤖 NIMDA Agent Command: {os.getenv("NIMDA_COMMAND", "статус")}')
+print(f'🤖 NIMDA Agent Command: {os.getenv("NIMDA_COMMAND", "status")}')
 print('📁 Project structure:')
 for root, dirs, files in os.walk('.'):
     level = root.replace('.', '').count(os.sep)
     indent = ' ' * 2 * level
     print(f'{indent}{os.path.basename(root)}/')
     subindent = ' ' * 2 * (level + 1)
-    for file in files[:5]:  # Показати тільки перші 5 файлів
+    for file in files[:5]:  # Show only first 5 files
         print(f'{subindent}{file}')
     if len(files) > 5:
-        print(f'{subindent}... та {len(files)-5} інших файлів')
+        print(f'{subindent}... and {len(files)-5} more files')
 "
 
     - name: Commit and push changes
@@ -66,8 +66,8 @@ for root, dirs, files in os.walk('.'):
         git config --local user.name "NIMDA Agent"
         git add .
         if ! git diff --cached --exit-code; then
-          git commit -m "🤖 NIMDA Agent: автоматичні зміни"
+          git commit -m "🤖 NIMDA Agent: automatic changes"
           git push
         else
-          echo "Немає змін для коміту"
+          echo "No changes to commit"
         fi
