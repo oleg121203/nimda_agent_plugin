@@ -1,5 +1,5 @@
 {
-  "timestamp": 1752512706.82373,
+  "timestamp": 1752528806.293409,
   "project_path": "/Users/dev/Documents/nimda_agent_plugin",
   "created_files": [],
   "created_dirs": [],
@@ -15,11 +15,9 @@
       "python": "3.11"
     },
     "project_type": "ai_system",
-    "phases": [
-      "\u0424\u0430\u0437\u0430 0: \u0421\u0438\u0441\u0442\u0435\u043c\u043d\u0430 \u0456\u043d\u0456\u0446\u0456\u0430\u043b\u0456\u0437\u0430\u0446\u0456\u044f \u0442\u0430 \u0432\u0435\u0440\u0438\u0444\u0456\u043a\u0430\u0446\u0456\u044f \u2705 \u0417\u0410\u0412\u0415\u0420\u0428\u0415\u041d\u041e"
-    ],
+    "phases": [],
     "creative_features": true,
     "error_recovery": true,
-    "interactive_mode": false
+    "interactive_mode": true
   }
 }
