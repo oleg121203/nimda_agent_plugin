@@ -1,0 +1,4 @@
+entrypoint: main.py
+language: python
+run: "|\n  pip install -r requirements.txt\n  python -m pytest --tb=short\n  python\
+  \ main.py"

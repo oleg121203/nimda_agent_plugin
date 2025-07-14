@@ -1,0 +1,15 @@
+# NIMDA Agent Python Project Dependencies
+# Core dependencies
+requests>=2.28.0
+pyyaml>=6.0
+pathlib
+datetime
+
+# Development dependencies
+pytest>=7.0.0
+black>=22.0.0
+flake8>=5.0.0
+mypy>=0.991
+
+# Optional dependencies
+# Add your project-specific dependencies here

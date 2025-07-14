@@ -1,0 +1,73 @@
+name: NIMDA Agent Auto-Development
+
+on:
+  schedule:
+    # Запуск кожні 6 годин
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'NIMDA Agent Command'
+        required: true
+        default: 'status'
+        type: choice
+        options:
+          - 'status'
+          - 'допрацюй девплан'
+          - 'виконай весь ДЕВ'
+          - 'synchronization'
+
+jobs:
+  nimda-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install NIMDA Agent dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests pyyaml pathlib
+
+    - name: Run NIMDA Agent
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NIMDA_COMMAND: ${{ github.event.inputs.command || 'status' }}
+      run: |
+        echo "🤖 Запуск NIMDA Agent з командою: $NIMDA_COMMAND"
+        # Тут буде код для запуску NIMDA Agent
+        python -c "
+import os
+print(f'🤖 NIMDA Agent Command: {os.getenv("NIMDA_COMMAND", "status")}')
+print('📁 Project structure:')
+for root, dirs, files in os.walk('.'):
+    level = root.replace('.', '').count(os.sep)
+    indent = ' ' * 2 * level
+    print(f'{indent}{os.path.basename(root)}/')
+    subindent = ' ' * 2 * (level + 1)
+    for file in files[:5]:  # Показати тільки перші 5 files
+        print(f'{subindent}{file}')
+    if len(files) > 5:
+        print(f'{subindent}... та {len(files)-5} інших files')
+"
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "NIMDA Agent"
+        git add .
+        if ! git diff --cached --exit-code; then
+          git commit -m "🤖 NIMDA Agent: автоматичні changes"
+          git push
+        else
+          echo "No changes to commit"
+        fi
