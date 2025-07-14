@@ -1,0 +1,1 @@
+"""\nStatic module\n"""\n

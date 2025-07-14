@@ -1,0 +1,51 @@
+{
+  "project_type": "web_application",
+  "technologies": [],
+  "phases": [],
+  "current_phase": 0,
+  "total_tasks": 0,
+  "completed_tasks": 0,
+  "auto_generated_subtasks": [
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    }
+  ],
+  "creative_extensions": []
+}
