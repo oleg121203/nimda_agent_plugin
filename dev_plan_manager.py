@@ -1195,6 +1195,96 @@ if __name__ == "__main__":
             self.logger.error(f"Failed to create learning_module.py: {e}")
             return False
 
+    def _create_macos_integration(self) -> bool:
+        """Create macos_integration.py file with macOS-specific functionality"""
+        try:
+            macos_content = '''"""
+macOS Integration Module
+Handles macOS-specific functionality and native integrations
+"""
+import logging
+import subprocess
+from typing import Dict, List, Any, Optional
+from pathlib import Path
+
+
+class MacOSIntegration:
+    """Handle macOS-specific integrations and functionality"""
+    
+    def __init__(self):
+        self.logger = logging.getLogger("MacOSIntegration")
+    
+    def get_system_info(self) -> Dict[str, Any]:
+        """Get macOS system information"""
+        try:
+            # Get macOS version
+            result = subprocess.run(
+                ["sw_vers", "-productVersion"], 
+                capture_output=True, text=True
+            )
+            macos_version = result.stdout.strip() if result.returncode == 0 else "Unknown"
+            
+            # Get hardware info
+            result = subprocess.run(
+                ["sysctl", "-n", "hw.model"], 
+                capture_output=True, text=True
+            )
+            hardware_model = result.stdout.strip() if result.returncode == 0 else "Unknown"
+            
+            return {
+                "macos_version": macos_version,
+                "hardware_model": hardware_model,
+                "platform": "macOS"
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Failed to get system info: {e}")
+            return {"error": str(e)}
+    
+    def send_notification(self, title: str, message: str) -> bool:
+        """Send native macOS notification"""
+        try:
+            subprocess.run([
+                "osascript", "-e", 
+                f'display notification "{message}" with title "{title}"'
+            ], check=True)
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Failed to send notification: {e}")
+            return False
+    
+    def open_finder(self, path: str) -> bool:
+        """Open Finder at specified path"""
+        try:
+            subprocess.run(["open", str(path)], check=True)
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Failed to open Finder: {e}")
+            return False
+
+
+if __name__ == "__main__":
+    integration = MacOSIntegration()
+    print("MacOSIntegration loaded successfully")
+    
+    # Test system info
+    info = integration.get_system_info()
+    print(f"System info: {info}")
+'''
+
+            file_path = self.project_path / "macos_integration.py"
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(macos_content)
+
+            self.logger.info(f"Created macos_integration.py at {file_path}")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Failed to create macos_integration.py: {e}")
+            return False
+
     def _create_directory_structure(self) -> bool:
         """Create basic directory structure for the project"""
         try:
@@ -1235,57 +1325,78 @@ if __name__ == "__main__":
         try:
             macos_integration_content = '''"""
 macOS Integration Module
-Provides native macOS functionality integration
+Handles macOS-specific functionality and native integrations
 """
 import logging
 import subprocess
-from typing import Dict, Any
+from typing import Dict, List, Any, Optional
+from pathlib import Path
 
 
 class MacOSIntegration:
-    """Handler for macOS-specific integrations"""
+    """Handle macOS-specific integrations and functionality"""
     
     def __init__(self):
         self.logger = logging.getLogger("MacOSIntegration")
-        self.speech_enabled = False
-        self._init_speech_framework()
     
-    def _init_speech_framework(self):
-        """Initialize macOS Speech Framework"""
+    def get_system_info(self) -> Dict[str, Any]:
+        """Get macOS system information"""
         try:
+            # Get macOS version
             result = subprocess.run(
-                ["which", "say"], 
-                capture_output=True, 
-                text=True
+                ["sw_vers", "-productVersion"], 
+                capture_output=True, text=True
             )
+            macos_version = result.stdout.strip() if result.returncode == 0 else "Unknown"
             
-            if result.returncode == 0:
-                self.speech_enabled = True
-                self.logger.info("macOS Speech Framework initialized")
-            else:
-                self.logger.warning("macOS Speech Framework not available")
-                
+            # Get hardware info
+            result = subprocess.run(
+                ["sysctl", "-n", "hw.model"], 
+                capture_output=True, text=True
+            )
+            hardware_model = result.stdout.strip() if result.returncode == 0 else "Unknown"
+            
+            return {
+                "macos_version": macos_version,
+                "hardware_model": hardware_model,
+                "platform": "macOS"
+            }
+            
         except Exception as e:
-            self.logger.error(f"Failed to initialize Speech Framework: {e}")
+            self.logger.error(f"Failed to get system info: {e}")
+            return {"error": str(e)}
     
-    def speak_text(self, text: str) -> bool:
-        """Use macOS speech synthesis to speak text"""
-        if not self.speech_enabled:
-            return False
-        
+    def send_notification(self, title: str, message: str) -> bool:
+        """Send native macOS notification"""
         try:
-            subprocess.run(["say", text], check=True)
-            self.logger.info(f"Spoke text: {text[:50]}...")
+            subprocess.run([
+                "osascript", "-e", 
+                f'display notification "{message}" with title "{title}"'
+            ], check=True)
             return True
             
-        except subprocess.CalledProcessError as e:
-            self.logger.error(f"Failed to speak text: {e}")
+        except Exception as e:
+            self.logger.error(f"Failed to send notification: {e}")
+            return False
+    
+    def open_finder(self, path: str) -> bool:
+        """Open Finder at specified path"""
+        try:
+            subprocess.run(["open", str(path)], check=True)
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Failed to open Finder: {e}")
             return False
 
 
 if __name__ == "__main__":
-    macos = MacOSIntegration()
-    print("macOS integration module loaded successfully")
+    integration = MacOSIntegration()
+    print("MacOSIntegration loaded successfully")
+    
+    # Test system info
+    info = integration.get_system_info()
+    print(f"System info: {info}")
 '''
 
             file_path = self.project_path / "macos_integration.py"

@@ -64,6 +64,14 @@ class CommandProcessor:
                 r"start.*full.*dev",
                 r"start.*complete.*plan",
             ],
+            "interactive_dev": [
+                r"interactive.*dev",
+                r"dev.*interactive",
+                r"step.*by.*step.*dev",
+                r"real.*dev.*workflow",
+                r"interactive.*workflow",
+                r"run.*interactive.*dev",
+            ],
             "status": [r"status", r"state", r"what.*doing", r"how.*going", r"progress"],
             "sync": [r"sync", r"synchronize", r"git.*sync", r"update.*git"],
             "fix_errors": [r"fix.*errors", r"debug", r"repair", r"solve.*issues"],
@@ -165,6 +173,9 @@ class CommandProcessor:
 
             elif command_type == "execute_codex_mode":
                 return self._handle_execute_codex_mode()
+
+            elif command_type == "interactive_dev":
+                return self._handle_interactive_dev()
 
             elif command_type == "status":
                 return self._handle_status()
@@ -514,4 +525,48 @@ class CommandProcessor:
                 "user_message": "❌ CODEX MODE: Failed to execute in current agent",
                 "backup_created": backup_result["success"],
                 "mode": "codex_current_agent",
+            }
+
+    def _handle_interactive_dev(self) -> Dict[str, Any]:
+        """Handle interactive development workflow"""
+        self.logger.info("Starting interactive development workflow")
+
+        try:
+            # Імпортуємо модуль інтерактивного воркфлоу
+            import sys
+
+            sys.path.append("/Users/dev/Documents/nimda_agent_plugin")
+            from interactive_dev_workflow import InteractiveDevWorkflow
+
+            # Створюємо екземпляр воркфлоу
+            workflow = InteractiveDevWorkflow()
+
+            # Запускаємо повний воркфлоу
+            success = workflow.run_full_workflow()
+
+            if success:
+                return {
+                    "success": True,
+                    "message": "Interactive development workflow completed successfully",
+                    "user_message": "✅ Інтерактивний воркфлоу розробки завершено успішно!",
+                    "created_files": workflow.created_files,
+                    "created_dirs": workflow.created_dirs,
+                    "errors_found": workflow.errors_found,
+                }
+            else:
+                return {
+                    "success": False,
+                    "message": "Interactive development workflow failed",
+                    "user_message": "❌ Інтерактивний воркфлоу розробки завершено з помилками",
+                    "created_files": workflow.created_files,
+                    "created_dirs": workflow.created_dirs,
+                    "errors_found": workflow.errors_found,
+                }
+
+        except Exception as e:
+            self.logger.error(f"Error in interactive development workflow: {e}")
+            return {
+                "success": False,
+                "message": f"Interactive development workflow error: {e}",
+                "user_message": f"❌ Помилка інтерактивного воркфлоу: {e}",
             }
