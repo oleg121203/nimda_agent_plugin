@@ -20,6 +20,10 @@ class CommandProcessor:
         self.agent = agent
         self.logger = logging.getLogger("CommandProcessor")
 
+        # Session tracking
+        self.codex_session_file = "./.codex_session_active"
+        self.last_activity_file = "./.last_codex_activity"
+
         # Command patterns
         self.command_patterns = {
             "update_plan": [
@@ -59,6 +63,9 @@ class CommandProcessor:
             Command result
         """
         try:
+            # Mark Codex session as active when any command is received
+            self._mark_codex_session_active()
+
             # Command normalization
             normalized_command = command.lower().strip()
 
@@ -413,3 +420,20 @@ class CommandProcessor:
             suggestions.append("fix errors")
 
         return suggestions[:3]  # Maximum 3 suggestions
+
+    def _mark_codex_session_active(self):
+        """Mark Codex session as active for local monitor"""
+        try:
+            import time
+
+            # Create session file
+            with open(self.codex_session_file, "w") as f:
+                f.write(str(time.time()))
+
+            # Update last activity
+            with open(self.last_activity_file, "w") as f:
+                f.write(str(int(time.time())))
+
+            self.logger.info("Codex session marked as active")
+        except Exception as e:
+            self.logger.warning(f"Failed to mark Codex session active: {e}")
