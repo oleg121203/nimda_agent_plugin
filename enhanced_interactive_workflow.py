@@ -15,8 +15,8 @@ from pathlib import Path
 
 sys.path.append("/Users/dev/Documents/nimda_agent_plugin")
 
-from deep_system_analyzer import DeepSystemAnalyzer
 from dev_plan_manager import DevPlanManager
+from focused_system_analyzer import FocusedSystemAnalyzer
 
 
 class EnhancedInteractiveWorkflow:
@@ -24,7 +24,7 @@ class EnhancedInteractiveWorkflow:
         self.project_path = Path(project_path)
         self.pause_duration = pause_duration
         self.dev_manager = DevPlanManager(self.project_path)
-        self.analyzer = DeepSystemAnalyzer(str(self.project_path))
+        self.analyzer = FocusedSystemAnalyzer(str(self.project_path))
         self.error_count = 0
         self.max_iterations = 5
 
@@ -128,7 +128,7 @@ class EnhancedInteractiveWorkflow:
         self.analyzer.analyze_full_system(self.pause_duration / 2)
 
         # Save analysis report
-        report_path = self.analyzer.save_report()
+        report_path = self.analyzer.save_report("FOCUSED_ANALYSIS_REPORT.md")
         print(f"📋 Analysis report saved to: {report_path}")
 
         # Print analysis summary
