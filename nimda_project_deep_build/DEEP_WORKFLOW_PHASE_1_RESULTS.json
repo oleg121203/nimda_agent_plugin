@@ -1,0 +1,21 @@
+{
+  "legacy_components": [
+    {
+      "component": "main.py",
+      "criticality": "high",
+      "dependencies": []
+    }
+  ],
+  "compatibility_layer": {
+    "layer_status": "created",
+    "compatibility_bridges": []
+  },
+  "backup_status": {
+    "backup_created": true,
+    "backup_location": "backup_1752485503"
+  },
+  "migration_plan": {
+    "migration_strategy": "gradual",
+    "phases": []
+  }
+}
