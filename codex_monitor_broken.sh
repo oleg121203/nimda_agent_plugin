@@ -3,7 +3,27 @@
 
 # Configuration
 MONITOR_INTERVAL=30  # Check every 30 seconds
-CODEX_SESSION_TIMEOUT=60  # 1 minute timeout for Codex session
+CODEX_SESSION_TIMEOUT=60  # 1 minute ti# Main execution
+case "$1" in
+    start)
+        start_monitor
+        ;;
+    stop)
+        stop_monitor
+        ;;
+    restart)
+        stop_monitor
+        sleep 2
+        start_monitor
+        ;;
+    status)
+        show_status
+        ;;
+    mark-active)
+        mark_codex_active
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status|mark-active}"ssion
 SERVICE_NAME="Codex Sync Monitor"
 PID_FILE="./.codex_monitor.pid"
 LOG_FILE="./.codex_monitor.log"
@@ -193,9 +213,6 @@ case "$1" in
         ;;
     status)
         show_status
-        ;;
-    mark-active)
-        mark_codex_active
         ;;
     *)
         echo "Usage: $0 {start|stop|restart|status|mark-active}"
