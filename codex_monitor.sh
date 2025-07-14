@@ -71,6 +71,42 @@ restart_dev_execution() {
     fi
 }
 
+# Function to cleanup stale session files on startup
+cleanup_stale_sessions() {
+    local current_time=$(date +%s)
+    local cleaned=false
+    
+    # Check session file age
+    if [ -f "$CODEX_SESSION_FILE" ]; then
+        local session_time=$(stat -f %m "$CODEX_SESSION_FILE" 2>/dev/null || echo 0)
+        local time_diff=$((current_time - session_time))
+        
+        if [ $time_diff -ge $CODEX_SESSION_TIMEOUT ]; then
+            log_monitor "Removing stale session file (age: ${time_diff}s > ${CODEX_SESSION_TIMEOUT}s)"
+            rm -f "$CODEX_SESSION_FILE"
+            cleaned=true
+        fi
+    fi
+    
+    # Check activity file age
+    if [ -f "$LAST_CODEX_ACTIVITY_FILE" ]; then
+        local activity_time_content=$(cat "$LAST_CODEX_ACTIVITY_FILE" 2>/dev/null || echo 0)
+        local time_diff=$((current_time - activity_time_content))
+        
+        if [ $time_diff -ge $CODEX_SESSION_TIMEOUT ]; then
+            log_monitor "Removing stale activity file (age: ${time_diff}s > ${CODEX_SESSION_TIMEOUT}s)"
+            rm -f "$LAST_CODEX_ACTIVITY_FILE"
+            cleaned=true
+        fi
+    fi
+    
+    if [ "$cleaned" = true ]; then
+        log_monitor "Startup cleanup completed - stale session files removed"
+    else
+        log_monitor "Startup cleanup completed - no stale files found"
+    fi
+}
+
 # Function to check if monitor is already running
 is_monitor_running() {
     if [ -f "$PID_FILE" ]; then
@@ -93,6 +129,10 @@ start_monitor() {
     fi
     
     log_monitor "Starting $SERVICE_NAME..."
+    
+    # Clean up stale session files on startup
+    cleanup_stale_sessions
+    
     echo $$ > "$PID_FILE"
     
     while true; do
@@ -197,8 +237,11 @@ case "$1" in
     mark-active)
         mark_codex_active
         ;;
+    cleanup)
+        cleanup_stale_sessions
+        ;;
     *)
-        echo "Usage: $0 {start|stop|restart|status|mark-active}"
+        echo "Usage: $0 {start|stop|restart|status|mark-active|cleanup}"
         echo ""
         echo "Commands:"
         echo "  start       - Start the Codex sync monitor"
@@ -206,6 +249,7 @@ case "$1" in
         echo "  restart     - Restart the Codex sync monitor"
         echo "  status      - Show monitor status"
         echo "  mark-active - Mark Codex session as active (call from Codex)"
+        echo "  cleanup     - Clean up stale session files manually"
         exit 1
         ;;
 esac

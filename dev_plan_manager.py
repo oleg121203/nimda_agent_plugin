@@ -649,3 +649,193 @@ class DevPlanManager:
         content.append("")
 
         return "\n".join(content)
+
+    def create_project_from_plan(self) -> Dict[str, Any]:
+        """
+        Create new project based on DEV_PLAN specifications
+
+        Returns:
+            Result of project creation
+        """
+        try:
+            # Parse DEV_PLAN to extract project requirements
+            plan_content = self._load_plan_content()
+            project_info = self._extract_project_info(plan_content)
+
+            # Create project directory according to plan
+            if project_info.get("project_location"):
+                project_path = Path(project_info["project_location"]).expanduser()
+                self.logger.info(f"Creating project at: {project_path}")
+
+                # Create project directory
+                project_path.mkdir(parents=True, exist_ok=True)
+
+                # Initialize project structure
+                self._setup_project_structure(project_path, project_info)
+
+                # Copy DEV_PLAN to new project
+                new_dev_plan = project_path / "DEV_PLAN.md"
+                if self.dev_plan_file.exists():
+                    import shutil
+
+                    shutil.copy2(self.dev_plan_file, new_dev_plan)
+
+                # Update project path to new location
+                self.project_path = project_path
+                self.dev_plan_file = new_dev_plan
+
+                return {
+                    "success": True,
+                    "message": f"Project created at {project_path}",
+                    "project_path": str(project_path),
+                }
+            else:
+                # Use current directory if no specific location specified
+                return self.execute_full_plan()
+
+        except Exception as e:
+            self.logger.error(f"Failed to create project from plan: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "message": "Failed to create project from DEV_PLAN",
+            }
+
+    def _load_plan_content(self) -> str:
+        """Load DEV_PLAN content"""
+        if self.dev_plan_file.exists():
+            with open(self.dev_plan_file, "r", encoding="utf-8") as f:
+                return f.read()
+        return ""
+
+    def _extract_project_info(self, content: str) -> Dict[str, Any]:
+        """Extract project information from DEV_PLAN"""
+        import re
+
+        info = {}
+
+        # Extract project location
+        location_match = re.search(r"\*\*Project Location:\*\*\s*`([^`]+)`", content)
+        if location_match:
+            info["project_location"] = location_match.group(1)
+
+        # Extract tech stack
+        tech_match = re.search(r"\*\*Tech Stack:\*\*\s*([^\n]+)", content)
+        if tech_match:
+            info["tech_stack"] = tech_match.group(1)
+
+        # Extract target platform
+        platform_match = re.search(r"\*\*Target Platform:\*\*\s*([^\n]+)", content)
+        if platform_match:
+            info["platform"] = platform_match.group(1)
+
+        return info
+
+    def _setup_project_structure(
+        self, project_path: Path, project_info: Dict[str, Any]
+    ):
+        """Setup initial project structure"""
+        try:
+            # Create basic directories
+            directories = [
+                "src",
+                "tests",
+                "docs",
+                "configs",
+                "data",
+                "logs",
+                ".github/workflows",
+            ]
+
+            for dir_name in directories:
+                (project_path / dir_name).mkdir(parents=True, exist_ok=True)
+
+            # Create .gitignore
+            gitignore_content = """# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Config files with secrets
+.env
+*.secret
+
+# Project specific
+nimda_logs/
+data/
+"""
+
+            with open(project_path / ".gitignore", "w", encoding="utf-8") as f:
+                f.write(gitignore_content)
+
+            # Initialize git repository
+            import subprocess
+
+            try:
+                subprocess.run(
+                    ["git", "init"],
+                    cwd=project_path,
+                    check=True,
+                    capture_output=True,
+                )
+                self.logger.info("Git repository initialized")
+            except subprocess.CalledProcessError as e:
+                self.logger.warning(f"Failed to initialize git: {e}")
+
+            # Create README.md
+            readme_content = f"""# {project_info.get("project_name", "New Project")}
+
+Created by NIMDA Agent on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+## Tech Stack
+{project_info.get("tech_stack", "Not specified")}
+
+## Platform
+{project_info.get("platform", "Not specified")}
+
+## Development
+See DEV_PLAN.md for detailed development plan.
+"""
+
+            with open(project_path / "README.md", "w", encoding="utf-8") as f:
+                f.write(readme_content)
+
+        except Exception as e:
+            self.logger.error(f"Failed to setup project structure: {e}")

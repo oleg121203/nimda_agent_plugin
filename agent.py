@@ -40,18 +40,29 @@ class NIMDAAgent:
         self.project_path = Path(project_path) if project_path else Path.cwd()
         self.config_file = self.project_path / "nimda_agent_config.json"
 
+        # Setup logging first
+        self._setup_logging()
+
         # Load environment variables
+        # NOTE: load_dotenv импортируется безусловно, но используется только при наличии .env файлов
+        # Это позволяет агенту работать с переменными окружения из системы, если .env отсутствует
         env_file = self.project_path / ".env"
         if env_file.exists():
             load_dotenv(env_file)
+            self.logger.info(f"Loaded environment from: {env_file}")
         else:
             # Try to load from plugin root folder
             plugin_env = Path(__file__).parent / ".env"
             if plugin_env.exists():
                 load_dotenv(plugin_env)
+                self.logger.info(f"Loaded environment from plugin: {plugin_env}")
+            else:
+                self.logger.info(
+                    "No .env files found, using system environment variables"
+                )
 
-        # Setup logging
-        self._setup_logging()
+        # Load configuration before initializing components
+        self.config = self._load_config()
 
         # Initialize components
         self.dev_plan_manager = DevPlanManager(
@@ -61,9 +72,6 @@ class NIMDAAgent:
         self.command_processor = CommandProcessor(self)
         self.project_initializer = ProjectInitializer(self.project_path)
         self.changelog_manager = ChangelogManager(self.project_path)
-
-        # Load configuration
-        self.config = self._load_config()
 
         # Agent status
         self.is_running = False
@@ -210,7 +218,25 @@ class NIMDAAgent:
                 result = self.dev_plan_manager.execute_task(task_number)
             else:
                 self.logger.info("Executing full DEV_PLAN.md")
-                result = self.dev_plan_manager.execute_full_plan()
+
+                # Check if this is a new project creation plan
+                plan_content = ""
+                if self.dev_plan_manager.dev_plan_file.exists():
+                    with open(
+                        self.dev_plan_manager.dev_plan_file, "r", encoding="utf-8"
+                    ) as f:
+                        plan_content = f.read()
+
+                # If plan contains project creation instructions, create new project
+                if (
+                    "~/Projects/" in plan_content
+                    and "Project Location:" in plan_content
+                ):
+                    self.logger.info("DEV_PLAN indicates new project creation")
+                    result = self.dev_plan_manager.create_project_from_plan()
+                else:
+                    # Execute plan in current directory
+                    result = self.dev_plan_manager.execute_full_plan()
 
             # Update execution status
             if result.get("success"):
