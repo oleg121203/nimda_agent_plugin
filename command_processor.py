@@ -52,6 +52,8 @@ class CommandProcessor:
                 r"codex do.*everything",
                 r"codex run full dev",
                 r"codex.*run.*full.*dev",
+                r"codex start.*full.*dev",
+                r"codex start.*complete.*plan",
             ],
             "execute_full_plan": [
                 r"execute.*full.*dev",
@@ -59,6 +61,8 @@ class CommandProcessor:
                 r"run.*full.*plan",
                 r"do.*everything",
                 r"run full dev",
+                r"start.*full.*dev",
+                r"start.*complete.*plan",
             ],
             "status": [r"status", r"state", r"what.*doing", r"how.*going", r"progress"],
             "sync": [r"sync", r"synchronize", r"git.*sync", r"update.*git"],
