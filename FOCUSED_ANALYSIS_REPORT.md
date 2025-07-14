@@ -1,14 +1,14 @@
 # Focused System Analysis Report
 
-**Generated:** 2025-07-14T18:47:11.277188
+**Generated:** 2025-07-14T19:19:00.410711
 **Project:** /Users/dev/Documents/nimda_agent_plugin
 **Scope:** Project files only (excludes virtual environments and dependencies)
 
 ## Project Structure
 
-- **Total Files:** 374
-- **Total Directories:** 94
-- **Python Files:** 229
+- **Total Files:** 383
+- **Total Directories:** 96
+- **Python Files:** 230
 - **Test Files:** 3
 - **Documentation:** 60
 
@@ -180,6 +180,7 @@
 - quick_test_workflow.py
 - real_time_demo.py
 - resources/__init__.py
+- restart_with_python311.py
 - resume_dev_cycle.py
 - run_ai_driven_workflow.py
 - run_automated_codex.py
@@ -245,7 +246,7 @@
 
 ## Code Metrics
 
-- **Total Lines:** 46041
+- **Total Lines:** 46051
 - **Total Functions:** 1482
 - **Total Classes:** 225
 - **Average Complexity:** 14.93

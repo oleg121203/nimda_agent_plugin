@@ -1,5 +1,7 @@
 # NIMDA Agent Plugin
 
+![NIMDA Agent Plugin](
+
 The **NIMDA Agent Plugin** provides an automated development assistant that can be embedded into any project. It reads a `DEV_PLAN.md`, executes tasks, manages Git repositories and keeps a changelog.
 
 ## 🚀 Features

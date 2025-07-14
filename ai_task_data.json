@@ -1,0 +1,1155 @@
+{
+  "tasks": [
+    {
+      "id": "task_1752511083_0",
+      "title": "Fix critical authentication bug",
+      "description": "Users cannot log in due to token validation error",
+      "priority": "high",
+      "estimated_time": 120,
+      "dependencies": [],
+      "tags": [
+        "bug",
+        "security",
+        "urgent"
+      ],
+      "created_at": "2025-07-14T19:38:03.081155",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.989,
+      "user_interaction_count": 5
+    },
+    {
+      "id": "task_1752511083_1",
+      "title": "Implement new AI learning module",
+      "description": "Add machine learning capabilities to the adaptive thinker",
+      "priority": "medium",
+      "estimated_time": 480,
+      "dependencies": [],
+      "tags": [
+        "feature",
+        "ai",
+        "ml"
+      ],
+      "created_at": "2025-07-14T19:38:03.081439",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "artificial_intelligence",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation",
+          "ai_complexity"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.719,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511083_2",
+      "title": "Update user interface theme",
+      "description": "Refresh the GUI with modern design elements",
+      "priority": "low",
+      "estimated_time": 240,
+      "dependencies": [],
+      "tags": [
+        "ui",
+        "design",
+        "enhancement"
+      ],
+      "created_at": "2025-07-14T19:38:03.082040",
+      "status": "pending",
+      "context": {
+        "type": "general",
+        "domain": "user_interface",
+        "urgency_indicators": [],
+        "complexity_factors": [],
+        "resource_requirements": [
+          "design_skills"
+        ]
+      },
+      "ai_score": 0.689,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511083_3",
+      "title": "Write unit tests for chat agent",
+      "description": "Add comprehensive test coverage for chat functionality",
+      "priority": "medium",
+      "estimated_time": 180,
+      "dependencies": [],
+      "tags": [
+        "testing",
+        "quality"
+      ],
+      "created_at": "2025-07-14T19:38:03.082221",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "unknown",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.749,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511090_4",
+      "title": "Fix critical authentication bug",
+      "description": "Users cannot log in due to token validation error",
+      "priority": "high",
+      "estimated_time": 120,
+      "dependencies": [],
+      "tags": [
+        "bug",
+        "security",
+        "urgent"
+      ],
+      "created_at": "2025-07-14T19:38:10.506591",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.989,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511090_5",
+      "title": "Implement new AI learning module",
+      "description": "Add machine learning capabilities to the adaptive thinker",
+      "priority": "medium",
+      "estimated_time": 480,
+      "dependencies": [],
+      "tags": [
+        "feature",
+        "ai",
+        "ml"
+      ],
+      "created_at": "2025-07-14T19:38:10.506904",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "artificial_intelligence",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation",
+          "ai_complexity"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.719,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511090_6",
+      "title": "Update user interface theme",
+      "description": "Refresh the GUI with modern design elements",
+      "priority": "low",
+      "estimated_time": 240,
+      "dependencies": [],
+      "tags": [
+        "ui",
+        "design",
+        "enhancement"
+      ],
+      "created_at": "2025-07-14T19:38:10.507391",
+      "status": "pending",
+      "context": {
+        "type": "general",
+        "domain": "user_interface",
+        "urgency_indicators": [],
+        "complexity_factors": [],
+        "resource_requirements": [
+          "design_skills"
+        ]
+      },
+      "ai_score": 0.689,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511090_7",
+      "title": "Write unit tests for chat agent",
+      "description": "Add comprehensive test coverage for chat functionality",
+      "priority": "medium",
+      "estimated_time": 180,
+      "dependencies": [],
+      "tags": [
+        "testing",
+        "quality"
+      ],
+      "created_at": "2025-07-14T19:38:10.507720",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "unknown",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.749,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511338_9",
+      "title": "Implement ML model training pipeline",
+      "description": "Add automated model retraining with FAISS integration",
+      "priority": "medium",
+      "estimated_time": 480,
+      "dependencies": [],
+      "tags": [
+        "ml",
+        "feature",
+        "ai"
+      ],
+      "created_at": "2025-07-14T19:42:18.398351",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "artificial_intelligence",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation",
+          "ai_complexity"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.719,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511338_10",
+      "title": "Refactor GUI theme system",
+      "description": "Update PySide6 components with modern design",
+      "priority": "low",
+      "estimated_time": 240,
+      "dependencies": [],
+      "tags": [
+        "ui",
+        "enhancement",
+        "design"
+      ],
+      "created_at": "2025-07-14T19:42:18.399073",
+      "status": "pending",
+      "context": {
+        "type": "general",
+        "domain": "user_interface",
+        "urgency_indicators": [],
+        "complexity_factors": [],
+        "resource_requirements": [
+          "design_skills"
+        ]
+      },
+      "ai_score": 0.689,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511338_11",
+      "title": "Add comprehensive unit tests",
+      "description": "Increase test coverage for core modules",
+      "priority": "medium",
+      "estimated_time": 360,
+      "dependencies": [],
+      "tags": [
+        "testing",
+        "quality",
+        "coverage"
+      ],
+      "created_at": "2025-07-14T19:42:18.399447",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "unknown",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.749,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511338_12",
+      "title": "Deploy to production server",
+      "description": "Configure production environment and deployment",
+      "priority": "high",
+      "estimated_time": 120,
+      "dependencies": [],
+      "tags": [
+        "deployment",
+        "production",
+        "urgent"
+      ],
+      "created_at": "2025-07-14T19:42:18.399878",
+      "status": "pending",
+      "context": {
+        "type": "deployment",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "release_critical"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.959,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511340_12",
+      "title": "Fix syntax_error: Fix syntax in module X",
+      "description": "Fix syntax in module X",
+      "priority": "high",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:42:20.523849",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.989,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511340_13",
+      "title": "Fix import_error: Missing dependency Y",
+      "description": "Missing dependency Y",
+      "priority": "medium",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:42:20.524394",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.869,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511386_15",
+      "title": "Implement ML model training pipeline",
+      "description": "Add automated model retraining with FAISS integration",
+      "priority": "medium",
+      "estimated_time": 480,
+      "dependencies": [],
+      "tags": [
+        "ml",
+        "feature",
+        "ai"
+      ],
+      "created_at": "2025-07-14T19:43:06.802758",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "artificial_intelligence",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation",
+          "ai_complexity"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.719,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511386_16",
+      "title": "Refactor GUI theme system",
+      "description": "Update PySide6 components with modern design",
+      "priority": "low",
+      "estimated_time": 240,
+      "dependencies": [],
+      "tags": [
+        "ui",
+        "enhancement",
+        "design"
+      ],
+      "created_at": "2025-07-14T19:43:06.803613",
+      "status": "pending",
+      "context": {
+        "type": "general",
+        "domain": "user_interface",
+        "urgency_indicators": [],
+        "complexity_factors": [],
+        "resource_requirements": [
+          "design_skills"
+        ]
+      },
+      "ai_score": 0.689,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511386_17",
+      "title": "Add comprehensive unit tests",
+      "description": "Increase test coverage for core modules",
+      "priority": "medium",
+      "estimated_time": 360,
+      "dependencies": [],
+      "tags": [
+        "testing",
+        "quality",
+        "coverage"
+      ],
+      "created_at": "2025-07-14T19:43:06.804087",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "unknown",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.749,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511386_18",
+      "title": "Deploy to production server",
+      "description": "Configure production environment and deployment",
+      "priority": "high",
+      "estimated_time": 120,
+      "dependencies": [],
+      "tags": [
+        "deployment",
+        "production",
+        "urgent"
+      ],
+      "created_at": "2025-07-14T19:43:06.804560",
+      "status": "pending",
+      "context": {
+        "type": "deployment",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "release_critical"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.959,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511388_18",
+      "title": "Fix syntax_error: Fix syntax in module X",
+      "description": "Fix syntax in module X",
+      "priority": "high",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:43:08.965249",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.989,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511388_19",
+      "title": "Fix import_error: Missing dependency Y",
+      "description": "Missing dependency Y",
+      "priority": "medium",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:43:08.965924",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.869,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511596_21",
+      "title": "Implement ML model training pipeline",
+      "description": "Add automated model retraining with FAISS integration",
+      "priority": "medium",
+      "estimated_time": 480,
+      "dependencies": [],
+      "tags": [
+        "ml",
+        "feature",
+        "ai"
+      ],
+      "created_at": "2025-07-14T19:46:36.477522",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "artificial_intelligence",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation",
+          "ai_complexity"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.718,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511596_22",
+      "title": "Refactor GUI theme system",
+      "description": "Update PySide6 components with modern design",
+      "priority": "low",
+      "estimated_time": 240,
+      "dependencies": [],
+      "tags": [
+        "ui",
+        "enhancement",
+        "design"
+      ],
+      "created_at": "2025-07-14T19:46:36.478605",
+      "status": "pending",
+      "context": {
+        "type": "general",
+        "domain": "user_interface",
+        "urgency_indicators": [],
+        "complexity_factors": [],
+        "resource_requirements": [
+          "design_skills"
+        ]
+      },
+      "ai_score": 0.688,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511596_23",
+      "title": "Add comprehensive unit tests",
+      "description": "Increase test coverage for core modules",
+      "priority": "medium",
+      "estimated_time": 360,
+      "dependencies": [],
+      "tags": [
+        "testing",
+        "quality",
+        "coverage"
+      ],
+      "created_at": "2025-07-14T19:46:36.479210",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "unknown",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.748,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511596_24",
+      "title": "Deploy to production server",
+      "description": "Configure production environment and deployment",
+      "priority": "high",
+      "estimated_time": 120,
+      "dependencies": [],
+      "tags": [
+        "deployment",
+        "production",
+        "urgent"
+      ],
+      "created_at": "2025-07-14T19:46:36.479813",
+      "status": "pending",
+      "context": {
+        "type": "deployment",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "release_critical"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.958,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511598_24",
+      "title": "Fix syntax_error: Fix syntax in module X",
+      "description": "Fix syntax in module X",
+      "priority": "high",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:46:38.617378",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.988,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752511598_25",
+      "title": "Fix import_error: Missing dependency Y",
+      "description": "Missing dependency Y",
+      "priority": "medium",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:46:38.618192",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.868,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512138_27",
+      "title": "Implement ML model training pipeline",
+      "description": "Add automated model retraining with FAISS integration",
+      "priority": "medium",
+      "estimated_time": 480,
+      "dependencies": [],
+      "tags": [
+        "ml",
+        "feature",
+        "ai"
+      ],
+      "created_at": "2025-07-14T19:55:38.981334",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "artificial_intelligence",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation",
+          "ai_complexity"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.716,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512138_28",
+      "title": "Refactor GUI theme system",
+      "description": "Update PySide6 components with modern design",
+      "priority": "low",
+      "estimated_time": 240,
+      "dependencies": [],
+      "tags": [
+        "ui",
+        "enhancement",
+        "design"
+      ],
+      "created_at": "2025-07-14T19:55:38.982081",
+      "status": "pending",
+      "context": {
+        "type": "general",
+        "domain": "user_interface",
+        "urgency_indicators": [],
+        "complexity_factors": [],
+        "resource_requirements": [
+          "design_skills"
+        ]
+      },
+      "ai_score": 0.686,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512138_29",
+      "title": "Add comprehensive unit tests",
+      "description": "Increase test coverage for core modules",
+      "priority": "medium",
+      "estimated_time": 360,
+      "dependencies": [],
+      "tags": [
+        "testing",
+        "quality",
+        "coverage"
+      ],
+      "created_at": "2025-07-14T19:55:38.982786",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "unknown",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.746,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512138_30",
+      "title": "Deploy to production server",
+      "description": "Configure production environment and deployment",
+      "priority": "high",
+      "estimated_time": 120,
+      "dependencies": [],
+      "tags": [
+        "deployment",
+        "production",
+        "urgent"
+      ],
+      "created_at": "2025-07-14T19:55:38.983488",
+      "status": "pending",
+      "context": {
+        "type": "deployment",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "release_critical"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.956,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512141_30",
+      "title": "Fix syntax_error: Fix syntax in module X",
+      "description": "Fix syntax in module X",
+      "priority": "high",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:55:41.183267",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.986,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512141_31",
+      "title": "Fix import_error: Missing dependency Y",
+      "description": "Missing dependency Y",
+      "priority": "medium",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T19:55:41.184137",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.866,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512661_33",
+      "title": "Implement ML model training pipeline",
+      "description": "Add automated model retraining with FAISS integration",
+      "priority": "medium",
+      "estimated_time": 480,
+      "dependencies": [],
+      "tags": [
+        "ml",
+        "feature",
+        "ai"
+      ],
+      "created_at": "2025-07-14T20:04:21.033761",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "artificial_intelligence",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation",
+          "ai_complexity"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.715,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512661_34",
+      "title": "Refactor GUI theme system",
+      "description": "Update PySide6 components with modern design",
+      "priority": "low",
+      "estimated_time": 240,
+      "dependencies": [],
+      "tags": [
+        "ui",
+        "enhancement",
+        "design"
+      ],
+      "created_at": "2025-07-14T20:04:21.034649",
+      "status": "pending",
+      "context": {
+        "type": "general",
+        "domain": "user_interface",
+        "urgency_indicators": [],
+        "complexity_factors": [],
+        "resource_requirements": [
+          "design_skills"
+        ]
+      },
+      "ai_score": 0.685,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512661_35",
+      "title": "Add comprehensive unit tests",
+      "description": "Increase test coverage for core modules",
+      "priority": "medium",
+      "estimated_time": 360,
+      "dependencies": [],
+      "tags": [
+        "testing",
+        "quality",
+        "coverage"
+      ],
+      "created_at": "2025-07-14T20:04:21.035517",
+      "status": "pending",
+      "context": {
+        "type": "feature_development",
+        "domain": "unknown",
+        "urgency_indicators": [],
+        "complexity_factors": [
+          "new_implementation"
+        ],
+        "resource_requirements": []
+      },
+      "ai_score": 0.745,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512661_36",
+      "title": "Deploy to production server",
+      "description": "Configure production environment and deployment",
+      "priority": "high",
+      "estimated_time": 120,
+      "dependencies": [],
+      "tags": [
+        "deployment",
+        "production",
+        "urgent"
+      ],
+      "created_at": "2025-07-14T20:04:21.036389",
+      "status": "pending",
+      "context": {
+        "type": "deployment",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "release_critical"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.955,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512663_36",
+      "title": "Fix syntax_error: Fix syntax in module X",
+      "description": "Fix syntax in module X",
+      "priority": "high",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T20:04:23.233778",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.0,
+      "user_interaction_count": 0
+    },
+    {
+      "id": "task_1752512663_37",
+      "title": "Fix import_error: Missing dependency Y",
+      "description": "Missing dependency Y",
+      "priority": "medium",
+      "estimated_time": 60,
+      "dependencies": [],
+      "tags": [
+        "bug_fix",
+        "automated"
+      ],
+      "created_at": "2025-07-14T20:04:23.235255",
+      "status": "pending",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.0,
+      "user_interaction_count": 0
+    }
+  ],
+  "completed_tasks": [
+    {
+      "id": "task_1752511338_8",
+      "title": "Critical security vulnerability fix",
+      "description": "Fix authentication bypass in login system",
+      "priority": "high",
+      "estimated_time": 180,
+      "dependencies": [],
+      "tags": [
+        "security",
+        "urgent",
+        "bug"
+      ],
+      "created_at": "2025-07-14T19:42:18.397943",
+      "status": "completed",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.955,
+      "user_interaction_count": 0,
+      "completed_at": "2025-07-14T19:42:18.400532",
+      "actual_time": 150,
+      "satisfaction_rating": 5,
+      "difficulty_rating": 3,
+      "time_prediction_accuracy": 0.8333333333333334
+    },
+    {
+      "id": "task_1752511386_14",
+      "title": "Critical security vulnerability fix",
+      "description": "Fix authentication bypass in login system",
+      "priority": "high",
+      "estimated_time": 180,
+      "dependencies": [],
+      "tags": [
+        "security",
+        "urgent",
+        "bug"
+      ],
+      "created_at": "2025-07-14T19:43:06.802197",
+      "status": "completed",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.963,
+      "user_interaction_count": 0,
+      "completed_at": "2025-07-14T19:43:06.805227",
+      "actual_time": 150,
+      "satisfaction_rating": 5,
+      "difficulty_rating": 3,
+      "time_prediction_accuracy": 0.8333333333333334
+    },
+    {
+      "id": "task_1752511596_20",
+      "title": "Critical security vulnerability fix",
+      "description": "Fix authentication bypass in login system",
+      "priority": "high",
+      "estimated_time": 180,
+      "dependencies": [],
+      "tags": [
+        "security",
+        "urgent",
+        "bug"
+      ],
+      "created_at": "2025-07-14T19:46:36.476576",
+      "status": "completed",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.97,
+      "user_interaction_count": 0,
+      "completed_at": "2025-07-14T19:46:36.480675",
+      "actual_time": 150,
+      "satisfaction_rating": 5,
+      "difficulty_rating": 3,
+      "time_prediction_accuracy": 0.8333333333333334
+    },
+    {
+      "id": "task_1752512138_26",
+      "title": "Critical security vulnerability fix",
+      "description": "Fix authentication bypass in login system",
+      "priority": "high",
+      "estimated_time": 180,
+      "dependencies": [],
+      "tags": [
+        "security",
+        "urgent",
+        "bug"
+      ],
+      "created_at": "2025-07-14T19:55:38.980624",
+      "status": "completed",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.978,
+      "user_interaction_count": 0,
+      "completed_at": "2025-07-14T19:55:38.984673",
+      "actual_time": 150,
+      "satisfaction_rating": 5,
+      "difficulty_rating": 3,
+      "time_prediction_accuracy": 0.8333333333333334
+    },
+    {
+      "id": "task_1752512661_32",
+      "title": "Critical security vulnerability fix",
+      "description": "Fix authentication bypass in login system",
+      "priority": "high",
+      "estimated_time": 180,
+      "dependencies": [],
+      "tags": [
+        "security",
+        "urgent",
+        "bug"
+      ],
+      "created_at": "2025-07-14T20:04:21.032942",
+      "status": "completed",
+      "context": {
+        "type": "bugfix",
+        "domain": "unknown",
+        "urgency_indicators": [
+          "error_correction"
+        ],
+        "complexity_factors": [],
+        "resource_requirements": []
+      },
+      "ai_score": 0.985,
+      "user_interaction_count": 0,
+      "completed_at": "2025-07-14T20:04:21.037801",
+      "actual_time": 150,
+      "satisfaction_rating": 5,
+      "difficulty_rating": 3,
+      "time_prediction_accuracy": 0.8333333333333334
+    }
+  ],
+  "user_patterns": {
+    "type_bugfix": 0.9999999999999999
+  },
+  "context_weights": {
+    "urgency": 0.3,
+    "complexity": 0.2,
+    "dependencies": 0.25,
+    "user_preference": 0.15,
+    "resource_availability": 0.1
+  },
+  "last_updated": "2025-07-14T20:04:23.235284"
+}

@@ -1,82 +1,155 @@
+#!/usr/bin/env python3
 """
-Chat Agent - Conversationalist & Interpreter
-Handles user interaction and command interpretation
+ChatAgent - Розумний чат-агент з глибоким розумінням контексту
+============================================================
 """
-import logging
-from typing import Dict, List, Any
+
+import asyncio
+from typing import Dict, List, Optional
 from datetime import datetime
 
-
 class ChatAgent:
-    """Agent responsible for conversation and command interpretation"""
+    """Інтелектуальний чат-агент для взаємодії з користувачем"""
     
     def __init__(self):
-        self.logger = logging.getLogger("ChatAgent")
+        self.context_memory = []
         self.conversation_history = []
-        self.active_session = None
-    
-    def process_message(self, message: str) -> Dict[str, Any]:
-        """Process incoming user message"""
-        try:
-            self.logger.info(f"Processing message: {message}")
-            
-            # Add to conversation history
-            self.conversation_history.append({
-                "type": "user",
-                "message": message,
-                "timestamp": datetime.now().isoformat()
-            })
-            
-            # Interpret command
-            command_info = self._interpret_command(message)
-            
-            # Generate response
-            response = self._generate_response(command_info)
-            
-            return {
-                "success": True,
-                "response": response,
-                "command_info": command_info
-            }
-            
-        except Exception as e:
-            self.logger.error(f"Error processing message: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "response": "Sorry, I encountered an error."
-            }
-    
-    def _interpret_command(self, message: str) -> Dict[str, Any]:
-        """Interpret user command from message"""
-        message_lower = message.lower()
+        self.skills = ['coding', 'analysis', 'planning', 'debugging']
         
-        if "codex" in message_lower and "run" in message_lower:
-            if "full dev" in message_lower:
-                return {"type": "codex_full_dev", "action": "execute_dev_plan"}
-            else:
-                return {"type": "codex_run", "action": "execute_command"}
-        elif "create" in message_lower:
-            return {"type": "create_project", "action": "initialize_project"}
-        elif "status" in message_lower:
-            return {"type": "status", "action": "get_status"}
-        else:
-            return {"type": "conversation", "action": "general_chat"}
-    
-    def _generate_response(self, command_info: Dict[str, Any]) -> str:
-        """Generate appropriate response based on command"""
-        command_type = command_info.get("type", "conversation")
+    async def process_message(self, message: str, context: Dict = None) -> str:
+        """Обробити повідомлення користувача з розумінням контексту"""
         
-        if command_type == "codex_full_dev":
-            return "Executing full development plan from DEV_PLAN.md..."
-        elif command_type == "create_project":
-            return "Creating new project structure..."
-        elif command_type == "status":
-            return "Checking system status..."
+        # Аналіз контексту
+        understood_context = await self._analyze_context(message, context)
+        
+        # Генерація відповіді
+        response = await self._generate_intelligent_response(message, understood_context)
+        
+        # Збереження в історії
+        self.conversation_history.append({
+            'timestamp': datetime.now(),
+            'user_message': message,
+            'agent_response': response,
+            'context': understood_context
+        })
+        
+        return response
+        
+    async def _analyze_context(self, message: str, context: Dict = None) -> Dict:
+        """Аналіз контексту повідомлення"""
+        return {
+            'intent': self._detect_intent(message),
+            'entities': self._extract_entities(message),
+            'sentiment': self._analyze_sentiment(message),
+            'complexity': self._assess_complexity(message)
+        }
+        
+    def _detect_intent(self, message: str) -> str:
+        """Виявити намір користувача"""
+        if any(word in message.lower() for word in ['create', 'generate', 'build']):
+            return 'creation'
+        elif any(word in message.lower() for word in ['fix', 'debug', 'error']):
+            return 'debugging'
+        elif any(word in message.lower() for word in ['explain', 'how', 'what']):
+            return 'explanation'
         else:
-            return "How can I help you with your development tasks?"
+            return 'general'
+            
+    def _extract_entities(self, message: str) -> List[str]:
+        """Витягнути сутності з повідомлення"""
+        entities = []
+        # Простий витяг технічних термінів
+        tech_terms = ['python', 'api', 'database', 'ai', 'machine learning']
+        for term in tech_terms:
+            if term in message.lower():
+                entities.append(term)
+        return entities
+        
+    def _analyze_sentiment(self, message: str) -> str:
+        """Аналіз тональності"""
+        positive_words = ['good', 'great', 'excellent', 'love']
+        negative_words = ['bad', 'terrible', 'hate', 'problem']
+        
+        if any(word in message.lower() for word in positive_words):
+            return 'positive'
+        elif any(word in message.lower() for word in negative_words):
+            return 'negative'
+        else:
+            return 'neutral'
+            
+    def _assess_complexity(self, message: str) -> str:
+        """Оцінити складність запиту"""
+        if len(message.split()) > 20:
+            return 'high'
+        elif len(message.split()) > 10:
+            return 'medium'
+        else:
+            return 'low'
+            
+    async def _generate_intelligent_response(self, message: str, context: Dict) -> str:
+        """Згенерувати розумну відповідь"""
+        
+        intent = context.get('intent', 'general')
+        complexity = context.get('complexity', 'low')
+        
+        if intent == 'creation':
+            return f"Розумію, ви хочете щось створити. Розкажу детально про процес..."
+        elif intent == 'debugging':
+            return f"Аналізую проблему. Ось кроки для вирішення..."
+        elif intent == 'explanation':
+            return f"Пояснення з урахуванням складності '{complexity}'..."
+        else:
+            return "Як ваш AI-асистент, готовий допомогти з будь-яким питанням!"
+            
+    def get_conversation_summary(self) -> Dict:
+        """Отримати підсумок розмови"""
+        return {
+            'total_messages': len(self.conversation_history),
+            'dominant_intent': self._get_dominant_intent(),
+            'user_satisfaction': self._estimate_satisfaction(),
+            'topics_covered': self._extract_topics()
+        }
+        
+    def _get_dominant_intent(self) -> str:
+        """Визначити домінуючий намір в розмові"""
+        intents = [conv['context']['intent'] for conv in self.conversation_history]
+        return max(set(intents), key=intents.count) if intents else 'unknown'
+        
+    def _estimate_satisfaction(self) -> float:
+        """Оцінити задоволеність користувача"""
+        positive_responses = sum(1 for conv in self.conversation_history 
+                               if conv['context']['sentiment'] == 'positive')
+        total = len(self.conversation_history)
+        return positive_responses / total if total > 0 else 0.5
+        
+    def _extract_topics(self) -> List[str]:
+        """Витягнути основні теми розмови"""
+        all_entities = []
+        for conv in self.conversation_history:
+            all_entities.extend(conv['context']['entities'])
+        return list(set(all_entities))
+        
 
+# Приклад використання
+async def main():
+    agent = ChatAgent()
+    
+    # Тестові повідомлення
+    messages = [
+        "How can I create a Python API?",
+        "I'm having trouble with database errors",
+        "Explain machine learning concepts please"
+    ]
+    
+    for msg in messages:
+        response = await agent.process_message(msg)
+        print(f"User: {msg}")
+        print(f"Agent: {response}")
+        print("-" * 50)
+        
+    # Підсумок
+    summary = agent.get_conversation_summary()
+    print("Conversation Summary:", summary)
 
 if __name__ == "__main__":
-    agent = ChatAgent()
-    print("ChatAgent module loaded successfully")
+    asyncio.run(main())
