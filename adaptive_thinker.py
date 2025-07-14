@@ -6,6 +6,7 @@ import logging
 from typing import Dict, List, Any
 from datetime import datetime
 
+
 class AdaptiveThinker:
     """Engine for adaptive reasoning and decision making"""
     
@@ -50,6 +51,7 @@ class AdaptiveThinker:
             
         except Exception as e:
             return {"error": str(e), "success": False}
+
 
 if __name__ == "__main__":
     thinker = AdaptiveThinker()

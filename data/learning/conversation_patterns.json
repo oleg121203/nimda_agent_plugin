@@ -1,0 +1,14 @@
+{
+  "question_uk": [
+    {
+      "timestamp": "2025-07-14T18:33:46.924639",
+      "message_length": 46,
+      "complexity": "medium",
+      "patterns": [
+        "polite_request",
+        "question",
+        "planning_request"
+      ]
+    }
+  ]
+}

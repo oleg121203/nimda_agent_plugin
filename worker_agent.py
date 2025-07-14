@@ -7,6 +7,7 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Any
 
+
 class WorkerAgent:
     """Agent responsible for technical task execution"""
     
@@ -61,6 +62,7 @@ class WorkerAgent:
     def _handle_generic_task(self, task_info: Dict[str, Any]) -> Dict[str, Any]:
         """Handle generic tasks"""
         return {"success": True, "message": "Generic task completed"}
+
 
 if __name__ == "__main__":
     worker = WorkerAgent(Path("."))

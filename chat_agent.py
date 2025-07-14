@@ -6,6 +6,7 @@ import logging
 from typing import Dict, List, Any
 from datetime import datetime
 
+
 class ChatAgent:
     """Agent responsible for conversation and command interpretation"""
     
@@ -74,6 +75,7 @@ class ChatAgent:
             return "Checking system status..."
         else:
             return "How can I help you with your development tasks?"
+
 
 if __name__ == "__main__":
     agent = ChatAgent()
