@@ -360,9 +360,13 @@ node_modules/
                 ["git", "config", "--get", "remote.origin.url"]
             )
             if not remote_url:
+                self.logger.warning(
+                    "Remote repository not configured - skipping push"
+                )
                 return {
-                    "success": False,
-                    "message": "remote repository not configured",
+                    "success": True,
+                    "skipped": True,
+                    "message": "Remote repository not configured, skipping push",
                 }
 
             # Push changes
