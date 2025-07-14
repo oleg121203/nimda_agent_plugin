@@ -34,6 +34,10 @@ PyObjC>=9.0; sys_platform=="darwin"
 # Advanced logging
 # colorlog>=6.0.0
 
+# Code analysis and AST parsing for deep context understanding
+ast>=3.8.0  # Built into Python
+typing_extensions>=4.0.0
+
 # Progress bars for long operations
 # tqdm>=4.64.0
 
@@ -54,3 +58,8 @@ PyObjC>=9.0; sys_platform=="darwin"
 # black>=22.0.0
 # flake8>=5.0.0
 # mypy>=0.991
+
+requirements_nimda_v3.txt
+requirements.txt
+customtkinter
+RESTRUCTURE_SUMMARY.md

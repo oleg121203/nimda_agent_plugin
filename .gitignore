@@ -62,3 +62,4 @@ node_modules/
 *.backup
 
 nimda_project_deep_build
+nimda_project_ai_driven_build/
