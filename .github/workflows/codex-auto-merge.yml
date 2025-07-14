@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -32,26 +32,26 @@ jobs:
         git fetch origin ${{ github.base_ref }}
         git fetch origin ${{ github.head_ref }}
         git checkout ${{ github.base_ref }}
-        
+
         echo "Merging ${{ github.head_ref }} into ${{ github.base_ref }} with Codex priority..."
-        
+
         if ! git merge origin/${{ github.head_ref }} --no-commit --no-ff; then
           echo "Merge conflicts detected. Applying Codex priority resolution..."
-          
+
           git status --porcelain | grep "^UU" | while read -r line; do
             file=$(echo "$line" | cut -c4-)
             echo "Resolving conflict in $file with Codex priority"
             git checkout --theirs "$file"
             git add "$file"
           done
-          
+
           git status --porcelain | grep "^DU\|^UD\|^AU\|^UA" | while read -r line; do
             file=$(echo "$line" | cut -c4-)
             echo "Resolving add/delete conflict in $file with Codex priority"
             git checkout --theirs "$file" 2>/dev/null || git rm "$file" 2>/dev/null || true
             git add "$file" 2>/dev/null || true
           done
-          
+
           git commit -m "Auto-merge: Codex branch with priority - ${{ github.head_ref }}"
         else
           git commit -m "Auto-merge: Clean merge of Codex branch - ${{ github.head_ref }}"
@@ -70,7 +70,7 @@ jobs:
             pull_number: context.issue.number,
             state: 'closed'
           });
-          
+
           await github.rest.issues.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    
+
     steps:
     - name: Add Codex labels
       uses: actions/github-script@v7
