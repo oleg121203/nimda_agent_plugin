@@ -56,3 +56,26 @@ codex run full dev
 ```
 
 **Now you can safely write from mobile!** 🎉
+
+## ⚙️ **Setup GitHub Repository:**
+
+To enable push operations, configure the GitHub repository:
+
+### Option 1: Using NIMDA Agent
+```bash
+python run_nimda_agent.py --setup-github https://github.com/oleg121203/nimda_agent_plugin.git
+```
+
+### Option 2: Using Git directly
+```bash
+git remote add origin https://github.com/oleg121203/nimda_agent_plugin.git
+git push --set-upstream origin main
+```
+
+### Option 3: Environment variables
+```bash
+export GITHUB_REPO_URL="https://github.com/oleg121203/nimda_agent_plugin.git"
+export GITHUB_TOKEN="your_github_token"
+```
+
+After setup, `codex run full dev` will successfully push changes! ✅
