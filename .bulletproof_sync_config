@@ -1,0 +1,122 @@
+# Bulletproof Sync Manager Configuration
+# Remote/Codex ABSOLUTE PRIORITY SYSTEM
+# 
+# This configuration ensures that:
+# 1. Remote/Codex changes ALWAYS have priority in automatic scenarios
+# 2. Local changes win ONLY when user manually commits AND changes are very recent
+# 3. Unresolved conflicts are ALWAYS resolved in favor of Remote/Codex
+# 4. System is self-healing and bulletproof
+
+# === RETRY AND TIMING SETTINGS ===
+MAX_RETRIES=5
+RETRY_DELAY=15
+WAIT_INTERVAL=30
+MAX_WAIT_TIME=900
+
+# === PRIORITY THRESHOLD SETTINGS ===
+# Time threshold for manual commits (5 minutes)
+TIME_SYNC_THRESHOLD=300
+
+# Emergency threshold - beyond this, always prefer remote (30 minutes)
+EMERGENCY_THRESHOLD=1800
+
+# Health check interval (1 minute)
+HEALTH_CHECK_INTERVAL=60
+
+# === BRANCH PRIORITY CONFIGURATION ===
+# Remote branches in ABSOLUTE priority order (highest to lowest)
+# Codex has the highest priority, then work, then main
+REMOTE_PRIORITY_BRANCHES=("origin/codex" "origin/work" "origin/main")
+
+# Local branches for fallback mode when remote is unavailable
+LOCAL_FALLBACK_BRANCHES=("codex" "work" "main")
+
+# === LOGGING AND MONITORING ===
+VERBOSE_LOGGING=true
+ENABLE_HEALTH_MONITORING=true
+LOG_RETENTION_DAYS=30
+
+# === EMERGENCY AND SAFETY SETTINGS ===
+# Emergency mode - forces remote priority in all cases
+EMERGENCY_MODE=false
+
+# Nuclear option - allows forcing remote state when all else fails
+NUCLEAR_OPTION_ENABLED=true
+
+# Backup creation before risky operations
+AUTO_BACKUP_ENABLED=true
+
+# === CONFLICT RESOLUTION STRATEGY ===
+# Default conflict resolution (remote/codex/theirs)
+DEFAULT_CONFLICT_RESOLUTION="theirs"
+
+# Allow local priority only for very recent manual commits
+ALLOW_LOCAL_PRIORITY=true
+
+# === FALLBACK MODE SETTINGS ===
+# Enable fallback mode when remote is unavailable
+FALLBACK_MODE_ENABLED=true
+
+# Auto-retry when remote becomes available
+FALLBACK_AUTO_RETRY=true
+
+# Fallback retry interval (5 minutes)
+FALLBACK_RETRY_INTERVAL=300
+
+# === ADVANCED SETTINGS ===
+# Time synchronization before operations
+ENABLE_TIME_SYNC=true
+
+# Network connectivity checks
+NETWORK_CHECK_HOSTS=("github.com" "8.8.8.8")
+
+# Git lock detection and handling
+GIT_LOCK_TIMEOUT=300
+
+# === COMMIT CONTEXT DETECTION ===
+# Automatic commit indicators (for priority determination)
+AUTO_COMMIT_PATTERNS=(
+    "Auto-merge"
+    "Automatic"
+    "Bot:"
+    "Merge branch"
+    "GitHub"
+    "Codex"
+)
+
+# Manual commit exclusions (force these to be treated as manual)
+MANUAL_COMMIT_PATTERNS=(
+    "feat:"
+    "fix:"
+    "docs:"
+    "style:"
+    "refactor:"
+    "test:"
+    "chore:"
+)
+
+# === MONITORING AND ALERTS ===
+# Enable system health monitoring
+HEALTH_MONITORING_ENABLED=true
+
+# Create recovery queue for failed operations
+RECOVERY_QUEUE_ENABLED=true
+
+# Log all priority decisions for audit
+AUDIT_LOGGING_ENABLED=true
+
+# === PRIORITY RULES SUMMARY ===
+# 1. Remote/Codex automatic commits = ABSOLUTE PRIORITY
+# 2. Local automatic commits = Remote wins
+# 3. Both manual commits = Time-based with strict thresholds
+# 4. Emergency override = Always prefer remote if local is too old
+# 5. Unresolved conflicts = Force remote priority (nuclear option)
+# 6. Remote unavailable = Fallback mode with recovery queue
+
+# === BULLETPROOF GUARANTEES ===
+# - System will NEVER lose remote/Codex changes
+# - Local changes are preserved only when explicitly manual and recent
+# - All operations are logged and auditable
+# - System self-heals from any conflict state
+# - Fallback mode ensures continued operation when remote is down
+# - Recovery queue ensures synchronization when remote returns

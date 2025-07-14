@@ -1,0 +1,258 @@
+# Bulletproof Codex Sync Configuration
+# Advanced configuration for bulletproof synchronization system
+
+# ═══════════════════════════════════════════════════════════════════
+# BRANCH MANAGEMENT
+# ═══════════════════════════════════════════════════════════════════
+
+# Primary branches (in priority order)
+MAIN_BRANCH="main"
+WORK_BRANCH="work"
+CODEX_BRANCH_PATTERN="codex"
+
+# Branch priority for automatic merging (highest to lowest)
+BRANCH_PRIORITY_ORDER=(
+    "origin/codex"
+    "origin/bgrzdn-codex" 
+    "origin/work"
+    "origin/main"
+    "codex"
+    "bgrzdn-codex"
+    "work"
+    "main"
+)
+
+# Fallback branches when remote is unavailable
+FALLBACK_BRANCHES=("work" "main" "codex")
+
+# ═══════════════════════════════════════════════════════════════════
+# PRIORITY LOGIC CONFIGURATION  
+# ═══════════════════════════════════════════════════════════════════
+
+# Time threshold for priority decisions (seconds)
+TIME_SYNC_THRESHOLD=120
+
+# Priority matrix:
+# AUTOMATIC MODE (default for hooks and CI):
+#   - Codex/Remote always wins except against manual local
+#   - Manual local beats automatic remote
+#   - Automatic vs automatic = Codex wins
+#
+# INTERACTIVE MODE (manual execution):
+#   - More nuanced temporal decisions
+#   - User input considered
+#   - Manual commits have higher weight
+
+AUTO_MODE_CODEX_PRIORITY=true      # In auto mode, default to Codex
+INTERACTIVE_MODE_USER_CHOICE=true  # In interactive, respect user patterns
+MANUAL_BEATS_AUTOMATIC=true        # Manual local beats automatic remote
+
+# ═══════════════════════════════════════════════════════════════════
+# NETWORK AND CONNECTIVITY
+# ═══════════════════════════════════════════════════════════════════
+
+# Retry configuration
+MAX_RETRIES=5
+INITIAL_RETRY_DELAY=15
+MAX_RETRY_DELAY=300
+RETRY_BACKOFF_MULTIPLIER=2
+
+# Timeout settings
+REMOTE_TIMEOUT=30
+FETCH_TIMEOUT=60
+PUSH_TIMEOUT=120
+
+# Network test endpoints
+NETWORK_TEST_HOSTS=("github.com" "8.8.8.8" "1.1.1.1")
+GITHUB_API_TEST="https://api.github.com/zen"
+
+# ═══════════════════════════════════════════════════════════════════
+# FALLBACK AND RECOVERY
+# ═══════════════════════════════════════════════════════════════════
+
+# Fallback mode settings
+ENABLE_FALLBACK_MODE=true
+FALLBACK_WAIT_TIME=1800           # 30 minutes max wait for remote
+FALLBACK_CHECK_INTERVAL=60        # Check every minute
+
+# Recovery settings
+ENABLE_AUTO_RECOVERY=true
+RECOVERY_MAX_ATTEMPTS=3
+RECOVERY_COOLDOWN=300             # 5 minutes between recovery attempts
+KEEP_RECOVERY_LOG=true
+
+# Backup settings
+CREATE_BACKUP_BRANCHES=true
+BACKUP_PREFIX="backup-bulletproof-"
+BACKUP_RETENTION_DAYS=7
+
+# ═══════════════════════════════════════════════════════════════════
+# CONFLICT RESOLUTION
+# ═══════════════════════════════════════════════════════════════════
+
+# Automatic conflict resolution
+AUTO_RESOLVE_CONFLICTS=true
+MAX_AUTO_CONFLICTS=50             # Manual review if more conflicts
+CONFLICT_RESOLUTION_TIMEOUT=300   # 5 minutes max for conflict resolution
+
+# Merge strategies
+LOCAL_PRIORITY_STRATEGY="ours"    # For local priority merges
+CODEX_PRIORITY_STRATEGY="theirs"  # For Codex priority merges
+OCTOPUS_MERGE_ENABLED=true        # Enable multi-branch merges
+
+# Conflict patterns to always favor Codex
+CODEX_PRIORITY_PATTERNS=(
+    "*.py"                        # Python files
+    "*.js"                        # JavaScript files  
+    "*.md"                        # Documentation
+    "requirements.txt"            # Dependencies
+    "package.json"               # Node dependencies
+    ".github/workflows/*"        # GitHub Actions
+)
+
+# Patterns to always favor local (user data)
+LOCAL_PRIORITY_PATTERNS=(
+    ".env*"                      # Environment files
+    "config.local.*"             # Local config
+    "*.log"                      # Log files
+    "personal_*"                 # Personal files
+)
+
+# ═══════════════════════════════════════════════════════════════════
+# TIME SYNCHRONIZATION
+# ═══════════════════════════════════════════════════════════════════
+
+# Time sync settings
+ENABLE_TIME_SYNC=true
+TIME_SYNC_TIMEOUT=15
+
+# NTP servers (in preference order)
+NTP_SERVERS=(
+    "time.apple.com"
+    "time.google.com" 
+    "pool.ntp.org"
+    "time.cloudflare.com"
+    "time.nist.gov"
+)
+
+# Time comparison settings
+FORCE_UTC_COMPARISON=true
+TIMEZONE_TOLERANCE=3600           # 1 hour tolerance for timezone issues
+MIN_TIME_DIFF_SIGNIFICANT=30      # Minimum diff to be considered significant
+
+# ═══════════════════════════════════════════════════════════════════
+# LOGGING AND MONITORING
+# ═══════════════════════════════════════════════════════════════════
+
+# Log levels: DEBUG, INFO, WARN, ERROR
+LOG_LEVEL="INFO"
+DETAILED_LOGGING=true
+LOG_TIMESTAMPS=true
+
+# Log files
+MAIN_LOG_FILE=".codex_bulletproof.log"
+ERROR_LOG_FILE=".codex_errors.log"
+RECOVERY_LOG_FILE=".codex_recovery.log"
+PERFORMANCE_LOG_FILE=".codex_performance.log"
+
+# Log rotation
+MAX_LOG_SIZE_MB=10
+MAX_LOG_FILES=5
+COMPRESS_OLD_LOGS=true
+
+# ═══════════════════════════════════════════════════════════════════
+# PERFORMANCE AND OPTIMIZATION
+# ═══════════════════════════════════════════════════════════════════
+
+# Performance settings
+ENABLE_PARALLEL_OPERATIONS=true
+MAX_PARALLEL_FETCHES=3
+BACKGROUND_OPERATIONS=true
+
+# Optimization
+SHALLOW_FETCH_DEPTH=50            # For performance in large repos
+AGGRESSIVE_GC=false               # Aggressive garbage collection
+PRELOAD_BRANCHES=true             # Preload branch information
+
+# Cache settings
+ENABLE_OPERATION_CACHE=true
+CACHE_TIMEOUT=300                 # 5 minutes
+CACHE_DIR=".codex_cache"
+
+# ═══════════════════════════════════════════════════════════════════
+# SECURITY AND SAFETY
+# ═══════════════════════════════════════════════════════════════════
+
+# Safety checks
+VERIFY_SIGNATURES=false           # GPG signature verification
+CHECK_COMMIT_INTEGRITY=true      # Basic integrity checks
+PREVENT_FORCE_PUSH=true          # Prevent accidental force pushes
+
+# Security
+ALLOW_UNSIGNED_COMMITS=true      # Allow unsigned commits (for automation)
+RESTRICT_MERGE_USERS=false       # Restrict who can trigger merges
+AUDIT_ALL_OPERATIONS=true        # Audit trail for all operations
+
+# Data protection
+CREATE_SAFETY_SNAPSHOTS=true     # Create snapshots before risky operations
+VERIFY_BEFORE_DESTRUCTIVE=true   # Verify before destructive operations
+ENABLE_ROLLBACK=true             # Enable rollback capabilities
+
+# ═══════════════════════════════════════════════════════════════════
+# GITHUB INTEGRATION
+# ═══════════════════════════════════════════════════════════════════
+
+# GitHub Actions integration
+GITHUB_ACTIONS_INTEGRATION=true
+UPDATE_PR_STATUS=true
+CREATE_DETAILED_COMMENTS=true
+
+# GitHub API settings
+GITHUB_API_TIMEOUT=30
+GITHUB_API_RETRIES=3
+RATE_LIMIT_HANDLING=true
+
+# ═══════════════════════════════════════════════════════════════════
+# ADVANCED FEATURES
+# ═══════════════════════════════════════════════════════════════════
+
+# Advanced merge features
+ENABLE_OCTOPUS_MERGES=true        # Multi-branch merges
+SMART_CONFLICT_DETECTION=true     # Intelligent conflict analysis
+PREDICTIVE_MERGING=false          # Experimental: predict merge outcomes
+
+# AI-assisted features (experimental)
+ENABLE_AI_CONFLICT_RESOLUTION=false
+AI_CONFIDENCE_THRESHOLD=0.8
+
+# Monitoring and alerting
+ENABLE_WEBHOOKS=false
+WEBHOOK_URL=""
+ALERT_ON_FAILURES=true
+ALERT_ON_MANUAL_INTERVENTION=true
+
+# ═══════════════════════════════════════════════════════════════════
+# ENVIRONMENT SPECIFIC OVERRIDES
+# ═══════════════════════════════════════════════════════════════════
+
+# Override settings based on environment
+if [ "${CI:-false}" = "true" ]; then
+    # CI environment overrides
+    AUTO_MODE_CODEX_PRIORITY=true
+    MAX_RETRIES=3
+    REMOTE_TIMEOUT=60
+    DETAILED_LOGGING=false
+fi
+
+if [ "${CODEX_DEBUG:-false}" = "true" ]; then
+    # Debug mode overrides
+    LOG_LEVEL="DEBUG"
+    DETAILED_LOGGING=true
+    CREATE_BACKUP_BRANCHES=true
+    MAX_RETRIES=10
+fi
+
+# Load local overrides if they exist
+if [ -f ".codex_bulletproof_local.conf" ]; then
+    source .codex_bulletproof_local.conf
+fi

@@ -1,0 +1,164 @@
+{
+  "timestamp": "2025-07-14T04:00:10.969553",
+  "version": "2.0.0",
+  "status": "critical",
+  "components": {
+    "translate_all.py": {
+      "exists": true,
+      "status": "healthy"
+    },
+    "offline_queue.py": {
+      "exists": true,
+      "status": "healthy"
+    },
+    "backup_rotation.py": {
+      "exists": true,
+      "status": "healthy"
+    },
+    "nimda_cli.py": {
+      "exists": true,
+      "status": "healthy"
+    },
+    "performance_monitor.py": {
+      "exists": true,
+      "status": "healthy"
+    },
+    "health_dashboard.py": {
+      "exists": true,
+      "status": "healthy"
+    },
+    ".env.example": {
+      "exists": true,
+      "status": "healthy"
+    },
+    ".bulletproof_enhanced_config": {
+      "exists": true,
+      "status": "healthy"
+    },
+    "requirements.txt": {
+      "exists": true,
+      "status": "healthy"
+    }
+  },
+  "features": {
+    "syntax_check": {
+      "status": "healthy",
+      "all_files_valid": true
+    },
+    "imports": {
+      "offline_queue": "healthy",
+      "backup_rotation": "healthy",
+      "performance_monitor": "healthy",
+      "health_dashboard": "healthy"
+    },
+    "cli": {
+      "status": "healthy",
+      "help_command_works": true
+    },
+    "health_dashboard": {
+      "status": "critical",
+      "component_summary": {
+        "healthy": 2,
+        "warning": 2,
+        "critical": 1,
+        "total": 5
+      },
+      "details": {
+        "overall_status": "critical",
+        "components": [
+          {
+            "name": "Git Repository",
+            "status": "warning",
+            "last_check": "2025-07-14T04:00:11.325801",
+            "response_time_ms": 15.495061874389648,
+            "error_message": null,
+            "details": {
+              "dirty_files": 33,
+              "output": " M .github/workflows/codex-priority-merge.yml\n M CHANGELOG.md\n M INITIALIZER_DOCS.md\n M SUMMARY.md\n M agent.py\n M changelog_manager.py\n M command_processor.py\n M dev_plan_manager.py\n M git_manager.py\n"
+            }
+          },
+          {
+            "name": "Offline Queue",
+            "status": "healthy",
+            "last_check": "2025-07-14T04:00:11.544599",
+            "response_time_ms": 218.72687339782715,
+            "error_message": null,
+            "details": {
+              "total_operations": 0,
+              "pending": 0,
+              "processing": 0,
+              "completed": 0,
+              "failed": 0,
+              "retrying": 0,
+              "cancelled": 0,
+              "by_type": {},
+              "network_online": true,
+              "processing_active": false
+            }
+          },
+          {
+            "name": "Backup System",
+            "status": "warning",
+            "last_check": "2025-07-14T04:00:11.544887",
+            "response_time_ms": 0.26297569274902344,
+            "error_message": "No backups found",
+            "details": {
+              "backup_count": 0
+            }
+          },
+          {
+            "name": "Performance Monitor",
+            "status": "critical",
+            "last_check": "2025-07-14T04:00:11.544967",
+            "response_time_ms": 0.07390975952148438,
+            "error_message": "'PerformanceMonitor' object has no attribute 'get_current_metrics'",
+            "details": null
+          },
+          {
+            "name": "Network Connectivity",
+            "status": "healthy",
+            "last_check": "2025-07-14T04:00:11.578888",
+            "response_time_ms": 33.89739990234375,
+            "error_message": null,
+            "details": null
+          }
+        ],
+        "summary": {
+          "healthy": 2,
+          "warning": 2,
+          "critical": 1,
+          "total": 5
+        },
+        "timestamp": "2025-07-14T04:00:11.579344"
+      }
+    },
+    "offline_queue": {
+      "status": "healthy",
+      "stats": {
+        "total_operations": 0,
+        "pending": 0,
+        "processing": 0,
+        "completed": 0,
+        "failed": 0,
+        "retrying": 0,
+        "cancelled": 0,
+        "by_type": {},
+        "network_online": true,
+        "processing_active": false
+      }
+    },
+    "translation": {
+      "status": "healthy",
+      "backup_files": 4,
+      "completed": true
+    }
+  },
+  "recommendations": [
+    "❌ Fix critical issues before deploying to production"
+  ],
+  "summary": {
+    "critical_issues": 1,
+    "warnings": 0,
+    "healthy_components": 4
+  }
+}

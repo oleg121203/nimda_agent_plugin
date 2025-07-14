@@ -1,33 +1,33 @@
-# Журнал змін
+# Changelog
 
-Всі значущі зміни цього проекту будуть документовані в цьому файлі.
+All notable changes to this project will be documented in this file.
 
-Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
-і цей проект дотримується [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Нереалізовано]
+## [Unreleased]
 
-### Додано
-- [ ] Початкове налаштування проекту
+### Added
+- [ ] Initial project setup
 
-### Змінено
-- [ ] Оновлення документації
+### Changed
+- [ ] Documentation updates
 
-### Виправлено
-- [ ] Початкові помилки
+### Fixed
+- [ ] Initial errors
 
 ## [1.0.0] - 2025-07-11
 
-### Додано
-- [x] Ініціалізація проекту NIMDA Agent
-- [x] Створення структури файлів
-- [x] Налаштування автоматизації
+### Added
+- [x] NIMDA Agent project initialization
+- [x] File structure creation
+- [x] Automation setup
 
 ---
 
-**Легенда:**
-- [x] Виконано
-- [ ] Не виконано
-- [-] Скасовано
+**Legend:**
+- [x] Completed
+- [ ] Not completed
+- [-] Cancelled
 
-*Цей журнал автоматично оновлюється NIMDA Agent.*
+*This changelog is automatically updated by NIMDA Agent.*

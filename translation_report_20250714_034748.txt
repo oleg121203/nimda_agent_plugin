@@ -1,0 +1,46 @@
+============================================================
+🌐 NIMDA TRANSLATION REPORT
+============================================================
+📊 Summary:
+  • Total files processed: 9
+  • Files with translations: 4
+  • Total changes made: 686
+  • Overall success: ✅ YES
+
+📁 File Details:
+  ✅ git_manager.py: 102 changes
+      Sample Ukrainian text found:
+        Line 136: Виконання Git команди
+        Line 139: command: Команда для виконання
+        Line 140: capture_output: Чи захоплювати вивід
+        Line 143: Вивід команди або None при помилці
+        Line 160: self.logger.error(f"Помилка виконання команди {' '.join(comm...
+  ✅ dev_plan_manager.py: 146 changes
+      Sample Ukrainian text found:
+        Line 49: """Завантаження плану з файлу DEV_PLAN.md"""
+        Line 51: self.logger.warning("DEV_PLAN.md не знайдено. Створюю шаблон...
+        Line 61: f"DEV_PLAN.md завантажено. Знайдено {len(self.plan_structure...
+        Line 65: self.logger.error(f"Помилка завантаження DEV_PLAN.md: {e}")
+        Line 69: """Створення шаблону DEV_PLAN.md"""
+  ✅ changelog_manager.py: 74 changes
+      Sample Ukrainian text found:
+        Line 102: # Пошук секції "Нереалізовано"
+        Line 103: unreleased_pattern = r"## \[Нереалізовано\]"
+        Line 107: self.logger.warning("Секція [Нереалізовано] не знайдена")
+        Line 110: # Пошук відповідної категорії
+        Line 115: # Якщо категорія не знайдена, додаємо її
+  ➖ agent.py: 0 changes
+  ➖ command_processor.py: 0 changes
+  ✅ project_initializer.py: 364 changes
+      Sample Ukrainian text found:
+        Line 2: Ініціалізатор проекту - створення необхідних файлів та струк...
+        Line 17: Ініціалізатор для автоматичного створення структури проекту
+        Line 19: Функції:
+        Line 20: - Створення базових файлів проекту
+        Line 21: - Створення GitHub workflows
+  ➖ run_nimda_agent.py: 0 changes
+  ➖ setup_env.py: 0 changes
+  ➖ main.py: 0 changes
+
+🔄 Backup files saved in: /Users/dev/Documents/nimda_agent_plugin/.translation_backups
+============================================================

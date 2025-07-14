@@ -1,58 +1,59 @@
 """
-Основний клас NIMDA Agent - автономний агент розробки
+Main NIMDA Agent class - autonomous development agent
 """
 
-import os
 import json
 import logging
-from typing import Dict, List, Any, Optional
+import os
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 from dotenv import load_dotenv
 
+from changelog_manager import ChangelogManager
+from command_processor import CommandProcessor
 from dev_plan_manager import DevPlanManager
 from git_manager import GitManager
-from command_processor import CommandProcessor
 from project_initializer import ProjectInitializer
-from changelog_manager import ChangelogManager
 
 
 class NIMDAAgent:
     """
-    Універсальний автономний агент розробки NIMDA
+    Universal autonomous development agent NIMDA
 
-    Функції:
-    - Читає та виконує DEV_PLAN.md
-    - Управляє Git репозиторієм (локальним та GitHub)
-    - Виправляє помилки автоматично
-    - Створює необхідні файли проекту
-    - Веде журнал змін у CHANGELOG.md
+    Functions:
+    - Reads and executes DEV_PLAN.md
+    - Manages Git repository (local and GitHub)
+    - Fixes errors automatically
+    - Creates necessary project files
+    - Maintains changelog in CHANGELOG.md
     """
 
     def __init__(self, project_path: Optional[str] = None):
         """
-        Ініціалізація агента
+        Initialize the agent
 
         Args:
-            project_path: Шлях до проекту. Якщо None - використовується поточна директорія
+            project_path: Path to the project. If None - uses current directory
         """
         self.project_path = Path(project_path) if project_path else Path.cwd()
         self.config_file = self.project_path / "nimda_agent_config.json"
 
-        # Завантаження змінних середовища
+        # Load environment variables
         env_file = self.project_path / ".env"
         if env_file.exists():
             load_dotenv(env_file)
         else:
-            # Спробувати завантажити з кореневої папки плагіна
+            # Try to load from plugin root folder
             plugin_env = Path(__file__).parent / ".env"
             if plugin_env.exists():
                 load_dotenv(plugin_env)
 
-        # Налаштування логування
+        # Setup logging
         self._setup_logging()
 
-        # Ініціалізація компонентів
+        # Initialize components
         self.dev_plan_manager = DevPlanManager(
             self.project_path, max_retries=self.config.get("max_retries", 3)
         )
@@ -61,18 +62,18 @@ class NIMDAAgent:
         self.project_initializer = ProjectInitializer(self.project_path)
         self.changelog_manager = ChangelogManager(self.project_path)
 
-        # Завантаження конфігурації
+        # Load configuration
         self.config = self._load_config()
 
-        # Статус агента
+        # Agent status
         self.is_running = False
         self.current_task = None
         self.execution_log = []
 
-        self.logger.info(f"NIMDA Agent ініціалізовано для проекту: {self.project_path}")
+        self.logger.info(f"NIMDA Agent initialized for project: {self.project_path}")
 
     def _setup_logging(self):
-        """Налаштування системи логування"""
+        """Setup logging system"""
         log_dir = self.project_path / "nimda_logs"
         log_dir.mkdir(exist_ok=True)
 
@@ -80,21 +81,18 @@ class NIMDAAgent:
 
         logging.basicConfig(
             level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler(log_file),
-                logging.StreamHandler()
-            ]
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
         )
 
-        self.logger = logging.getLogger('NIMDAAgent')
+        self.logger = logging.getLogger("NIMDAAgent")
 
     def _load_config(self) -> Dict[str, Any]:
-        """Завантаження конфігурації агента"""
+        """Load agent configuration"""
         default_config = {
             "version": "1.0.0",
             "auto_commit": os.getenv("AUTO_COMMIT", "true").lower() == "true",
-            "auto_push": os.getenv("AUTO_PUSH", "true").lower() == "true", 
+            "auto_push": os.getenv("AUTO_PUSH", "true").lower() == "true",
             "create_backups": os.getenv("CREATE_BACKUPS", "true").lower() == "true",
             "max_retries": int(os.getenv("MAX_RETRIES", "3")),
             "github_integration": True,
@@ -108,109 +106,113 @@ class NIMDAAgent:
             "git_user_name": os.getenv("GIT_USER_NAME"),
             "git_user_email": os.getenv("GIT_USER_EMAIL"),
             "project_name": os.getenv("PROJECT_NAME", "NIMDA-CLI"),
-            "enable_debug": os.getenv("ENABLE_DEBUG", "false").lower() == "true"
+            "enable_debug": os.getenv("ENABLE_DEBUG", "false").lower() == "true",
         }
 
         if self.config_file.exists():
             try:
-                with open(self.config_file, 'r', encoding='utf-8') as f:
+                with open(self.config_file, "r", encoding="utf-8") as f:
                     config = json.load(f)
-                    # Оновлення конфігурації з default значеннями
+                    # Update configuration with default values
                     for key, value in default_config.items():
                         config.setdefault(key, value)
                     return config
             except Exception as e:
-                self.logger.warning(f"Помилка завантаження конфігурації: {e}")
+                self.logger.warning(f"Error loading configuration: {e}")
 
         return default_config
 
     def _save_config(self):
-        """Збереження конфігурації агента"""
+        """Save agent configuration"""
         try:
-            with open(self.config_file, 'w', encoding='utf-8') as f:
+            with open(self.config_file, "w", encoding="utf-8") as f:
                 json.dump(self.config, f, indent=2, ensure_ascii=False)
         except Exception as e:
-            self.logger.error(f"Помилка збереження конфігурації: {e}")
+            self.logger.error(f"Error saving configuration: {e}")
 
     def initialize_project(self) -> bool:
         """
-        Ініціалізація проекту - створення необхідних файлів та структури
+        Project initialization - create necessary files and structure
 
         Returns:
-            bool: True якщо ініціалізація успішна
+            bool: True if initialization successful
         """
         try:
-            self.logger.info("Початок ініціалізації проекту...")
+            self.logger.info("Starting project initialization...")
 
-            # Ініціалізація основних файлів проекту
+            # Initialize main project files
             success = self.project_initializer.initialize()
 
             if success:
-                self.logger.info("Проект успішно ініціалізовано")
-                self.changelog_manager.add_entry("🚀 Проект ініціалізовано NIMDA Agent")
+                self.logger.info("Project successfully initialized")
+                self.changelog_manager.add_entry(
+                    "🚀 Project initialized by NIMDA Agent"
+                )
                 return True
             else:
-                self.logger.error("Помилка ініціалізації проекту")
+                self.logger.error("Project initialization error")
                 return False
 
         except Exception as e:
-            self.logger.error(f"Критична помилка ініціалізації: {e}")
+            self.logger.error(f"Critical initialization error: {e}")
             return False
 
     def process_command(self, command: str) -> Dict[str, Any]:
         """
-        Обробка команди від користувача через Codex
+        Process command from user via Codex
 
         Args:
-            command: Команда від користувача
+            command: Command from user
 
         Returns:
-            Dict з результатом виконання
+            Dict with execution result
         """
-        self.logger.info(f"Отримано команду: {command}")
+        self.logger.info(f"Received command: {command}")
 
         try:
             result = self.command_processor.process(command)
 
-            # Логування результату
-            self.execution_log.append({
-                "timestamp": datetime.now().isoformat(),
-                "command": command,
-                "result": result,
-                "success": result.get("success", False)
-            })
+            # Log result
+            self.execution_log.append(
+                {
+                    "timestamp": datetime.now().isoformat(),
+                    "command": command,
+                    "result": result,
+                    "success": result.get("success", False),
+                }
+            )
 
             return result
 
         except Exception as e:
-            self.logger.error(f"Помилка обробки команди: {e}")
+            self.logger.error(f"Command processing error: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка виконання команди"
+                "message": "Command execution error",
             }
 
     def execute_dev_plan(self, task_number: Optional[int] = None) -> Dict[str, Any]:
         """
-        Виконання DEV_PLAN.md повністю або конкретної задачі
+        Execute DEV_PLAN.md completely or specific task
 
         Args:
-            task_number: Номер конкретної задачі. Якщо None - виконується весь план
+            task_number: Specific task number. If None - execute entire plan
 
         Returns:
-            Dict з результатом виконання
+            Dict with execution result
         """
         try:
             self.is_running = True
 
             if task_number:
-                self.logger.info(f"Виконання задачі #{task_number} з DEV_PLAN.md")
+                self.logger.info(f"Executing task #{task_number} from DEV_PLAN.md")
                 result = self.dev_plan_manager.execute_task(task_number)
             else:
-                self.logger.info("Виконання повного DEV_PLAN.md")
+                self.logger.info("Executing full DEV_PLAN.md")
                 result = self.dev_plan_manager.execute_full_plan()
 
-            # Оновлення статусу виконання
+            # Update execution status
             if result.get("success"):
                 completed_tasks = result.get("completed_tasks", [])
                 for task in completed_tasks:
@@ -221,28 +223,36 @@ class NIMDAAgent:
 
         except Exception as e:
             self.is_running = False
-            self.logger.error(f"Помилка виконання DEV_PLAN: {e}")
+            self.logger.error(f"DEV_PLAN execution error: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Критична помилка виконання плану розробки"
+                "message": "Critical development plan execution error",
             }
 
     def run_full_dev_cycle(self) -> Dict[str, Any]:
-        """Повний цикл виконання DEV_PLAN з автоматичною синхронізацією GitHub"""
+        """Full DEV_PLAN execution cycle with automatic GitHub synchronization"""
         try:
-            self.logger.info("🔄 Початок повного циклу DEV")
+            self.logger.info("🔄 Starting full DEV cycle")
 
             pre_sync = self.git_manager.sync_with_remote()
 
             plan_result = self.execute_dev_plan()
 
-            commit_result = self.git_manager.commit_changes("Автоматичне виконання DEV_PLAN")
+            commit_result = self.git_manager.commit_changes(
+                "Automatic DEV_PLAN execution"
+            )
 
-            push_result = (self.git_manager.push_changes() if commit_result.get("success") else None)
+            push_result = (
+                self.git_manager.push_changes()
+                if commit_result.get("success")
+                else None
+            )
 
             return {
-                "success": plan_result.get("success", False) and commit_result.get("success", True) and (push_result.get("success", True) if push_result else True),
+                "success": plan_result.get("success", False)
+                and commit_result.get("success", True)
+                and (push_result.get("success", True) if push_result else True),
                 "plan": plan_result,
                 "commit": commit_result,
                 "push": push_result,
@@ -250,56 +260,56 @@ class NIMDAAgent:
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка автоматичного циклу DEV: {e}")
+            self.logger.error(f"Automatic DEV cycle error: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка автоматичного циклу DEV",
+                "message": "Automatic DEV cycle error",
             }
 
     def update_dev_plan(self) -> Dict[str, Any]:
         """
-        Оновлення та розширення DEV_PLAN.md
+        Update and expand DEV_PLAN.md
 
         Returns:
-            Dict з результатом оновлення
+            Dict with update result
         """
         try:
-            self.logger.info("Оновлення DEV_PLAN.md")
+            self.logger.info("Updating DEV_PLAN.md")
 
             result = self.dev_plan_manager.update_and_expand_plan()
 
             if result.get("success"):
-                self.changelog_manager.add_entry("📋 DEV_PLAN.md оновлено та розширено")
+                self.changelog_manager.add_entry("📋 DEV_PLAN.md updated and expanded")
 
             return result
 
         except Exception as e:
-            self.logger.error(f"Помилка оновлення DEV_PLAN: {e}")
+            self.logger.error(f"DEV_PLAN update error: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка оновлення плану розробки"
+                "message": "Development plan update error",
             }
 
     def auto_fix_errors(self) -> Dict[str, Any]:
         """
-        Автоматичне виправлення помилок в проекті
+        Automatic error fixing in the project
 
         Returns:
-            Dict з результатом виправлення
+            Dict with fixing result
         """
         try:
-            self.logger.info("Початок автоматичного виправлення помилок")
+            self.logger.info("Starting automatic error fixing")
 
-            # Перевірка помилок в коді
+            # Check code errors
             errors = self._detect_errors()
 
             if not errors:
                 return {
                     "success": True,
-                    "message": "Помилок не виявлено",
-                    "fixed_count": 0
+                    "message": "No errors detected",
+                    "fixed_count": 0,
                 }
 
             fixed_count = 0
@@ -307,47 +317,51 @@ class NIMDAAgent:
                 if self._fix_error(error):
                     fixed_count += 1
 
-            # Фіксація змін
+            # Commit changes
             if fixed_count > 0:
-                self.git_manager.commit_changes(f"🔧 Автоматично виправлено {fixed_count} помилок")
-                self.changelog_manager.add_entry(f"🔧 Автоматично виправлено {fixed_count} помилок")
+                self.git_manager.commit_changes(
+                    f"🔧 Automatically fixed {fixed_count} errors"
+                )
+                self.changelog_manager.add_entry(
+                    f"🔧 Automatically fixed {fixed_count} errors"
+                )
 
             return {
                 "success": True,
-                "message": f"Виправлено {fixed_count} з {len(errors)} помилок",
+                "message": f"Fixed {fixed_count} of {len(errors)} errors",
                 "fixed_count": fixed_count,
-                "total_errors": len(errors)
+                "total_errors": len(errors),
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка автоматичного виправлення: {e}")
+            self.logger.error(f"Automatic fixing error: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка системи автоматичного виправлення"
+                "message": "Automatic fixing system error",
             }
 
     def _detect_errors(self) -> List[Dict[str, Any]]:
-        """Виявлення помилок в проекті"""
+        """Detect errors in the project"""
         errors = []
 
-        # Тут буде логіка виявлення помилок
-        # Поки що заглушка
+        # Here will be error detection logic
+        # Currently stub
 
         return errors
 
     def _fix_error(self, error: Dict[str, Any]) -> bool:
-        """Виправлення конкретної помилки"""
-        # Тут буде логіка виправлення помилок
-        # Поки що заглушка
+        """Fix specific error"""
+        # Here will be error fixing logic
+        # Currently stub
         return True
 
     def get_status(self) -> Dict[str, Any]:
         """
-        Отримання поточного статусу агента
+        Get current agent status
 
         Returns:
-            Dict зі статусом агента
+            Dict with agent status
         """
         dev_plan_status = self.dev_plan_manager.get_plan_status()
         git_status = self.git_manager.get_status()
@@ -359,42 +373,44 @@ class NIMDAAgent:
             "dev_plan": dev_plan_status,
             "git": git_status,
             "last_execution": self.config.get("last_execution"),
-            "execution_log_size": len(self.execution_log)
+            "execution_log_size": len(self.execution_log),
         }
 
     def shutdown(self):
-        """Завершення роботи агента"""
-        self.logger.info("Завершення роботи NIMDA Agent")
+        """Agent shutdown"""
+        self.logger.info("NIMDA Agent shutdown")
 
-        # Збереження конфігурації
+        # Save configuration
         self.config["last_execution"] = datetime.now().isoformat()
         self._save_config()
 
-        # Фінальний коміт якщо є незбережені зміни
+        # Final commit if there are unsaved changes
         if self.git_manager.has_changes():
-            self.git_manager.commit_changes("💾 Автоматичне збереження змін при завершенні NIMDA Agent")
+            self.git_manager.commit_changes(
+                "💾 Automatic save changes on NIMDA Agent shutdown"
+            )
 
         self.is_running = False
 
     def get_env_var(self, key: str, default: Any = None) -> str:
         """
-        Отримання змінної середовища
+        Get environment variable
 
         Args:
-            key: Назва змінної
-            default: Значення за замовчуванням
+            key: Variable name
+            default: Default value
 
         Returns:
-            Значення змінної середовища
+            Environment variable value
         """
         return os.getenv(key, default)
 
     def is_env_configured(self) -> bool:
         """
-        Перевірка чи налаштовані основні змінні середовища
+        Check if main environment variables are configured
 
         Returns:
-            True якщо основні змінні налаштовані
+            True if main variables are configured
         """
         required_vars = ["GIT_USER_NAME", "GIT_USER_EMAIL"]
         return all(os.getenv(var) for var in required_vars)

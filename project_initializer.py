@@ -1,5 +1,5 @@
 """
-Ініціалізатор проекту - створення необхідних файлів та структури
+Ініціалізатор project - Creating необхідних files та структури
 """
 
 import json
@@ -14,26 +14,26 @@ import yaml
 
 class ProjectInitializer:
     """
-    Ініціалізатор для автоматичного створення структури проекту
+    Ініціалізатор для автоматичного Creating структури project
 
     Функції:
-    - Створення базових файлів проекту
-    - Створення GitHub workflows
-    - Створення конфігураційних файлів
-    - Визначення типу проекту та мови програмування
+    - Creating базових files project
+    - Creating GitHub workflows
+    - Creating конфігураційних files
+    - Визначення типу project та мови програмування
     """
 
     def __init__(self, project_path: Path):
         """
-        Ініціалізація
+        initialization
 
         Args:
-            project_path: Шлях до проекту
+            project_path: path до project
         """
         self.project_path = project_path
         self.logger = logging.getLogger("ProjectInitializer")
 
-        # Шаблони файлів для різних типів проектів
+        # Шаблони files для різних типів проектів
         self.project_templates = {
             "python": {
                 "extensions": [".py"],
@@ -63,58 +63,58 @@ class ProjectInitializer:
 
     def initialize(self) -> bool:
         """
-        Основна ініціалізація проекту
+        Основна initialization project
 
         Returns:
-            True якщо ініціалізація успішна
+            True якщо initialization успішна
         """
         try:
-            self.logger.info("Початок ініціалізації проекту")
+            self.logger.info("Початок ініціалізації project")
 
-            # 1. Визначення типу проекту
+            # 1. Визначення типу project
             project_type = self._detect_project_type()
-            self.logger.info(f"Визначено тип проекту: {project_type}")
+            self.logger.info(f"Визначено тип project: {project_type}")
 
-            # 2. Створення базової структури
+            # 2. Creating базової структури
             self._create_basic_structure(project_type)
 
-            # 3. Створення базових файлів
+            # 3. Creating базових files
             self._create_basic_files(project_type)
 
-            # 4. Створення GitHub workflows
+            # 4. Creating GitHub workflows
             self._create_github_workflows(project_type)
 
-            # 5. Створення конфігураційних файлів
+            # 5. Creating конфігураційних files
             self._create_config_files(project_type)
 
-            # 6. Створення файлів для Codex
+            # 6. Creating files для Codex
             self._create_codex_files(project_type)
 
-            # 7. Створення CHANGELOG.md
+            # 7. Creating CHANGELOG.md
             self._create_changelog()
 
-            # 8. Створення шаблону DEV_PLAN.md (якщо не існує)
+            # 8. Creating шаблону DEV_PLAN.md (якщо does not exist)
             self._ensure_dev_plan_exists()
 
-            # 9. Створення файлів змінних середовища
+            # 9. Creating files змінних середовища
             self._create_environment_files()
 
-            # 10. Створення скрипта автоматичного налаштування проекту
+            # 10. Creating скрипта автоматичного configuration project
             self.create_setup_script()
 
-            self.logger.info("Ініціалізація проекту завершена успішно")
+            self.logger.info("initialization project completed Successfully")
             return True
 
         except Exception as e:
-            self.logger.error(f"Помилка ініціалізації проекту: {e}")
+            self.logger.error(f"Error ініціалізації project: {e}")
             return False
 
     def _detect_project_type(self) -> str:
         """
-        Визначення типу проекту на основі існуючих файлів
+        Визначення типу project на основі існуючих files
 
         Returns:
-            Тип проекту
+            Тип project
         """
         try:
             files = list(self.project_path.glob("**/*"))
@@ -124,7 +124,7 @@ class ProjectInitializer:
                 if file_path.is_file():
                     file_extensions.add(file_path.suffix.lower())
 
-            # Аналіз типу проекту
+            # Аналіз типу project
             if ".py" in file_extensions:
                 return "python"
             elif any(ext in file_extensions for ext in [".js", ".jsx", ".ts", ".tsx"]):
@@ -135,11 +135,11 @@ class ProjectInitializer:
                 return "generic"
 
         except Exception as e:
-            self.logger.warning(f"Помилка визначення типу проекту: {e}")
+            self.logger.warning(f"Error визначення типу project: {e}")
             return "generic"
 
     def _create_basic_structure(self, project_type: str):
-        """Створення базової структури директорій"""
+        """Creating базової структури директорій"""
         template = self.project_templates[project_type]
 
         for directory in template["directories"]:
@@ -147,14 +147,14 @@ class ProjectInitializer:
             dir_path.mkdir(exist_ok=True)
             self.logger.info(f"Створено директорію: {directory}")
 
-            # Створення __init__.py для Python пакетів
+            # Creating __init__.py для Python пакетів
             if project_type == "python" and directory in ["src", "tests"]:
                 init_file = dir_path / "__init__.py"
                 if not init_file.exists():
                     init_file.write_text("# Auto-generated by NIMDA Agent\n")
 
     def _create_basic_files(self, project_type: str):
-        """Створення базових файлів проекту"""
+        """Creating базових files project"""
         if project_type == "python":
             self._create_python_files()
         elif project_type == "javascript":
@@ -162,12 +162,12 @@ class ProjectInitializer:
         elif project_type == "web":
             self._create_web_files()
 
-        # Загальні файли для всіх типів
+        # Загальні files для всіх типів
         self._create_readme()
         self._create_gitignore(project_type)
 
     def _create_python_files(self):
-        """Створення файлів для Python проекту"""
+        """Creating files для Python project"""
         # requirements.txt
         requirements_file = self.project_path / "requirements.txt"
         if not requirements_file.exists():
@@ -255,7 +255,7 @@ if __name__ == "__main__":
             self.logger.info("Створено main.py")
 
     def _create_javascript_files(self):
-        """Створення файлів для JavaScript проекту"""
+        """Creating files для JavaScript project"""
         # package.json
         package_file = self.project_path / "package.json"
         if not package_file.exists():
@@ -313,7 +313,7 @@ module.exports = { main };
             self.logger.info("Створено index.js")
 
     def _create_web_files(self):
-        """Створення файлів для веб проекту"""
+        """Creating files для веб project"""
         # index.html
         html_file = self.project_path / "index.html"
         if not html_file.exists():
@@ -329,13 +329,13 @@ module.exports = { main };
 <body>
     <header>
         <h1>🤖 {project_name}</h1>
-        <p>Проект створено за допомогою NIMDA Agent</p>
+        <p>project створено за допомогою NIMDA Agent</p>
     </header>
 
     <main>
         <section>
             <h2>Ласкаво просимо!</h2>
-            <p>Цей проект було автоматично ініціалізовано NIMDA Agent.</p>
+            <p>Цей project було автоматично ініціалізовано NIMDA Agent.</p>
         </section>
     </main>
 
@@ -451,22 +451,22 @@ window.ProjectUtils = {
             self.logger.info("Створено script.js")
 
     def _create_readme(self):
-        """Створення README.md"""
+        """Creating README.md"""
         readme_file = self.project_path / "README.md"
         if not readme_file.exists():
             project_name = self.project_path.name
             readme_content = f"""# {project_name}
 
-🤖 Проект створено та керується за допомогою **NIMDA Agent** - автономного агента розробки.
+🤖 project створено та керується за допомогою **NIMDA Agent** - автономного агента development.
 
-## Опис проекту
+## Опис project
 
-Додайте тут опис вашого проекту.
+Додайте тут опис вашого project.
 
 ## Встановлення
 
 ```bash
-# Клонування репозиторію
+# Клонування repository
 git clone <repository-url>
 cd {project_name.lower()}
 
@@ -480,58 +480,58 @@ npm install
 ## Використання
 
 ```bash
-# Запуск проекту
+# Запуск project
 python main.py
 
 # Або для Node.js
 npm start
 ```
 
-## Структура проекту
+## Структура project
 
 ```
 {project_name}/
-├── README.md           # Цей файл
-├── DEV_PLAN.md        # План розробки
-├── CHANGELOG.md       # Журнал змін
+├── README.md           # Цей file
+├── DEV_PLAN.md        # plan development
+├── CHANGELOG.md       # changelog
 ├── requirements.txt   # Python залежності
-├── main.py           # Головний файл
+├── main.py           # Головний file
 ├── src/              # Вихідний код
 ├── tests/            # Тести
-├── docs/             # Документація
+├── docs/             # documentation
 └── .github/          # GitHub workflows
 ```
 
 ## NIMDA Agent
 
-Цей проект використовує NIMDA Agent для автоматизації розробки:
+Цей project використовує NIMDA Agent для автоматизації development:
 
-- 📋 Автоматичне виконання плану розробки з DEV_PLAN.md
+- 📋 Автоматичне execution plan development з DEV_PLAN.md
 - 🔧 Автоматичне виправлення помилок
-- 🔄 Синхронізація з Git репозиторієм
-- 📝 Ведення журналу змін
+- 🔄 synchronization з Git репозиторієм
+- 📝 Ведення журналу changes
 
 ### Команди для NIMDA Agent
 
-- `допрацюй девплан` - оновити план розробки
-- `виконай задачу номер X` - виконати конкретну задачу
-- `виконай весь ДЕВ` - виконати весь план
-- `статус` - показати поточний статус
-- `синхронізація` - синхронізувати з Git
+- `допрацюй девплан` - update plan development
+- `виконай задачу номер X` - execute конкретну задачу
+- `виконай весь ДЕВ` - execute весь plan
+- `status` - показати поточний status
+- `synchronization` - синхронізувати з Git
 
 ## Ліцензія
 
-MIT License - дивіться файл LICENSE для деталей.
+MIT License - дивіться file LICENSE для деталей.
 
 ## Автор
 
-Створено NIMDA Agent - автономним агентом розробки.
+Створено NIMDA Agent - автономним агентом development.
 """
             readme_file.write_text(readme_content)
             self.logger.info("Створено README.md")
 
     def _create_gitignore(self, project_type: str):
-        """Створення .gitignore файлу"""
+        """Creating .gitignore file"""
         gitignore_file = self.project_path / ".gitignore"
 
         if gitignore_file.exists():
@@ -661,7 +661,7 @@ build/
         self.logger.info("Створено .gitignore")
 
     def _create_github_workflows(self, project_type: str):
-        """Створення адаптивних GitHub workflows"""
+        """Creating адаптивних GitHub workflows"""
         workflows_dir = self.project_path / ".github" / "workflows"
         workflows_dir.mkdir(parents=True, exist_ok=True)
 
@@ -727,7 +727,7 @@ jobs:
           echo "python-version=3.11" >> $GITHUB_OUTPUT
         fi
         
-        # Перевірка файлів
+        # Перевірка files
         echo "has-requirements=$([ -f requirements.txt ] && echo true || echo false)" >> $GITHUB_OUTPUT
         echo "has-tests=$([ -d tests ] && echo true || echo false)" >> $GITHUB_OUTPUT
         echo "has-nimda=$([ -f nimda_agent_plugin/run_nimda_agent.py ] && echo true || echo false)" >> $GITHUB_OUTPUT
@@ -787,7 +787,7 @@ jobs:
       if: needs.detect-environment.outputs.has-nimda == 'true'
       run: |
         cd nimda_agent_plugin
-        python run_nimda_agent.py --command "статус" || echo "NIMDA Agent test completed"
+        python run_nimda_agent.py --command "status" || echo "NIMDA Agent test completed"
 
     - name: Upload coverage
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
@@ -804,7 +804,7 @@ jobs:
       run: |
         echo "🔍 Checking VS Code workspace configuration..."
         
-        # Перевірка .vscode файлів
+        # Перевірка .vscode files
         if [ -d ".vscode" ]; then
           echo "✅ VS Code workspace detected"
           ls -la .vscode/
@@ -866,7 +866,7 @@ jobs:
       run: |
         if [ -f "nimda_agent_plugin/run_nimda_agent.py" ]; then
           echo "🤖 NIMDA Agent detected"
-          python3 nimda_agent_plugin/run_nimda_agent.py --command "статус" || echo "NIMDA test completed"
+          python3 nimda_agent_plugin/run_nimda_agent.py --command "status" || echo "NIMDA test completed"
         fi
 """
 
@@ -895,7 +895,7 @@ jobs:
         echo "OS: ${{ matrix.os }}"
         echo "Runner: ${{ runner.os }}"
         
-        # Детекція типу проекту
+        # Детекція типу project
         if [ -f "requirements.txt" ] || [ -f "setup.py" ]; then
           echo "🐍 Python project detected"
         fi
@@ -926,7 +926,7 @@ jobs:
       run: |
         if [ -f "nimda_agent_plugin/run_nimda_agent.py" ]; then
           echo "🚀 Testing NIMDA Agent"
-          python3 nimda_agent_plugin/run_nimda_agent.py --command "статус" || echo "NIMDA test completed"
+          python3 nimda_agent_plugin/run_nimda_agent.py --command "status" || echo "NIMDA test completed"
         fi
 """
 
@@ -943,13 +943,13 @@ on:
       command:
         description: 'NIMDA Agent Command'
         required: true
-        default: 'статус'
+        default: 'status'
         type: choice
         options:
-          - 'статус'
+          - 'status'
           - 'допрацюй девплан'
           - 'виконай весь ДЕВ'
-          - 'синхронізація'
+          - 'synchronization'
 
 jobs:
   nimda-agent:
@@ -975,23 +975,23 @@ jobs:
     - name: Run NIMDA Agent
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NIMDA_COMMAND: ${{ github.event.inputs.command || 'статус' }}
+        NIMDA_COMMAND: ${{ github.event.inputs.command || 'status' }}
       run: |
         echo "🤖 Запуск NIMDA Agent з командою: $NIMDA_COMMAND"
         # Тут буде код для запуску NIMDA Agent
         python -c "
 import os
-print(f'🤖 NIMDA Agent Command: {os.getenv(\"NIMDA_COMMAND\", \"статус\")}')
+print(f'🤖 NIMDA Agent Command: {os.getenv(\"NIMDA_COMMAND\", \"status\")}')
 print('📁 Project structure:')
 for root, dirs, files in os.walk('.'):
     level = root.replace('.', '').count(os.sep)
     indent = ' ' * 2 * level
     print(f'{indent}{os.path.basename(root)}/')
     subindent = ' ' * 2 * (level + 1)
-    for file in files[:5]:  # Показати тільки перші 5 файлів
+    for file in files[:5]:  # Показати тільки перші 5 files
         print(f'{subindent}{file}')
     if len(files) > 5:
-        print(f'{subindent}... та {len(files)-5} інших файлів')
+        print(f'{subindent}... та {len(files)-5} інших files')
 "
 
     - name: Commit and push changes
@@ -1000,10 +1000,10 @@ for root, dirs, files in os.walk('.'):
         git config --local user.name "NIMDA Agent"
         git add .
         if ! git diff --cached --exit-code; then
-          git commit -m "🤖 NIMDA Agent: автоматичні зміни"
+          git commit -m "🤖 NIMDA Agent: автоматичні changes"
           git push
         else
-          echo "Немає змін для коміту"
+          echo "No changes to commit"
         fi
 """
 
@@ -1034,10 +1034,10 @@ jobs:
       run: |
         echo "🔧 Setting up VS Code compatible environment..."
         
-        # Створення .vscode директорії якщо не існує
+        # Creating .vscode directory якщо does not exist
         mkdir -p .vscode
         
-        # Створення базових налаштувань VS Code
+        # Creating базових налаштувань VS Code
         cat > .vscode/settings.json << 'EOF'
         {
           "python.defaultInterpreterPath": "./nimda_env/bin/python",
@@ -1060,7 +1060,7 @@ jobs:
       run: |
         echo "🧪 Testing VS Code configuration..."
         
-        # Перевірка синтаксису JSON файлів
+        # Перевірка синтаксису JSON files
         for file in .vscode/*.json; do
           if [ -f "$file" ]; then
             echo "Validating $file..."
@@ -1074,7 +1074,7 @@ jobs:
         
         if [ -f "nimda_agent_plugin/run_nimda_agent.py" ]; then
           echo "✅ NIMDA Agent found"
-          python3 nimda_agent_plugin/run_nimda_agent.py --command "статус" || echo "NIMDA Agent test completed"
+          python3 nimda_agent_plugin/run_nimda_agent.py --command "status" || echo "NIMDA Agent test completed"
         else
           echo "⚠️ NIMDA Agent not found"
         fi
@@ -1132,13 +1132,13 @@ jobs:
       run: |
         if [ -f "nimda_agent_plugin/run_nimda_agent.py" ]; then
           echo "Testing NIMDA Agent..."
-          python nimda_agent_plugin/run_nimda_agent.py --command "статус" || echo "NIMDA test completed"
+          python nimda_agent_plugin/run_nimda_agent.py --command "status" || echo "NIMDA test completed"
         fi
       shell: bash
 """
 
     def _create_config_files(self, project_type: str):
-        """Створення конфігураційних файлів"""
+        """Creating конфігураційних files"""
         # codex.yaml для Codex інтеграції
         codex_file = self.project_path / "codex.yaml"
         if not codex_file.exists():
@@ -1154,7 +1154,7 @@ jobs:
             self.logger.info("Створено codex.yaml")
 
     def _get_entrypoint(self, project_type: str) -> str:
-        """Отримання точки входу для проекту"""
+        """Receiving точки входу для project"""
         if project_type == "python":
             return "main.py"
         elif project_type == "javascript":
@@ -1165,7 +1165,7 @@ jobs:
             return "README.md"
 
     def _get_run_command(self, project_type: str) -> str:
-        """Отримання команди запуску для проекту"""
+        """Receiving команди запуску для project"""
         commands = []
 
         if project_type == "python":
@@ -1187,7 +1187,7 @@ jobs:
         return "|\n  " + "\n  ".join(commands)
 
     def _create_codex_files(self, project_type: str):
-        """Створення файлів для інтеграції з Codex"""
+        """Creating files для інтеграції з Codex"""
         # .codex/config.json
         codex_dir = self.project_path / ".codex"
         codex_dir.mkdir(exist_ok=True)
@@ -1199,10 +1199,10 @@ jobs:
                     "enabled": True,
                     "auto_execute": False,
                     "commands": [
-                        "статус",
+                        "status",
                         "допрацюй девплан",
                         "виконай весь ДЕВ",
-                        "синхронізація",
+                        "synchronization",
                     ],
                 },
                 "project": {
@@ -1218,42 +1218,42 @@ jobs:
             self.logger.info("Створено .codex/config.json")
 
     def _create_changelog(self):
-        """Створення CHANGELOG.md"""
+        """Creating CHANGELOG.md"""
         changelog_file = self.project_path / "CHANGELOG.md"
         if not changelog_file.exists():
-            changelog_content = f"""# Журнал змін
+            changelog_content = f"""# changelog
 
-Всі значущі зміни цього проекту будуть документовані в цьому файлі.
+Всі значущі changes цього project будуть документовані в цьому файлі.
 
 Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
-і цей проект дотримується [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+і цей project дотримується [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Нереалізовано]
+## [Unreleased]
 
-### Додано
-- [ ] Базова структура проекту
+### Added
+- [ ] Базова структура project
 - [ ] Інтеграція з NIMDA Agent
-- [ ] Автоматизація розробки
+- [ ] Автоматизація development
 
-### Змінено
-- [ ] Оновлення документації
+### Changed
+- [ ] Updating документації
 
-### Виправлено
-- [ ] Початкове налаштування
+### Fixed
+- [ ] Початкове configuration
 
 ## [1.0.0] - {datetime.now().strftime("%Y-%m-%d")}
 
-### Додано
-- [x] Початкова ініціалізація проекту NIMDA Agent
-- [x] Створення базових файлів та структури
-- [x] Налаштування GitHub workflows
+### Added
+- [x] Початкова initialization project NIMDA Agent
+- [x] Creating базових files та структури
+- [x] configuration GitHub workflows
 - [x] Інтеграція з Codex
 
 ---
 
 **Легенда:**
-- [x] Виконано
-- [ ] Не виконано
+- [x] executed
+- [ ] Не executed
 - [-] Скасовано
 
 Цей журнал автоматично оновлюється NIMDA Agent.
@@ -1266,32 +1266,32 @@ jobs:
         dev_plan_file = self.project_path / "DEV_PLAN.md"
 
         if not dev_plan_file.exists():
-            self.logger.info("DEV_PLAN.md не існує - буде створено базовий шаблон")
-            # Створення базового шаблону DEV_PLAN.md
-            dev_plan_content = """# План розробки проекту
+            self.logger.info("DEV_PLAN.md does not exist - буде створено базовий шаблон")
+            # Creating базового шаблону DEV_PLAN.md
+            dev_plan_content = """# plan development project
 
 Автоматично створено NIMDA Agent.
 
 ## Загальна інформація
-- **Проект**: Автоматизований розробкою
-- **Статус**: В розробці
-- **Версія**: 1.0.0
+- **project**: Автоматизований розробкою
+- **status**: В розробці
+- **version**: 1.0.0
 
-## Задачі
+## task
 
-### 1. Базова ініціалізація
-- [ ] Налаштування проекту
-- [ ] Створення структури файлів
-- [ ] Налаштування Git репозиторію
+### 1. Базова initialization
+- [ ] configuration project
+- [ ] Creating структури files
+- [ ] configuration Git repository
 
-### 2. Розробка функціональності
+### 2. development функціональності
 - [ ] Основний функціонал
-- [ ] Тестування
-- [ ] Документація
+- [ ] testing
+- [ ] documentation
 
 ### 3. Фінальні кроки
 - [ ] Код-ревʼю
-- [ ] Тестування на різних платформах
+- [ ] testing на різних платформах
 - [ ] Деплой
 
 ## Прогрес
@@ -1300,29 +1300,29 @@ jobs:
 - Всього підзадач: 9
 
 ---
-*Цей файл автоматично оновлюється NIMDA Agent*
+*Цей file автоматично оновлюється NIMDA Agent*
 """
             dev_plan_file.write_text(dev_plan_content)
             self.logger.info("Створено базовий DEV_PLAN.md")
 
     def _create_environment_files(self):
-        """Створення файлів змінних середовища"""
+        """Creating files змінних середовища"""
         # .env.example - шаблон змінних середовища
         env_example_file = self.project_path / ".env.example"
         if not env_example_file.exists():
             env_example_content = """# NIMDA Agent Environment Variables Template
-# Скопіюйте цей файл у .env та заповніть своїми значеннями
+# Скопіюйте цей file у .env та заповніть своїми значеннями
 
 # Git конфігурація (обов'язково для комітів)
 GIT_USER_NAME=Your Name
 GIT_USER_EMAIL=your.email@example.com
 
-# GitHub налаштування (опціонально для роботи з репозиторієм)
+# GitHub configuration (опціонально для роботи з репозиторієм)
 GITHUB_TOKEN=your_github_personal_access_token
 GITHUB_USERNAME=your_github_username
 GITHUB_REPO_URL=https://github.com/username/repository.git
 
-# Налаштування проекту
+# configuration project
 PROJECT_NAME=NIMDA-CLI
 PROJECT_VERSION=1.0.0
 AUTO_COMMIT=true
@@ -1334,7 +1334,7 @@ LOG_LEVEL=INFO
 LOG_FILE_MAX_SIZE=10MB
 ENABLE_DEBUG=false
 
-# Розширені налаштування
+# Розширені configuration
 MAX_RETRIES=3
 TIMEOUT_SECONDS=30
 GITHUB_INTEGRATION=true
@@ -1352,13 +1352,13 @@ ANTHROPIC_API_KEY=your_anthropic_api_key_here
         if not env_file.exists():
             project_name = self.project_path.name
             env_content = f"""# NIMDA Agent Environment Variables
-# Автоматично згенеровано під час ініціалізації проекту
+# Автоматично згенеровано під час ініціалізації project
 
 # Git конфігурація
 GIT_USER_NAME=NIMDA Agent
 GIT_USER_EMAIL=nimda@agent.local
 
-# Налаштування проекту
+# configuration project
 PROJECT_NAME={project_name}
 PROJECT_VERSION=1.0.0
 AUTO_COMMIT=true
@@ -1369,13 +1369,13 @@ CREATE_BACKUPS=true
 LOG_LEVEL=INFO
 ENABLE_DEBUG=false
 
-# Розширені налаштування
+# Розширені configuration
 MAX_RETRIES=3
 TIMEOUT_SECONDS=30
 GITHUB_INTEGRATION=true
 CODEX_INTEGRATION=true
 
-# GitHub налаштування (потрібно заповнити вручну)
+# GitHub configuration (потрібно заповнити вручну)
 # GITHUB_TOKEN=
 # GITHUB_USERNAME=
 # GITHUB_REPO_URL=
@@ -1387,12 +1387,12 @@ CODEX_INTEGRATION=true
             env_file.write_text(env_content)
             self.logger.info("Створено .env з базовими налаштуваннями")
 
-        # setup_env.py - утиліта для налаштування змінних середовища
+        # setup_env.py - утиліта для configuration змінних середовища
         setup_env_file = self.project_path / "setup_env.py"
         if not setup_env_file.exists():
             setup_env_content = '''#!/usr/bin/env python3
 """
-Утиліта для налаштування змінних середовища NIMDA Agent
+Утиліта для configuration змінних середовища NIMDA Agent
 """
 
 import os
@@ -1400,9 +1400,9 @@ from pathlib import Path
 
 
 def setup_environment():
-    """Інтерактивне налаштування змінних середовища"""
+    """Інтерактивне configuration змінних середовища"""
     
-    print("🔧 Налаштування змінних середовища NIMDA Agent")
+    print("🔧 configuration змінних середовища NIMDA Agent")
     print("=" * 50)
     
     env_file = Path(".env")
@@ -1420,7 +1420,7 @@ def setup_environment():
     env_vars = {}
     
     # Обов'язкові змінні
-    print("\\n📋 Обов'язкові налаштування:")
+    print("\\n📋 Обов'язкові configuration:")
     
     git_name = input(f"Git ім'я користувача (GIT_USER_NAME) [{current_env.get('GIT_USER_NAME', 'NIMDA Agent')}]: ").strip()
     env_vars["GIT_USER_NAME"] = git_name or current_env.get('GIT_USER_NAME', 'NIMDA Agent')
@@ -1428,8 +1428,8 @@ def setup_environment():
     git_email = input(f"Git email (GIT_USER_EMAIL) [{current_env.get('GIT_USER_EMAIL', 'nimda@agent.local')}]: ").strip()
     env_vars["GIT_USER_EMAIL"] = git_email or current_env.get('GIT_USER_EMAIL', 'nimda@agent.local')
     
-    # GitHub налаштування
-    print("\\n🔗 GitHub налаштування (опціонально):")
+    # GitHub configuration
+    print("\\n🔗 GitHub configuration (опціонально):")
     
     github_token = input(f"GitHub токен (GITHUB_TOKEN) [{current_env.get('GITHUB_TOKEN', 'не встановлено')}]: ").strip()
     if github_token:
@@ -1443,16 +1443,16 @@ def setup_environment():
     elif "GITHUB_USERNAME" in current_env:
         env_vars["GITHUB_USERNAME"] = current_env["GITHUB_USERNAME"]
     
-    github_repo = input(f"GitHub репозиторій URL (GITHUB_REPO_URL) [{current_env.get('GITHUB_REPO_URL', '')}]: ").strip()
+    github_repo = input(f"GitHub repository URL (GITHUB_REPO_URL) [{current_env.get('GITHUB_REPO_URL', '')}]: ").strip()
     if github_repo:
         env_vars["GITHUB_REPO_URL"] = github_repo
     elif "GITHUB_REPO_URL" in current_env:
         env_vars["GITHUB_REPO_URL"] = current_env["GITHUB_REPO_URL"]
     
-    # Налаштування проекту
-    print("\\n⚙️ Налаштування проекту:")
+    # configuration project
+    print("\\n⚙️ configuration project:")
     
-    project_name = input(f"Назва проекту (PROJECT_NAME) [{current_env.get('PROJECT_NAME', 'NIMDA-CLI')}]: ").strip()
+    project_name = input(f"Назва project (PROJECT_NAME) [{current_env.get('PROJECT_NAME', 'NIMDA-CLI')}]: ").strip()
     env_vars["PROJECT_NAME"] = project_name or current_env.get('PROJECT_NAME', 'NIMDA-CLI')
     
     auto_commit = input(f"Автоматичні коміти (AUTO_COMMIT) [{current_env.get('AUTO_COMMIT', 'true')}]: ").strip().lower()
@@ -1485,7 +1485,7 @@ def setup_environment():
         if key not in env_vars:
             env_vars[key] = value
     
-    # Запис у файл
+    # entry у file
     with open(env_file, "w") as f:
         f.write("# NIMDA Agent Environment Variables\\n")
         f.write("# Оновлено автоматично\\n\\n")
@@ -1493,10 +1493,10 @@ def setup_environment():
         # Групування змінних
         groups = {
             "Git конфігурація": ["GIT_USER_NAME", "GIT_USER_EMAIL"],
-            "Налаштування проекту": ["PROJECT_NAME", "PROJECT_VERSION", "AUTO_COMMIT", "AUTO_PUSH", "CREATE_BACKUPS"],
+            "configuration project": ["PROJECT_NAME", "PROJECT_VERSION", "AUTO_COMMIT", "AUTO_PUSH", "CREATE_BACKUPS"],
             "Логування": ["LOG_LEVEL", "ENABLE_DEBUG"],
-            "Розширені налаштування": ["MAX_RETRIES", "TIMEOUT_SECONDS", "GITHUB_INTEGRATION", "CODEX_INTEGRATION"],
-            "GitHub налаштування": ["GITHUB_TOKEN", "GITHUB_USERNAME", "GITHUB_REPO_URL"]
+            "Розширені configuration": ["MAX_RETRIES", "TIMEOUT_SECONDS", "GITHUB_INTEGRATION", "CODEX_INTEGRATION"],
+            "GitHub configuration": ["GITHUB_TOKEN", "GITHUB_USERNAME", "GITHUB_REPO_URL"]
         }
         
         for group_name, keys in groups.items():
@@ -1518,7 +1518,7 @@ def show_current_env():
     env_file = Path(".env")
     
     if not env_file.exists():
-        print("❌ Файл .env не знайдено")
+        print("❌ file .env not found")
         print("💡 Запустіть: python setup_env.py --setup")
         return
     
@@ -1550,7 +1550,7 @@ def validate_environment():
     
     env_file = Path(".env")
     if not env_file.exists():
-        print("❌ Файл .env не знайдено")
+        print("❌ file .env not found")
         return False
     
     required_vars = ["GIT_USER_NAME", "GIT_USER_EMAIL"]
@@ -1582,7 +1582,7 @@ def validate_environment():
     missing_optional = [var for var in optional_important if var not in env_vars or not env_vars[var]]
     
     if missing_optional:
-        print(f"⚠️ Опціональні змінні не налаштовано: {', '.join(missing_optional)}")
+        print(f"⚠️ Опціональні змінні not configured: {', '.join(missing_optional)}")
         print("   Деякі функції можуть бути недоступні")
     
     return True
@@ -1593,10 +1593,10 @@ def main():
     
     import argparse
     
-    parser = argparse.ArgumentParser(description="Налаштування змінних середовища NIMDA Agent")
-    parser.add_argument("--setup", action="store_true", help="Налаштувати змінні середовища")
+    parser = argparse.ArgumentParser(description="configuration змінних середовища NIMDA Agent")
+    parser.add_argument("--setup", action="store_true", help="configure змінні середовища")
     parser.add_argument("--show", action="store_true", help="Показати поточні змінні")
-    parser.add_argument("--validate", action="store_true", help="Перевірити змінні середовища")
+    parser.add_argument("--validate", action="store_true", help="check змінні середовища")
     
     args = parser.parse_args()
     
@@ -1608,10 +1608,10 @@ def main():
         validate_environment()
     else:
         # Інтерактивний режим
-        print("🤖 NIMDA Agent - Налаштування змінних середовища")
-        print("1. Налаштувати змінні")
+        print("🤖 NIMDA Agent - configuration змінних середовища")
+        print("1. configure змінні")
         print("2. Показати поточні змінні")
-        print("3. Перевірити налаштування")
+        print("3. check configuration")
         print("0. Вихід")
         
         choice = input("\\nВиберіть опцію: ").strip()
@@ -1632,11 +1632,11 @@ if __name__ == "__main__":
             setup_env_file.write_text(setup_env_content)
             self.logger.info("Створено setup_env.py")
 
-        # Оновлення .gitignore для включення .env
+        # Updating .gitignore для включення .env
         self._update_gitignore_for_env()
 
     def _update_gitignore_for_env(self):
-        """Оновлення .gitignore для змінних середовища"""
+        """Updating .gitignore для змінних середовища"""
         gitignore_file = self.project_path / ".gitignore"
 
         if gitignore_file.exists():
@@ -1649,14 +1649,14 @@ if __name__ == "__main__":
                     "\n# Environment variables\n.env\n.env.local\n.env.*.local\n"
                 )
 
-                # Додавання в кінець файлу
+                # Додавання в кінець file
                 with open(gitignore_file, "a") as f:
                     f.write(env_section)
 
                 self.logger.info("Оновлено .gitignore для змінних середовища")
 
     def create_setup_script(self):
-        """Створення розумного скрипта для автоматичного налаштування проекту"""
+        """Creating розумного скрипта для автоматичного configuration project"""
         setup_script = self.project_path / "setup_project.py"
 
         if not setup_script.exists():
@@ -1787,8 +1787,8 @@ def check_python_compatibility(env_info):
 
 
 def setup_with_existing_environment(env_info):
-    """Налаштування з існуючим NIMDA environment"""
-    print("🔧 Налаштування з існуючим NIMDA environment...")
+    """configuration з існуючим NIMDA environment"""
+    print("🔧 configuration з існуючим NIMDA environment...")
     
     venv_path = Path(env_info["venv_path"])
     python_exe = venv_path / "bin" / "python"
@@ -1800,7 +1800,7 @@ def setup_with_existing_environment(env_info):
         # Перевірка активації environment
         result = subprocess.run([str(python_exe), "--version"], 
                               capture_output=True, text=True, check=True)
-        print(f"✅ NIMDA Environment активний: {result.stdout.strip()}")
+        print(f"✅ NIMDA Environment active: {result.stdout.strip()}")
         
         # Встановлення додаткових залежностей якщо потрібно
         requirements_files = [
@@ -1818,13 +1818,13 @@ def setup_with_existing_environment(env_info):
         return True
         
     except subprocess.CalledProcessError as e:
-        print(f"❌ Помилка роботи з environment: {e}")
+        print(f"❌ Error роботи з environment: {e}")
         return False
 
 
 def create_vscode_integration(env_info):
-    """Створення інтеграції з VS Code"""
-    print("🆚 Налаштування VS Code інтеграції...")
+    """Creating інтеграції з VS Code"""
+    print("🆚 configuration VS Code інтеграції...")
     
     vscode_dir = Path(".vscode")
     vscode_dir.mkdir(exist_ok=True)
@@ -1893,7 +1893,7 @@ def create_vscode_integration(env_info):
             {
                 "label": "Run NIMDA Agent Status",
                 "type": "shell",
-                "command": f"{activate_cmd} && {python_cmd} nimda_agent_plugin/run_nimda_agent.py --command 'статус'",
+                "command": f"{activate_cmd} && {python_cmd} nimda_agent_plugin/run_nimda_agent.py --command 'status'",
                 "group": "test",
                 "presentation": {
                     "echo": True,
@@ -1931,7 +1931,7 @@ def create_vscode_integration(env_info):
                 "type": "python",
                 "request": "launch",
                 "program": "${workspaceFolder}/nimda_agent_plugin/run_nimda_agent.py",
-                "args": ["--command", "статус", "--verbose"],
+                "args": ["--command", "status", "--verbose"],
                 "console": "integratedTerminal",
                 "cwd": "${workspaceFolder}",
                 "python": python_path
@@ -1956,25 +1956,25 @@ def create_vscode_integration(env_info):
 
 
 def setup_environment_variables():
-    """Налаштування змінних середовища"""
-    print("🔧 Налаштування змінних середовища...")
+    """configuration змінних середовища"""
+    print("🔧 configuration змінних середовища...")
     
     env_setup_script = Path("nimda_agent_plugin/setup_env.py")
     
     if env_setup_script.exists():
-        print("📋 Запуск налаштування змінних середовища...")
+        print("📋 Запуск configuration змінних середовища...")
         try:
             subprocess.run([sys.executable, str(env_setup_script), "--setup"], check=True)
             print("✅ Змінні середовища налаштовано")
         except subprocess.CalledProcessError as e:
-            print(f"⚠️ Помилка налаштування змінних: {e}")
+            print(f"⚠️ Error configuration змінних: {e}")
             create_basic_env_file()
     else:
         create_basic_env_file()
 
 
 def create_basic_env_file():
-    """Створення базового .env файлу"""
+    """Creating базового .env file"""
     env_content = """# NIMDA Agent Environment Variables
 # Автоматично створено setup скриптом
 
@@ -1982,7 +1982,7 @@ def create_basic_env_file():
 GIT_USER_NAME=NIMDA Agent
 GIT_USER_EMAIL=nimda@agent.local
 
-# Налаштування проекту
+# configuration project
 PROJECT_NAME=NIMDA-CLI
 PROJECT_VERSION=1.0.0
 AUTO_COMMIT=true
@@ -1993,13 +1993,13 @@ CREATE_BACKUPS=true
 LOG_LEVEL=INFO
 ENABLE_DEBUG=false
 
-# Розширені налаштування
+# Розширені configuration
 MAX_RETRIES=3
 TIMEOUT_SECONDS=30
 GITHUB_INTEGRATION=true
 CODEX_INTEGRATION=true
 
-# GitHub налаштування (потрібно заповнити вручну)
+# GitHub configuration (потрібно заповнити вручну)
 # GITHUB_TOKEN=your_token_here
 # GITHUB_USERNAME=your_username
 # GITHUB_REPO_URL=https://github.com/username/repo.git
@@ -2009,17 +2009,17 @@ CODEX_INTEGRATION=true
     if not env_file.exists():
         with open(env_file, "w", encoding="utf-8") as f:
             f.write(env_content)
-        print(f"✅ Створено базовий файл .env")
+        print(f"✅ Створено базовий file .env")
 
 
 def test_nimda_agent(env_info):
-    """Тестування NIMDA Agent"""
-    print("🧪 Тестування NIMDA Agent...")
+    """testing NIMDA Agent"""
+    print("🧪 testing NIMDA Agent...")
     
     nimda_script = Path("nimda_agent_plugin/run_nimda_agent.py")
     
     if not nimda_script.exists():
-        print("❌ NIMDA Agent не знайдено")
+        print("❌ NIMDA Agent not found")
         return False
     
     # Вибір правильного Python executable
@@ -2035,11 +2035,11 @@ def test_nimda_agent(env_info):
     try:
         print("🚀 Запуск тестової команди...")
         result = subprocess.run([
-            str(python_exe), str(nimda_script), "--command", "статус"
+            str(python_exe), str(nimda_script), "--command", "status"
         ], capture_output=True, text=True, timeout=30)
         
         if result.returncode == 0:
-            print("✅ NIMDA Agent працює успішно!")
+            print("✅ NIMDA Agent працює Successfully!")
             print("📊 Результат тесту:")
             for line in result.stdout.strip().split('\\n'):
                 if line.strip():
@@ -2047,7 +2047,7 @@ def test_nimda_agent(env_info):
             return True
         else:
             print(f"⚠️ NIMDA Agent завершився з кодом {result.returncode}")
-            print("📝 Помилки:")
+            print("📝 Errors:")
             for line in result.stderr.strip().split('\\n'):
                 if line.strip():
                     print(f"   {line}")
@@ -2057,12 +2057,12 @@ def test_nimda_agent(env_info):
         print("⏰ Тайм-аут при тестуванні NIMDA Agent")
         return False
     except Exception as e:
-        print(f"❌ Помилка тестування: {e}")
+        print(f"❌ Error testing: {e}")
         return False
 
 
 def create_workspace_file(env_info):
-    """Створення VS Code workspace файлу"""
+    """Creating VS Code workspace file"""
     workspace = {
         "folders": [
             {
@@ -2088,7 +2088,7 @@ def create_workspace_file(env_info):
         }
     }
     
-    # Видалення None значень
+    # Deleting None значень
     if workspace["settings"]["python.defaultInterpreterPath"] is None:
         del workspace["settings"]["python.defaultInterpreterPath"]
     
@@ -2100,8 +2100,8 @@ def create_workspace_file(env_info):
 
 
 def main():
-    """Головна функція розумного налаштування"""
-    print("🤖 Розумне автоматичне налаштування NIMDA Agent")
+    """Головна функція розумного configuration"""
+    print("🤖 Розумне автоматичне configuration NIMDA Agent")
     print("=" * 60)
     
     # Детекція середовища
@@ -2112,15 +2112,15 @@ def main():
     if not check_python_compatibility(env_info):
         sys.exit(1)
     
-    print("\\n🔄 Початок налаштування...")
+    print("\\n🔄 Початок configuration...")
     
-    # Кроки налаштування
+    # Кроки configuration
     steps = [
-        ("Налаштування з існуючим environment", lambda: setup_with_existing_environment(env_info) if env_info["has_nimda_env"] else True),
-        ("Створення VS Code інтеграції", lambda: create_vscode_integration(env_info)),
-        ("Налаштування змінних середовища", setup_environment_variables),
-        ("Створення workspace файлу", lambda: create_workspace_file(env_info)),
-        ("Тестування NIMDA Agent", lambda: test_nimda_agent(env_info))
+        ("configuration з існуючим environment", lambda: setup_with_existing_environment(env_info) if env_info["has_nimda_env"] else True),
+        ("Creating VS Code інтеграції", lambda: create_vscode_integration(env_info)),
+        ("configuration змінних середовища", setup_environment_variables),
+        ("Creating workspace file", lambda: create_workspace_file(env_info)),
+        ("testing NIMDA Agent", lambda: test_nimda_agent(env_info))
     ]
     
     success_count = 0
@@ -2129,24 +2129,24 @@ def main():
         try:
             if step_func():
                 success_count += 1
-                print(f"✅ {step_name} - успішно")
+                print(f"✅ {step_name} - Successfully")
             else:
-                print(f"⚠️ {step_name} - завершено з попередженнями")
+                print(f"⚠️ {step_name} - completed з попередженнями")
         except Exception as e:
-            print(f"❌ {step_name} - помилка: {e}")
+            print(f"❌ {step_name} - Error: {e}")
     
-    print(f"\\n� Налаштування завершено: {success_count}/{len(steps)} кроків успішно")
+    print(f"\\n� configuration completed: {success_count}/{len(steps)} кроків Successfully")
     
     if success_count >= len(steps) - 1:  # Допускаємо одну помилку
         print("\\n🎉 NIMDA Agent готовий до роботи!")
         print("\\n📚 Наступні кроки:")
-        print("  1. Відкрийте проект у VS Code")
+        print("  1. Відкрийте project у VS Code")
         print("  2. Виберіть рекомендовані розширення")
         print("  3. Налаштуйте GitHub токен у .env файлі")
         print("  4. Запустіть: Ctrl+Shift+P -> 'Tasks: Run Task' -> 'Run NIMDA Agent Status'")
     else:
-        print("\\n⚠️ Деякі кроки не вдалося виконати")
-        print("Перевірте помилки вище та спробуйте знову")
+        print("\\n⚠️ Деякі кроки failed to execute")
+        print("Перевірте Errors вище та спробуйте знову")
 
 
 if __name__ == "__main__":

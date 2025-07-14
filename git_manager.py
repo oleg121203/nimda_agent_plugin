@@ -1,66 +1,68 @@
 """
-Git менеджер - управління локальним та віддаленим репозиторієм
+Git manager - manages local and remote repository
 """
 
+import json
+import logging
 import os
 import subprocess
-import json
-from typing import Dict, List, Any, Optional
-from pathlib import Path
 from datetime import datetime
-import logging
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class GitManager:
     """
-    Менеджер для роботи з Git репозиторієм
+    Manager for Git repository operations
 
-    Функції:
-    - Управління локальним Git репозиторієм
-    - Синхронізація з GitHub
-    - Автоматичні коміти та пуші
-    - Резолюція конфліктів
-    - Управління гілками
+    Functions:
+    - Local Git repository management
+    - GitHub synchronization
+    - Automatic commits and pushes
+    - Conflict resolution
+    - Branch management
     """
 
     def __init__(self, project_path: Path):
         """
-        Ініціалізація Git менеджера
+        Initialize Git manager
 
         Args:
-            project_path: Шлях до проекту
+            project_path: Path to project
         """
         self.project_path = project_path
-        self.logger = logging.getLogger('GitManager')
+        self.logger = logging.getLogger("GitManager")
 
-        # Конфігурація
+        # Configuration
         self.config = {
             "auto_commit": True,
             "auto_push": True,
             "auto_pull": True,
             "commit_message_prefix": "🤖 NIMDA:",
             "main_branch": "main",
-            "backup_branch": "nimda-backup"
+            "backup_branch": "nimda-backup",
         }
 
-        # Перевірка та ініціалізація Git
+        # Check and initialize Git
         self._ensure_git_initialized()
 
     def _ensure_git_initialized(self):
-        """Перевірка та ініціалізація Git репозиторію"""
+        """Check and initialize Git repository"""
         git_dir = self.project_path / ".git"
 
         if not git_dir.exists():
-            self.logger.info("Git репозиторій не знайдено. Ініціалізація...")
+            self.logger.info("Git repository not found. Initializing...")
             self._run_git_command(["git", "init"])
 
-            # Створення початкового коміту
+            # Create initial commit
             self._create_gitignore()
             self._run_git_command(["git", "add", ".gitignore"])
-            self._run_git_command(["git", "commit", "-m", "🚀 Початковий коміт NIMDA Agent"])
+            self._run_git_command(
+                ["git", "commit", "-m", "🚀 Initial NIMDA Agent commit"]
+            )
 
     def _create_gitignore(self):
-        """Створення базового .gitignore файлу"""
+        """Create basic .gitignore file"""
         gitignore_content = """# NIMDA Agent
 nimda_logs/
 nimda_agent_config.json
@@ -109,7 +111,7 @@ Thumbs.db
 *.log
 logs/
 
-# Node modules (якщо використовується JavaScript)
+# Node modules (if using JavaScript)
 node_modules/
 
 # Backup files
@@ -121,18 +123,20 @@ node_modules/
 
         if not gitignore_file.exists():
             try:
-                with open(gitignore_file, 'w', encoding='utf-8') as f:
+                with open(gitignore_file, "w", encoding="utf-8") as f:
                     f.write(gitignore_content)
-                self.logger.info(".gitignore створено")
+                self.logger.info(".gitignore created")
             except Exception as e:
-                self.logger.error(f"Помилка створення .gitignore: {e}")
+                self.logger.error(f"Error creating .gitignore: {e}")
 
-    def _run_git_command(self, command: List[str], capture_output: bool = True) -> Optional[str]:
+    def _run_git_command(
+        self, command: List[str], capture_output: bool = True
+    ) -> Optional[str]:
         """
-        Виконання Git команди
+        execution Git команди
 
         Args:
-            command: Команда для виконання
+            command: Команда для execution
             capture_output: Чи захоплювати вивід
 
         Returns:
@@ -144,7 +148,7 @@ node_modules/
                 cwd=self.project_path,
                 capture_output=capture_output,
                 text=True,
-                check=True
+                check=True,
             )
 
             if capture_output:
@@ -153,36 +157,36 @@ node_modules/
             return "Success"
 
         except subprocess.CalledProcessError as e:
-            self.logger.error(f"Помилка виконання команди {' '.join(command)}: {e}")
+            self.logger.error(f"Error executing command {' '.join(command)}: {e}")
             if capture_output and e.stdout:
                 self.logger.error(f"STDOUT: {e.stdout}")
             if capture_output and e.stderr:
                 self.logger.error(f"STDERR: {e.stderr}")
             return None
         except Exception as e:
-            self.logger.error(f"Неочікувана помилка Git команди: {e}")
+            self.logger.error(f"Неочікувана Git error команди: {e}")
             return None
 
     def get_status(self) -> Dict[str, Any]:
         """
-        Отримання статусу Git репозиторію
+        Receiving статусу Git repository
 
         Returns:
-            Статус репозиторію
+            status repository
         """
         try:
-            # Перевірка чи є Git репозиторій
+            # Перевірка чи є Git repository
             git_dir = self.project_path / ".git"
             if not git_dir.exists():
                 return {
                     "initialized": False,
-                    "message": "Git репозиторій не ініціалізовано"
+                    "message": "Git repository not initialized",
                 }
 
-            # Поточна гілка
+            # current branch
             current_branch = self._run_git_command(["git", "branch", "--show-current"])
 
-            # Статус файлів
+            # status files
             status_output = self._run_git_command(["git", "status", "--porcelain"])
 
             # Аналіз статусу
@@ -192,27 +196,29 @@ node_modules/
             untracked_files = []
 
             if status_output:
-                for line in status_output.split('\n'):
+                for line in status_output.split("\n"):
                     if line:
                         status_code = line[:2]
                         file_path = line[3:]
 
-                        if status_code[0] != ' ' and status_code[0] != '?':
+                        if status_code[0] != " " and status_code[0] != "?":
                             staged_files.append(file_path)
 
-                        if status_code[1] != ' ':
-                            if status_code[0] == '?':
+                        if status_code[1] != " ":
+                            if status_code[0] == "?":
                                 untracked_files.append(file_path)
                             else:
                                 unstaged_files.append(file_path)
 
-            # Інформація про віддалений репозиторій
-            remote_url = self._run_git_command(["git", "config", "--get", "remote.origin.url"])
+            # Інформація про remote repository
+            remote_url = self._run_git_command(
+                ["git", "config", "--get", "remote.origin.url"]
+            )
 
-            # Останній коміт
+            # last commit
             last_commit = self._run_git_command(["git", "log", "-1", "--oneline"])
 
-            # Кількість комітів попереду/позаду
+            # commit count ahead/behind
             behind_ahead = self._get_behind_ahead_count()
 
             return {
@@ -226,33 +232,34 @@ node_modules/
                 "last_commit": last_commit,
                 "behind_count": behind_ahead.get("behind", 0),
                 "ahead_count": behind_ahead.get("ahead", 0),
-                "total_files": len(staged_files) + len(unstaged_files) + len(untracked_files)
+                "total_files": len(staged_files)
+                + len(unstaged_files)
+                + len(untracked_files),
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка отримання статусу Git: {e}")
+            self.logger.error(f"Error getting status Git: {e}")
             return {
                 "initialized": False,
                 "error": str(e),
-                "message": "Помилка отримання статусу репозиторію"
+                "message": "Error getting status repository",
             }
 
     def _get_behind_ahead_count(self) -> Dict[str, int]:
-        """Отримання кількості комітів позаду/попереду віддаленої гілки"""
+        """Receiving кількості комітів behind/ahead віддаленої branch"""
         try:
             # Спочатку fetch щоб отримати останню інформацію
             self._run_git_command(["git", "fetch"], capture_output=False)
 
-            # Отримуємо кількість комітів
-            output = self._run_git_command(["git", "rev-list", "--left-right", "--count", "HEAD...@{u}"])
+            # Отримуємо commit count
+            output = self._run_git_command(
+                ["git", "rev-list", "--left-right", "--count", "HEAD...@{u}"]
+            )
 
             if output:
-                parts = output.split('\t')
+                parts = output.split("\t")
                 if len(parts) == 2:
-                    return {
-                        "ahead": int(parts[0]),
-                        "behind": int(parts[1])
-                    }
+                    return {"ahead": int(parts[0]), "behind": int(parts[1])}
 
             return {"ahead": 0, "behind": 0}
 
@@ -261,52 +268,49 @@ node_modules/
 
     def has_changes(self) -> bool:
         """
-        Перевірка чи є незбережені зміни
+        Перевірка чи є незбережені changes
 
         Returns:
-            True якщо є зміни
+            True якщо є changes
         """
         status = self.get_status()
         return status.get("has_changes", False)
 
     def commit_changes(self, message: str, add_all: bool = True) -> Dict[str, Any]:
         """
-        Створення коміту зі змінами
+        Creating commit зі змінами
 
         Args:
-            message: Повідомлення коміту
-            add_all: Чи додавати всі файли автоматично
+            message: Повідомлення commit
+            add_all: Чи додавати all files автоматично
 
         Returns:
-            Результат створення коміту
+            Результат Creating commit
         """
         try:
             if not self.has_changes():
                 return {
                     "success": True,
-                    "message": "Немає змін для коміту",
-                    "commit_hash": None
+                    "message": "No changes to commit",
+                    "commit_hash": None,
                 }
 
-            # Додавання файлів
+            # Додавання files
             if add_all:
                 self._run_git_command(["git", "add", "."])
 
-            # Створення коміту
+            # Creating commit
             full_message = f"{self.config['commit_message_prefix']} {message}"
             result = self._run_git_command(["git", "commit", "-m", full_message])
 
             if result is None:
-                return {
-                    "success": False,
-                    "message": "Помилка створення коміту"
-                }
+                return {"success": False, "message": "Error creating commit"}
 
-            # Отримання хешу коміту
+            # Receiving хешу commit
             commit_hash = self._run_git_command(["git", "rev-parse", "HEAD"])
 
             if commit_hash:
-                self.logger.info(f"Коміт створено: {commit_hash[:8]} - {full_message}")
+                self.logger.info(f"Commit created: {commit_hash[:8]} - {full_message}")
 
                 # Автоматичний push якщо налаштовано
                 push_result = None
@@ -315,31 +319,28 @@ node_modules/
 
                 return {
                     "success": True,
-                    "message": f"Коміт створено: {commit_hash[:8]}",
+                    "message": f"Commit created: {commit_hash[:8]}",
                     "commit_hash": commit_hash,
                     "commit_message": full_message,
-                    "push_result": push_result
+                    "push_result": push_result,
                 }
             else:
-                return {
-                    "success": False,
-                    "message": "Помилка отримання хешу коміту"
-                }
+                return {"success": False, "message": "Error Receiving хешу commit"}
 
         except Exception as e:
-            self.logger.error(f"Помилка створення коміту: {e}")
+            self.logger.error(f"Error creating commit: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка створення коміту"
+                "message": "Error creating commit",
             }
 
     def push_changes(self, branch: Optional[str] = None) -> Dict[str, Any]:
         """
-        Відправка змін до віддаленого репозиторію
+        Sending changes до remote repository
 
         Args:
-            branch: Гілка для push. Якщо None - поточна гілка
+            branch: branch для push. Якщо None - current branch
 
         Returns:
             Результат відправки
@@ -351,125 +352,133 @@ node_modules/
             if not branch:
                 return {
                     "success": False,
-                    "message": "Не вдалося визначити поточну гілку"
+                    "message": "failed to визначити поточну гілку",
                 }
 
-            # Перевірка наявності віддаленого репозиторію
-            remote_url = self._run_git_command(["git", "config", "--get", "remote.origin.url"])
+            # Перевірка наявності remote repository
+            remote_url = self._run_git_command(
+                ["git", "config", "--get", "remote.origin.url"]
+            )
             if not remote_url:
                 return {
                     "success": False,
-                    "message": "Віддалений репозиторій не налаштовано"
+                    "message": "remote repository not configured",
                 }
 
-            # Push змін
+            # Push changes
             result = self._run_git_command(["git", "push", "origin", branch])
 
             if result is None:
-                return {
-                    "success": False,
-                    "message": "Помилка відправки змін"
-                }
+                return {"success": False, "message": "Error pushing changes"}
 
-            self.logger.info(f"Зміни відправлено до віддаленого репозиторію: {branch}")
+            self.logger.info(f"Changes pushed to remote repository: {branch}")
 
             return {
                 "success": True,
-                "message": f"Зміни відправлено до гілки {branch}",
+                "message": f"changes відправлено до branch {branch}",
                 "branch": branch,
-                "remote_url": remote_url
+                "remote_url": remote_url,
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка відправки змін: {e}")
+            self.logger.error(f"Error pushing changes: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка відправки змін до віддаленого репозиторію"
+                "message": "Error pushing changes до remote repository",
             }
 
     def pull_changes(self) -> Dict[str, Any]:
         """
-        Отримання змін з віддаленого репозиторію
+        Receiving changes з remote repository
 
         Returns:
-            Результат отримання змін
+            Результат Receiving changes
         """
         try:
-            # Перевірка наявності віддаленого репозиторію
-            remote_url = self._run_git_command(["git", "config", "--get", "remote.origin.url"])
+            # Перевірка наявності remote repository
+            remote_url = self._run_git_command(
+                ["git", "config", "--get", "remote.origin.url"]
+            )
             if not remote_url:
                 return {
                     "success": False,
-                    "message": "Віддалений репозиторій не налаштовано"
+                    "message": "remote repository not configured",
                 }
 
-            # Збереження локальних змін перед pull
+            # Saving local changes перед pull
             if self.has_changes():
-                stash_result = self._run_git_command(["git", "stash", "push", "-m", "NIMDA auto-stash before pull"])
+                stash_result = self._run_git_command(
+                    ["git", "stash", "push", "-m", "NIMDA auto-stash before pull"]
+                )
                 if stash_result is None:
                     return {
                         "success": False,
-                        "message": "Помилка збереження локальних змін"
+                        "message": "Error Saving local changes",
                     }
 
-            # Pull змін
+            # Pull changes
             result = self._run_git_command(["git", "pull", "origin"])
 
             if result is None:
-                return {
-                    "success": False,
-                    "message": "Помилка отримання змін"
-                }
+                return {"success": False, "message": "Error pulling changes"}
 
-            # Відновлення локальних змін якщо були
+            # Відновлення local changes якщо були
             if "NIMDA auto-stash before pull" in str(result):
                 stash_pop_result = self._run_git_command(["git", "stash", "pop"])
                 if stash_pop_result is None:
-                    self.logger.warning("Не вдалося відновити локальні зміни після pull")
+                    self.logger.warning(
+                        "failed to відновити local changes після pull"
+                    )
 
-            self.logger.info("Зміни отримано з віддаленого репозиторію")
+            self.logger.info("Changes pulled from remote repository")
 
             return {
                 "success": True,
-                "message": "Зміни успішно отримано",
+                "message": "Changes successfully received",
                 "pull_output": result,
-                "remote_url": remote_url
+                "remote_url": remote_url,
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка отримання змін: {e}")
+            self.logger.error(f"Error pulling changes: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка отримання змін з віддаленого репозиторію"
+                "message": "Error pulling changes з remote repository",
             }
 
     def setup_github_remote(self, github_url: str) -> Dict[str, Any]:
         """
-        Налаштування віддаленого GitHub репозиторію
+        configuration remote GitHub repository
 
         Args:
-            github_url: URL GitHub репозиторію
+            github_url: URL GitHub repository
 
         Returns:
-            Результат налаштування
+            Результат configuration
         """
         try:
             # Перевірка існуючого remote
-            existing_remote = self._run_git_command(["git", "config", "--get", "remote.origin.url"])
+            existing_remote = self._run_git_command(
+                ["git", "config", "--get", "remote.origin.url"]
+            )
 
             if existing_remote:
-                # Оновлення існуючого remote
-                result = self._run_git_command(["git", "remote", "set-url", "origin", github_url])
+                # Updating існуючого remote
+                result = self._run_git_command(
+                    ["git", "remote", "set-url", "origin", github_url]
+                )
             else:
                 # Додавання нового remote
-                result = self._run_git_command(["git", "remote", "add", "origin", github_url])
+                result = self._run_git_command(
+                    ["git", "remote", "add", "origin", github_url]
+                )
 
             if result is None:
                 return {
                     "success": False,
-                    "message": "Помилка налаштування віддаленого репозиторію"
+                    "message": "Error setting up remote repository",
                 }
 
             # Перевірка з'єднання
@@ -478,100 +487,108 @@ node_modules/
             if test_result is None:
                 return {
                     "success": False,
-                    "message": "Не вдалося підключитися до віддаленого репозиторію"
+                    "message": "failed to підключитися до remote repository",
                 }
 
-            self.logger.info(f"Віддалений репозиторій налаштовано: {github_url}")
+            self.logger.info(f"Remote repository configured: {github_url}")
 
             return {
                 "success": True,
-                "message": f"GitHub репозиторій налаштовано: {github_url}",
+                "message": f"GitHub repository configured: {github_url}",
                 "remote_url": github_url,
-                "action": "updated" if existing_remote else "added"
+                "action": "updated" if existing_remote else "added",
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка налаштування GitHub: {e}")
+            self.logger.error(f"Error configuration GitHub: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка налаштування GitHub репозиторію"
+                "message": "Error configuration GitHub repository",
             }
 
     def create_backup_branch(self) -> Dict[str, Any]:
         """
-        Створення резервної гілки
+        Creating резервної branch
 
         Returns:
-            Результат створення резервної гілки
+            Результат Creating резервної branch
         """
         try:
             backup_branch_name = f"{self.config['backup_branch']}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
-            # Створення нової гілки
-            result = self._run_git_command(["git", "checkout", "-b", backup_branch_name])
+            # Creating нової branch
+            result = self._run_git_command(
+                ["git", "checkout", "-b", backup_branch_name]
+            )
 
             if result is None:
                 return {
                     "success": False,
-                    "message": "Помилка створення резервної гілки"
+                    "message": "Error creating backup branch",
                 }
 
-            # Коміт поточного стану
+            # commit поточного стану
             if self.has_changes():
-                commit_result = self.commit_changes("Резервна копія перед автоматичними змінами")
+                commit_result = self.commit_changes(
+                    "backup копія перед автоматичними змінами"
+                )
                 if not commit_result["success"]:
                     return {
                         "success": False,
-                        "message": "Помилка створення резервного коміту"
+                        "message": "Error Creating резервного commit",
                     }
 
-            # Повернення до основної гілки
-            main_branch_result = self._run_git_command(["git", "checkout", self.config["main_branch"]])
+            # Повернення до основної branch
+            main_branch_result = self._run_git_command(
+                ["git", "checkout", self.config["main_branch"]]
+            )
 
             if main_branch_result is None:
-                self.logger.warning(f"Не вдалося повернутися до гілки {self.config['main_branch']}")
+                self.logger.warning(
+                    f"failed to повернутися до branch {self.config['main_branch']}"
+                )
 
-            self.logger.info(f"Резервну гілку створено: {backup_branch_name}")
+            self.logger.info(f"Backup branch created: {backup_branch_name}")
 
             return {
                 "success": True,
-                "message": f"Резервну гілку створено: {backup_branch_name}",
+                "message": f"Backup branch created: {backup_branch_name}",
                 "backup_branch": backup_branch_name,
-                "current_branch": self.config["main_branch"]
+                "current_branch": self.config["main_branch"],
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка створення резервної гілки: {e}")
+            self.logger.error(f"Error creating backup branch: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Помилка створення резервної гілки"
+                "message": "Error creating backup branch",
             }
 
     def sync_with_remote(self) -> Dict[str, Any]:
         """
-        Повна синхронізація з віддаленим репозиторієм
+        Повна synchronization з віддаленим репозиторієм
 
         Returns:
-            Результат синхронізації
+            Результат synchronization
         """
         try:
-            self.logger.info("Початок синхронізації з віддаленим репозиторієм")
+            self.logger.info("Початок synchronization з віддаленим репозиторієм")
 
             results = []
 
-            # 1. Отримання змін з віддаленого репозиторію
+            # 1. Receiving changes з remote repository
             if self.config["auto_pull"]:
                 pull_result = self.pull_changes()
                 results.append(("pull", pull_result))
 
-            # 2. Коміт локальних змін
+            # 2. commit local changes
             if self.has_changes() and self.config["auto_commit"]:
-                commit_result = self.commit_changes("Автоматична синхронізація змін")
+                commit_result = self.commit_changes("Автоматична synchronization changes")
                 results.append(("commit", commit_result))
 
-            # 3. Відправка змін
+            # 3. Sending changes
             if self.config["auto_push"]:
                 push_result = self.push_changes()
                 results.append(("push", push_result))
@@ -581,15 +598,17 @@ node_modules/
 
             return {
                 "success": all_successful,
-                "message": "Синхронізація завершена" if all_successful else "Синхронізація завершена з помилками",
+                "message": "synchronization completed"
+                if all_successful
+                else "synchronization completed with errors",
                 "operations": results,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка синхронізації: {e}")
+            self.logger.error(f"Synchronization error: {e}")
             return {
                 "success": False,
                 "error": str(e),
-                "message": "Критична помилка синхронізації"
+                "message": "critical Synchronization error",
             }

@@ -2,11 +2,11 @@
 """Main entry file for the NIMDA Agent Plugin.
 Provides a universal autonomous development agent."""
 
-import sys
-import json
 import argparse
+import json
+import sys
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 # Add plugin path to PYTHONPATH
 plugin_dir = Path(__file__).parent
@@ -50,58 +50,35 @@ Supported commands:
 - "fix errors" - automatically fix issues
 - "initialize" - create project structure
 - "help" - list available commands
-        """
+        """,
     )
 
     parser.add_argument(
         "--project-path",
         type=str,
         default=".",
-        help="Path to the project (default: current directory)"
+        help="Path to the project (default: current directory)",
     )
 
-    parser.add_argument(
-        "--command",
-        type=str,
-        help="Command to execute"
-    )
+    parser.add_argument("--command", type=str, help="Command to execute")
 
-    parser.add_argument(
-        "--init",
-        action="store_true",
-        help="Initialize a new project"
-    )
+    parser.add_argument("--init", action="store_true", help="Initialize a new project")
 
     parser.add_argument(
         "--daemon",
         action="store_true",
-        help="Run in daemon mode (waiting for commands)"
+        help="Run in daemon mode (waiting for commands)",
     )
 
     parser.add_argument(
-        "--setup-github",
-        type=str,
-        metavar="URL",
-        help="Configure GitHub repository"
+        "--setup-github", type=str, metavar="URL", help="Configure GitHub repository"
     )
 
-    parser.add_argument(
-        "--config",
-        type=str,
-        help="Path to configuration file"
-    )
+    parser.add_argument("--config", type=str, help="Path to configuration file")
 
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Verbose output"
-    )
+    parser.add_argument("--verbose", action="store_true", help="Verbose output")
 
-    parser.add_argument(
-        "--json",
-        action="store_true",
-        help="Output in JSON format"
-    )
+    parser.add_argument("--json", action="store_true", help="Output in JSON format")
 
     args = parser.parse_args()
 
@@ -133,6 +110,7 @@ Supported commands:
         print(f"❌ Critical error: {e}")
         if args.verbose:
             import traceback
+
             traceback.print_exc()
         sys.exit(1)
 
@@ -147,13 +125,10 @@ def handle_init(agent: NIMDAAgent, args):
         result = {
             "success": True,
             "message": "Project initialized successfully",
-            "project_path": str(agent.project_path)
+            "project_path": str(agent.project_path),
         }
     else:
-        result = {
-            "success": False,
-            "message": "Project initialization failed"
-        }
+        result = {"success": False, "message": "Project initialization failed"}
 
     output_result(result, args)
 
@@ -190,13 +165,13 @@ def handle_daemon_mode(agent: NIMDAAgent, args):
         try:
             command = input("\nNIMDA> ").strip()
 
-            if command.lower() in ['exit', 'quit']:
+            if command.lower() in ["exit", "quit"]:
                 break
 
             if not command:
                 continue
 
-            if command.lower() in ['help']:
+            if command.lower() in ["help"]:
                 show_help()
                 continue
 
@@ -208,20 +183,20 @@ def handle_daemon_mode(agent: NIMDAAgent, args):
             elif result.get("success"):
                 print(f"✅ {result.get('message', 'Command executed')}")
             else:
-                print(f"❌ {result.get('message', 'Помилка виконання команди')}")
+                print(f"❌ {result.get('message', 'Command execution error')}")
 
         except KeyboardInterrupt:
             break
         except Exception as e:
-            print(f"❌ Помилка: {e}")
+            print(f"❌ Error: {e}")
 
-    print("\n👋 NIMDA Agent завершує роботу...")
+    print("\n👋 NIMDA Agent shutting down...")
     agent.shutdown()
 
 
 def handle_interactive_mode(agent: NIMDAAgent, args):
     """Handle interactive mode"""
-    print("🤖 NIMDA Agent - Універсальний автономний агент розробки")
+    print("🤖 NIMDA Agent - Universal Autonomous Development Agent")
     print("=" * 60)
 
     # Show status
@@ -229,8 +204,12 @@ def handle_interactive_mode(agent: NIMDAAgent, args):
 
     if not args.json:
         print(f"📁 Project: {status['project_path']}")
-        print(f"🎯 Plan: {status['dev_plan']['completed_subtasks']}/{status['dev_plan']['total_subtasks']} subtasks")
-        print(f"🔧 Git: {status['git']['current_branch'] if status['git'].get('current_branch') else 'not initialized'}")
+        print(
+            f"🎯 Plan: {status['dev_plan']['completed_subtasks']}/{status['dev_plan']['total_subtasks']} subtasks"
+        )
+        print(
+            f"🔧 Git: {status['git']['current_branch'] if status['git'].get('current_branch') else 'not initialized'}"
+        )
         print(f"🤖 Status: {'Running' if status['agent_running'] else 'Idle'}")
         print()
 
@@ -314,7 +293,7 @@ def output_result(result: Dict[str, Any], args):
             print(f"❌ {result.get('message', 'Operation failed')}")
 
             if "error" in result and args.verbose:
-                print(f"Деталі помилки: {result['error']}")
+                print(f"Error details: {result['error']}")
 
 
 if __name__ == "__main__":

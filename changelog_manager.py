@@ -1,121 +1,123 @@
 """
-Менеджер журналу змін - ведення CHANGELOG.md
+Changelog manager - maintaining CHANGELOG.md
 """
 
-import re
-from typing import Dict, List, Any, Optional
-from pathlib import Path
-from datetime import datetime
 import logging
+import re
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class ChangelogManager:
     """
-    Менеджер для ведення журналу змін у файлі CHANGELOG.md
+    Manager for maintaining changelog in CHANGELOG.md file
 
-    Функції:
-    - Додавання записів про зміни
-    - Відмітка виконаних задач
-    - Оновлення статусу проекту
-    - Підтримка форматування Keep a Changelog
+    Functions:
+    - Adding change records
+    - Marking completed tasks
+    - Updating project status
+    - Supporting Keep a Changelog formatting
     """
 
     def __init__(self, project_path: Path):
         """
-        Ініціалізація менеджера журналу змін
+        Initialize changelog manager
 
         Args:
-            project_path: Шлях до проекту
+            project_path: Path to project
         """
         self.project_path = project_path
         self.changelog_file = project_path / "CHANGELOG.md"
-        self.logger = logging.getLogger('ChangelogManager')
+        self.logger = logging.getLogger("ChangelogManager")
 
-        # Перевірка існування файлу
+        # Check file existence
         if not self.changelog_file.exists():
             self._create_initial_changelog()
 
     def _create_initial_changelog(self):
-        """Створення початкового CHANGELOG.md"""
-        initial_content = f'''# Журнал змін
+        """Create initial CHANGELOG.md"""
+        initial_content = f"""# Changelog
 
-Всі значущі зміни цього проекту будуть документовані в цьому файлі.
+All notable changes to this project will be documented in this file.
 
-Формат базується на [Keep a Changelog](https://keepachangelog.com/uk/1.0.0/),
-і цей проект дотримується [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Нереалізовано]
+## [Unreleased]
 
-### Додано
-- [ ] Початкове налаштування проекту
+### Added
+- [ ] Initial project setup
 
-### Змінено
-- [ ] Оновлення документації
+### Changed
+- [ ] Documentation updates
 
-### Виправлено
-- [ ] Початкові помилки
+### Fixed
+- [ ] Initial errors
 
-## [1.0.0] - {datetime.now().strftime('%Y-%m-%d')}
+## [1.0.0] - {datetime.now().strftime("%Y-%m-%d")}
 
-### Додано
-- [x] Ініціалізація проекту NIMDA Agent
-- [x] Створення структури файлів
-- [x] Налаштування автоматизації
+### Added
+- [x] NIMDA Agent project initialization
+- [x] File structure creation
+- [x] Automation setup
 
 ---
 
-**Легенда:**
-- [x] Виконано
-- [ ] Не виконано
-- [-] Скасовано
+**Legend:**
+- [x] Completed
+- [ ] Not completed
+- [-] Cancelled
 
-*Цей журнал автоматично оновлюється NIMDA Agent.*
-'''
+*This changelog is automatically updated by NIMDA Agent.*
+"""
 
         try:
-            self.changelog_file.write_text(initial_content, encoding='utf-8')
-            self.logger.info("Створено початковий CHANGELOG.md")
+            self.changelog_file.write_text(initial_content, encoding="utf-8")
+            self.logger.info("Created initial CHANGELOG.md")
         except Exception as e:
-            self.logger.error(f"Помилка створення CHANGELOG.md: {e}")
+            self.logger.error(f"Error creating CHANGELOG.md: {e}")
 
-    def add_entry(self, message: str, category: str = "Додано", completed: bool = True) -> bool:
+    def add_entry(
+        self, message: str, category: str = "Added", completed: bool = True
+    ) -> bool:
         """
-        Додавання нового запису до журналу змін
+        Add new entry to changelog
 
         Args:
-            message: Повідомлення про зміну
-            category: Категорія зміни (Додано, Змінено, Виправлено)
-            completed: Чи є задача виконаною
+            message: Change message
+            category: Change category (Added, Changed, Fixed)
+            completed: Whether task is completed
 
         Returns:
-            True якщо запис додано успішно
+            True if entry added successfully
         """
         try:
-            # Читання поточного вмісту
+            # Read current content
             if not self.changelog_file.exists():
                 self._create_initial_changelog()
 
-            content = self.changelog_file.read_text(encoding='utf-8')
+            content = self.changelog_file.read_text(encoding="utf-8")
 
-            # Пошук секції "Нереалізовано"
-            unreleased_pattern = r'## \[Нереалізовано\]'
+            # search секції "Unreleased"
+            unreleased_pattern = r"## \[Unreleased\]"
             match = re.search(unreleased_pattern, content)
 
             if not match:
-                self.logger.warning("Секція [Нереалізовано] не знайдена")
+                self.logger.warning("Секція [Unreleased] не знайдена")
                 return False
 
-            # Пошук відповідної категорії
-            category_pattern = f'### {category}'
+            # search відповідної категорії
+            category_pattern = f"### {category}"
             category_start = content.find(category_pattern, match.start())
 
             if category_start == -1:
-                # Якщо категорія не знайдена, додаємо її
+                # Якщо category не знайдена, додаємо її
                 self._add_category_section(category, message, completed)
                 return True
 
             # Знаходимо місце для вставки нового запису
-            lines = content.split('\n')
+            lines = content.split("\n")
             category_line_idx = None
 
             for i, line in enumerate(lines):
@@ -128,72 +130,72 @@ class ChangelogManager:
 
             # Форматування нового запису
             status_mark = "[x]" if completed else "[ ]"
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
             new_entry = f"- {status_mark} {message} ({timestamp})"
 
             # Вставка нового запису після заголовка категорії
             lines.insert(category_line_idx + 1, new_entry)
 
-            # Збереження оновленого вмісту
-            updated_content = '\n'.join(lines)
-            self.changelog_file.write_text(updated_content, encoding='utf-8')
+            # Saving оновленого вмісту
+            updated_content = "\n".join(lines)
+            self.changelog_file.write_text(updated_content, encoding="utf-8")
 
-            self.logger.info(f"Додано запис до CHANGELOG: {message}")
+            self.logger.info(f"Added entry to CHANGELOG: {message}")
             return True
 
         except Exception as e:
-            self.logger.error(f"Помилка додавання запису до CHANGELOG: {e}")
+            self.logger.error(f"Error adding entry to CHANGELOG: {e}")
             return False
 
     def _add_category_section(self, category: str, message: str, completed: bool):
         """Додавання нової секції категорії"""
         try:
-            content = self.changelog_file.read_text(encoding='utf-8')
+            content = self.changelog_file.read_text(encoding="utf-8")
 
-            # Пошук секції "Нереалізовано"
-            unreleased_pattern = r'(## \[Нереалізовано\])'
+            # search секції "Unreleased"
+            unreleased_pattern = r"(## \[Unreleased\])"
             match = re.search(unreleased_pattern, content)
 
             if not match:
                 return False
 
-            # Створення нової секції
+            # Creating нової секції
             status_mark = "[x]" if completed else "[ ]"
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
-            new_section = f'''
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+            new_section = f"""
 ### {category}
 - {status_mark} {message} ({timestamp})
-'''
+"""
 
-            # Вставка після заголовка "Нереалізовано"
+            # Вставка після заголовка "Unreleased"
             insert_pos = match.end()
             updated_content = content[:insert_pos] + new_section + content[insert_pos:]
 
-            self.changelog_file.write_text(updated_content, encoding='utf-8')
-            self.logger.info(f"Додано нову категорію '{category}' до CHANGELOG")
+            self.changelog_file.write_text(updated_content, encoding="utf-8")
+            self.logger.info(f"Added new category '{category}' до CHANGELOG")
 
         except Exception as e:
-            self.logger.error(f"Помилка додавання категорії: {e}")
+            self.logger.error(f"Error adding category: {e}")
 
     def mark_task_completed(self, task_info: Dict[str, Any]) -> bool:
         """
-        Відмітка задачі як виконаної
+        Відмітка task як виконаної
 
         Args:
             task_info: Інформація про задачу
 
         Returns:
-            True якщо задачу відмічено успішно
+            True якщо задачу відмічено Successfully
         """
         try:
-            task_title = task_info.get("title", "Невідома задача")
+            task_title = task_info.get("title", "Невідома task")
             task_number = task_info.get("number", "N/A")
 
-            # Додавання запису про виконання задачі
-            message = f"Виконано задачу #{task_number}: {task_title}"
+            # Додавання запису про execution task
+            message = f"executed задачу #{task_number}: {task_title}"
 
-            # Додаємо до категорії "Виконано"
-            self.add_entry(message, "Виконано", completed=True)
+            # Додаємо до категорії "executed"
+            self.add_entry(message, "executed", completed=True)
 
             # Якщо є підзадачі, додаємо їх теж
             subtasks = task_info.get("subtasks", [])
@@ -202,38 +204,40 @@ class ChangelogManager:
             if completed_subtasks:
                 for subtask in completed_subtasks:
                     subtask_message = f"  └─ {subtask['text']}"
-                    self.add_entry(subtask_message, "Виконано", completed=True)
+                    self.add_entry(subtask_message, "executed", completed=True)
 
             return True
 
         except Exception as e:
-            self.logger.error(f"Помилка відмітки задачі: {e}")
+            self.logger.error(f"Error marking task: {e}")
             return False
 
-    def update_version(self, version: str, release_notes: Optional[List[str]] = None) -> bool:
+    def update_version(
+        self, version: str, release_notes: Optional[List[str]] = None
+    ) -> bool:
         """
-        Створення нової версії в журналі змін
+        Creating нової версії в журналі changes
 
         Args:
             version: Номер версії
             release_notes: Додаткові нотатки про реліз
 
         Returns:
-            True якщо версію створено успішно
+            True якщо версію створено Successfully
         """
         try:
-            content = self.changelog_file.read_text(encoding='utf-8')
+            content = self.changelog_file.read_text(encoding="utf-8")
 
-            # Перенесення "Нереалізовано" до нової версії
-            current_date = datetime.now().strftime('%Y-%m-%d')
+            # Перенесення "Unreleased" до нової версії
+            current_date = datetime.now().strftime("%Y-%m-%d")
 
-            # Заміна [Нереалізовано] на версію
+            # Заміна [Unreleased] на версію
             version_header = f"## [{version}] - {current_date}"
             updated_content = re.sub(
-                r'## \[Нереалізовано\]',
-                f"## [Нереалізовано]\n\n### Додано\n- [ ] Нові функції\n\n### Змінено\n- [ ] Оновлення\n\n### Виправлено\n- [ ] Помилки\n\n{version_header}",
+                r"## \[Unreleased\]",
+                f"## [Unreleased]\n\n### Added\n- [ ] Нові функції\n\n### Changed\n- [ ] Updating\n\n### Fixed\n- [ ] Errors\n\n{version_header}",
                 content,
-                count=1
+                count=1,
             )
 
             # Додавання приміток до релізу
@@ -244,54 +248,55 @@ class ChangelogManager:
 
                 # Вставка після заголовка версії
                 version_pos = updated_content.find(version_header) + len(version_header)
-                updated_content = updated_content[:version_pos] + notes_section + updated_content[version_pos:]
+                updated_content = (
+                    updated_content[:version_pos]
+                    + notes_section
+                    + updated_content[version_pos:]
+                )
 
-            self.changelog_file.write_text(updated_content, encoding='utf-8')
+            self.changelog_file.write_text(updated_content, encoding="utf-8")
 
-            self.logger.info(f"Створено версію {version} в CHANGELOG")
+            self.logger.info(f"Created version {version} в CHANGELOG")
             return True
 
         except Exception as e:
-            self.logger.error(f"Помилка створення версії: {e}")
+            self.logger.error(f"Error creating version: {e}")
             return False
 
     def get_changelog_stats(self) -> Dict[str, Any]:
         """
-        Отримання статистики журналу змін
+        Receiving статистики журналу changes
 
         Returns:
-            Статистика журналу змін
+            statistics журналу changes
         """
         try:
             if not self.changelog_file.exists():
-                return {
-                    "exists": False,
-                    "message": "CHANGELOG.md не існує"
-                }
+                return {"exists": False, "message": "CHANGELOG.md does not exist"}
 
-            content = self.changelog_file.read_text(encoding='utf-8')
+            content = self.changelog_file.read_text(encoding="utf-8")
 
             # Підрахунок записів
-            completed_pattern = r'- \[x\]'
-            pending_pattern = r'- \[ \]'
-            cancelled_pattern = r'- \[-\]'
+            completed_pattern = r"- \[x\]"
+            pending_pattern = r"- \[ \]"
+            cancelled_pattern = r"- \[-\]"
 
             completed_count = len(re.findall(completed_pattern, content))
             pending_count = len(re.findall(pending_pattern, content))
             cancelled_count = len(re.findall(cancelled_pattern, content))
 
             # Підрахунок версій
-            version_pattern = r'## \[(\d+\.\d+\.\d+)\]'
+            version_pattern = r"## \[(\d+\.\d+\.\d+)\]"
             versions = re.findall(version_pattern, content)
 
-            # Останнє оновлення
-            lines = content.split('\n')
+            # Останнє Updating
+            lines = content.split("\n")
             last_modified = None
 
             for line in lines:
-                if '(' in line and ')' in line:
-                    # Пошук дати в дужках
-                    date_match = re.search(r'\((\d{4}-\d{2}-\d{2} \d{2}:\d{2})\)', line)
+                if "(" in line and ")" in line:
+                    # search дати в дужках
+                    date_match = re.search(r"\((\d{4}-\d{2}-\d{2} \d{2}:\d{2})\)", line)
                     if date_match:
                         last_modified = date_match.group(1)
                         break
@@ -306,20 +311,20 @@ class ChangelogManager:
                 "latest_version": versions[0] if versions else None,
                 "last_modified": last_modified,
                 "file_size": len(content),
-                "lines_count": len(lines)
+                "lines_count": len(lines),
             }
 
         except Exception as e:
-            self.logger.error(f"Помилка отримання статистики: {e}")
+            self.logger.error(f"Error getting statistics: {e}")
             return {
                 "exists": False,
                 "error": str(e),
-                "message": "Помилка читання CHANGELOG.md"
+                "message": "Error читання CHANGELOG.md",
             }
 
     def search_entries(self, query: str) -> List[Dict[str, Any]]:
         """
-        Пошук записів у журналі змін
+        search записів у журналі changes
 
         Args:
             query: Пошуковий запит
@@ -331,8 +336,8 @@ class ChangelogManager:
             if not self.changelog_file.exists():
                 return []
 
-            content = self.changelog_file.read_text(encoding='utf-8')
-            lines = content.split('\n')
+            content = self.changelog_file.read_text(encoding="utf-8")
+            lines = content.split("\n")
 
             results = []
             current_section = None
@@ -340,65 +345,73 @@ class ChangelogManager:
 
             for i, line in enumerate(lines):
                 # Визначення секцій
-                if line.startswith('## ['):
+                if line.startswith("## ["):
                     current_section = line.strip()
                     continue
 
-                if line.startswith('### '):
+                if line.startswith("### "):
                     current_category = line.strip()[4:]  # Видаляємо "### "
                     continue
 
-                # Пошук у записах
-                if line.startswith('- [') and query.lower() in line.lower():
+                # search у записах
+                if line.startswith("- [") and query.lower() in line.lower():
                     # Визначення статусу
-                    status = "completed" if "[x]" in line else "pending" if "[ ]" in line else "cancelled"
+                    status = (
+                        "completed"
+                        if "[x]" in line
+                        else "pending"
+                        if "[ ]" in line
+                        else "cancelled"
+                    )
 
                     # Витягування тексту та дати
-                    text_match = re.search(r'- \[.\] (.+)', line)
+                    text_match = re.search(r"- \[.\] (.+)", line)
                     text = text_match.group(1) if text_match else line
 
-                    date_match = re.search(r'\((\d{4}-\d{2}-\d{2} \d{2}:\d{2})\)', text)
+                    date_match = re.search(r"\((\d{4}-\d{2}-\d{2} \d{2}:\d{2})\)", text)
                     date = date_match.group(1) if date_match else None
 
                     if date:
-                        text = re.sub(r' \(\d{4}-\d{2}-\d{2} \d{2}:\d{2}\)', '', text)
+                        text = re.sub(r" \(\d{4}-\d{2}-\d{2} \d{2}:\d{2}\)", "", text)
 
-                    results.append({
-                        "line_number": i + 1,
-                        "section": current_section,
-                        "category": current_category,
-                        "text": text.strip(),
-                        "status": status,
-                        "date": date,
-                        "full_line": line.strip()
-                    })
+                    results.append(
+                        {
+                            "line_number": i + 1,
+                            "section": current_section,
+                            "category": current_category,
+                            "text": text.strip(),
+                            "status": status,
+                            "date": date,
+                            "full_line": line.strip(),
+                        }
+                    )
 
             return results
 
         except Exception as e:
-            self.logger.error(f"Помилка пошуку в CHANGELOG: {e}")
+            self.logger.error(f"Error searching in CHANGELOG: {e}")
             return []
 
     def cleanup_changelog(self) -> bool:
         """
-        Очищення та реорганізація журналу змін
+        cleanup та реорганізація журналу changes
 
         Returns:
-            True якщо очищення виконано успішно
+            True якщо cleanup executed Successfully
         """
         try:
             if not self.changelog_file.exists():
                 return False
 
-            content = self.changelog_file.read_text(encoding='utf-8')
+            content = self.changelog_file.read_text(encoding="utf-8")
 
-            # Видалення порожніх рядків підряд
-            lines = content.split('\n')
+            # Deleting порожніх рядків підряд
+            lines = content.split("\n")
             cleaned_lines = []
             prev_empty = False
 
             for line in lines:
-                is_empty = line.strip() == ''
+                is_empty = line.strip() == ""
 
                 if not (is_empty and prev_empty):
                     cleaned_lines.append(line)
@@ -406,29 +419,29 @@ class ChangelogManager:
                 prev_empty = is_empty
 
             # Сортування записів у кожній категорії за датою
-            cleaned_content = self._sort_entries_by_date('\n'.join(cleaned_lines))
+            cleaned_content = self._sort_entries_by_date("\n".join(cleaned_lines))
 
-            # Збереження очищеного вмісту
-            self.changelog_file.write_text(cleaned_content, encoding='utf-8')
+            # Saving очищеного вмісту
+            self.changelog_file.write_text(cleaned_content, encoding="utf-8")
 
-            self.logger.info("CHANGELOG.md очищено та реорганізовано")
+            self.logger.info("CHANGELOG.md cleaned and reorganized")
             return True
 
         except Exception as e:
-            self.logger.error(f"Помилка очищення CHANGELOG: {e}")
+            self.logger.error(f"Error cleaning CHANGELOG: {e}")
             return False
 
     def _sort_entries_by_date(self, content: str) -> str:
         """Сортування записів за датою в кожній категорії"""
         try:
-            lines = content.split('\n')
+            lines = content.split("\n")
             result_lines = []
             current_entries = []
             in_category = False
 
             for line in lines:
-                if line.startswith('### '):
-                    # Збереження попередніх відсортованих записів
+                if line.startswith("### "):
+                    # Saving попередніх відсортованих записів
                     if current_entries:
                         sorted_entries = self._sort_entry_list(current_entries)
                         result_lines.extend(sorted_entries)
@@ -437,11 +450,11 @@ class ChangelogManager:
                     result_lines.append(line)
                     in_category = True
 
-                elif line.startswith('- [') and in_category:
+                elif line.startswith("- [") and in_category:
                     current_entries.append(line)
 
                 else:
-                    # Збереження попередніх відсортованих записів
+                    # Saving попередніх відсортованих записів
                     if current_entries:
                         sorted_entries = self._sort_entry_list(current_entries)
                         result_lines.extend(sorted_entries)
@@ -450,25 +463,26 @@ class ChangelogManager:
                     result_lines.append(line)
                     in_category = False
 
-            # Збереження останніх записів
+            # Saving останніх записів
             if current_entries:
                 sorted_entries = self._sort_entry_list(current_entries)
                 result_lines.extend(sorted_entries)
 
-            return '\n'.join(result_lines)
+            return "\n".join(result_lines)
 
         except Exception:
             return content  # Повернення оригінального вмісту при помилці
 
     def _sort_entry_list(self, entries: List[str]) -> List[str]:
         """Сортування списку записів за датою"""
+
         def extract_date(entry: str) -> datetime:
-            date_match = re.search(r'\((\d{4}-\d{2}-\d{2} \d{2}:\d{2})\)', entry)
+            date_match = re.search(r"\((\d{4}-\d{2}-\d{2} \d{2}:\d{2})\)", entry)
             if date_match:
                 try:
-                    return datetime.strptime(date_match.group(1), '%Y-%m-%d %H:%M')
+                    return datetime.strptime(date_match.group(1), "%Y-%m-%d %H:%M")
                 except ValueError:
                     pass
             return datetime.min
 
-        return sorted(entries, key=extract_date, reverse=True)  # Новіші записи зверху
+        return sorted(entries, key=extract_date, reverse=True)  # Новіші entries зверху

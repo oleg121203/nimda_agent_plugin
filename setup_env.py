@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Утиліта для налаштування змінних середовища NIMDA Agent
+Utility for setting up NIMDA Agent environment variables
 """
 
 import os
@@ -8,79 +8,81 @@ from pathlib import Path
 
 
 def setup_environment():
-    """Інтерактивне налаштування змінних середовища"""
-    
-    print("🔧 Налаштування змінних середовища NIMDA Agent")
+    """Interactive environment variables setup"""
+
+    print("🔧 Setting up NIMDA Agent environment variables")
     print("=" * 50)
-    
+
     env_file = Path(".env")
     env_vars = {}
-    
-    # Обов'язкові змінні
-    print("\n📋 Обов'язкові налаштування:")
-    
-    git_name = input("Git ім'я користувача (GIT_USER_NAME): ").strip()
+
+    # Required variables
+    print("\n📋 Required settings:")
+
+    git_name = input("Git user name (GIT_USER_NAME): ").strip()
     if git_name:
         env_vars["GIT_USER_NAME"] = git_name
-    
+
     git_email = input("Git email (GIT_USER_EMAIL): ").strip()
     if git_email:
         env_vars["GIT_USER_EMAIL"] = git_email
-    
-    # GitHub налаштування
-    print("\n🔗 GitHub налаштування (опціонально):")
-    
-    github_token = input("GitHub токен (GITHUB_TOKEN): ").strip()
+
+    # GitHub settings
+    print("\n🔗 GitHub settings (optional):")
+
+    github_token = input("GitHub token (GITHUB_TOKEN): ").strip()
     if github_token:
         env_vars["GITHUB_TOKEN"] = github_token
-    
+
     github_username = input("GitHub username (GITHUB_USERNAME): ").strip()
     if github_username:
         env_vars["GITHUB_USERNAME"] = github_username
-    
-    github_repo = input("GitHub репозиторій URL (GITHUB_REPO_URL): ").strip()
+
+    github_repo = input("GitHub repository URL (GITHUB_REPO_URL): ").strip()
     if github_repo:
         env_vars["GITHUB_REPO_URL"] = github_repo
-    
-    # Налаштування проекту
-    print("\n⚙️ Налаштування проекту (опціонально):")
-    
-    project_name = input("Назва проекту (PROJECT_NAME) [NIMDA-CLI]: ").strip()
+
+    # Project settings
+    print("\n⚙️ Project settings (optional):")
+
+    project_name = input("Project name (PROJECT_NAME) [NIMDA-CLI]: ").strip()
     env_vars["PROJECT_NAME"] = project_name or "NIMDA-CLI"
-    
-    auto_commit = input("Автоматичні коміти (AUTO_COMMIT) [true/false]: ").strip().lower()
-    env_vars["AUTO_COMMIT"] = auto_commit if auto_commit in ["true", "false"] else "true"
-    
-    auto_push = input("Автоматичний push (AUTO_PUSH) [true/false]: ").strip().lower()
+
+    auto_commit = input("Auto commits (AUTO_COMMIT) [true/false]: ").strip().lower()
+    env_vars["AUTO_COMMIT"] = (
+        auto_commit if auto_commit in ["true", "false"] else "true"
+    )
+
+    auto_push = input("Auto push (AUTO_PUSH) [true/false]: ").strip().lower()
     env_vars["AUTO_PUSH"] = auto_push if auto_push in ["true", "false"] else "true"
-    
-    # Запис у файл
+
+    # Save to file
     if env_vars:
         with open(env_file, "w") as f:
             f.write("# NIMDA Agent Environment Variables\n")
-            f.write("# Автоматично згенеровано\n\n")
-            
+            f.write("# Auto-generated\n\n")
+
             for key, value in env_vars.items():
                 f.write(f"{key}={value}\n")
-        
-        print(f"\n✅ Змінні середовища збережено у {env_file}")
-        print("🚀 Тепер можна запускати NIMDA Agent!")
+
+        print(f"\n✅ Environment variables saved to {env_file}")
+        print("🚀 Now you can run NIMDA Agent!")
     else:
-        print("\n⚠️ Не введено жодної змінної")
+        print("\n⚠️ No variables entered")
 
 
 def show_current_env():
-    """Показати поточні змінні середовища"""
-    
+    """Show current environment variables"""
+
     env_file = Path(".env")
-    
+
     if not env_file.exists():
-        print("❌ Файл .env не знайдено")
+        print("❌ .env file not found")
         return
-    
-    print("📋 Поточні змінні середовища:")
+
+    print("📋 Current environment variables:")
     print("=" * 40)
-    
+
     with open(env_file) as f:
         for line in f:
             line = line.strip()
@@ -89,35 +91,39 @@ def show_current_env():
 
 
 def main():
-    """Головна функція"""
-    
+    """Main function"""
+
     import argparse
-    
-    parser = argparse.ArgumentParser(description="Налаштування змінних середовища NIMDA Agent")
-    parser.add_argument("--setup", action="store_true", help="Налаштувати змінні середовища")
-    parser.add_argument("--show", action="store_true", help="Показати поточні змінні")
-    
+
+    parser = argparse.ArgumentParser(
+        description="Setup NIMDA Agent environment variables"
+    )
+    parser.add_argument(
+        "--setup", action="store_true", help="Setup environment variables"
+    )
+    parser.add_argument("--show", action="store_true", help="Show current variables")
+
     args = parser.parse_args()
-    
+
     if args.setup:
         setup_environment()
     elif args.show:
         show_current_env()
     else:
-        # Інтерактивний режим
-        print("🤖 NIMDA Agent - Налаштування змінних середовища")
-        print("1. Налаштувати змінні")
-        print("2. Показати поточні змінні")
-        print("0. Вихід")
-        
-        choice = input("\nВиберіть опцію: ").strip()
-        
+        # Interactive mode
+        print("🤖 NIMDA Agent - Environment Variables Setup")
+        print("1. Setup variables")
+        print("2. Show current variables")
+        print("0. Exit")
+
+        choice = input("\nChoose option: ").strip()
+
         if choice == "1":
             setup_environment()
         elif choice == "2":
             show_current_env()
         else:
-            print("👋 До побачення!")
+            print("👋 Goodbye!")
 
 
 if __name__ == "__main__":
