@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-🚀 NIMDA Enhanced Development Plan Executor v5.0
+🚀 NIMDA Enhanced Development Pl        # Розширені патерни для фаз 8-12
+        phase_pattern = r'## [🎮🧠🚀🌐🔬] Phase (\d+): (.+)'
+        section_pattern = r'### (\d+\.\d+) (.+)'
+        task_pattern = r'- \[ \] \*\*(.+?)\*\* - (.+)'xecutor v5.0
 Розширений виконавець для революційного GUI та AI покращень
 
 Створено: 14 липня 2025
@@ -69,8 +72,12 @@ class EnhancedDevPlanExecutor:
             phase_match = re.search(phase_pattern, line)
             if phase_match:
                 phase_num = phase_match.group(1)
+                phase_title = (
+                    phase_match.group(2) if len(phase_match.groups()) > 1 else ""
+                )
                 current_phase = f"Phase {phase_num}"
                 phases[current_phase] = {}
+                self.logger.info(f"🔍 Found {current_phase}: {phase_title}")
                 continue
 
             # Виявлення секції
