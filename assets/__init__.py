@@ -1,0 +1,1 @@
+"""\nAssets module\n"""\n

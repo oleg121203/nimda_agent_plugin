@@ -1,0 +1,1 @@
+"""\nResources module\n"""\n
