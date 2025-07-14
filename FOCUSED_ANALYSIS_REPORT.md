@@ -1,16 +1,16 @@
 # Focused System Analysis Report
 
-**Generated:** 2025-07-14T18:27:25.402185
+**Generated:** 2025-07-14T18:47:11.277188
 **Project:** /Users/dev/Documents/nimda_agent_plugin
 **Scope:** Project files only (excludes virtual environments and dependencies)
 
 ## Project Structure
 
-- **Total Files:** 367
-- **Total Directories:** 92
+- **Total Files:** 374
+- **Total Directories:** 94
 - **Python Files:** 229
 - **Test Files:** 3
-- **Documentation:** 58
+- **Documentation:** 60
 
 ### Python Files
 - GUI/__init__.py

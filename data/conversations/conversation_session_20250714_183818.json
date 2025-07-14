@@ -1,0 +1,266 @@
+{
+  "session_info": {
+    "session_id": "session_20250714_183818",
+    "export_timestamp": "2025-07-14T18:38:18.117160",
+    "total_messages": 8
+  },
+  "conversation_history": [
+    {
+      "type": "user",
+      "message": "Чи можеш ти оновити dev план і розширити його?",
+      "timestamp": "2025-07-14T18:38:18.114580",
+      "context": null,
+      "processing_result": {
+        "success": true,
+        "response": "Дякую за повідомлення. Функція обробки цього типу запитів буде покращена в наступних ітераціях.",
+        "command_info": {
+          "type": "information_query",
+          "action": "update_dev_plan",
+          "intent": "question",
+          "patterns": [
+            "polite_request",
+            "question",
+            "planning_request"
+          ],
+          "entities": [],
+          "confidence": 0.7
+        },
+        "analysis": {
+          "message": "Чи можеш ти оновити dev план і розширити його?",
+          "timestamp": "2025-07-14T18:38:18.113709",
+          "context": {},
+          "language": "uk",
+          "intent": "question",
+          "entities": [],
+          "sentiment": "neutral",
+          "complexity": "medium",
+          "patterns": [
+            "polite_request",
+            "question",
+            "planning_request"
+          ]
+        },
+        "ai_response": {
+          "response": {
+            "text": "Дякую за повідомлення. Функція обробки цього типу запитів буде покращена в наступних ітераціях.",
+            "confidence": 0.8,
+            "suggestions": [],
+            "actions": []
+          },
+          "confidence": 0.8,
+          "intent": "question",
+          "language": "uk",
+          "generated_at": "2025-07-14T18:38:18.114183"
+        },
+        "suggestions": [],
+        "actions": [],
+        "confidence": 0.8,
+        "processing_mode": "intelligent"
+      }
+    },
+    {
+      "type": "agent",
+      "message": "Дякую за повідомлення. Функція обробки цього типу запитів буде покращена в наступних ітераціях.",
+      "timestamp": "2025-07-14T18:38:18.114582",
+      "session_id": "session_20250714_183818"
+    },
+    {
+      "type": "user",
+      "message": "Can you analyze the current system?",
+      "timestamp": "2025-07-14T18:38:18.115439",
+      "context": null,
+      "processing_result": {
+        "success": true,
+        "response": "Thank you for your message. The function for processing this type of request will be improved in future iterations.",
+        "command_info": {
+          "type": "information_query",
+          "action": "general",
+          "intent": "question",
+          "patterns": [
+            "polite_request",
+            "question"
+          ],
+          "entities": [],
+          "confidence": 0.7
+        },
+        "analysis": {
+          "message": "Can you analyze the current system?",
+          "timestamp": "2025-07-14T18:38:18.114601",
+          "context": {},
+          "language": "en",
+          "intent": "question",
+          "entities": [],
+          "sentiment": "neutral",
+          "complexity": "medium",
+          "patterns": [
+            "polite_request",
+            "question"
+          ]
+        },
+        "ai_response": {
+          "response": {
+            "text": "Thank you for your message. The function for processing this type of request will be improved in future iterations.",
+            "confidence": 0.8,
+            "suggestions": [],
+            "actions": []
+          },
+          "confidence": 0.8,
+          "intent": "question",
+          "language": "en",
+          "generated_at": "2025-07-14T18:38:18.114625"
+        },
+        "suggestions": [],
+        "actions": [],
+        "confidence": 0.8,
+        "processing_mode": "intelligent"
+      }
+    },
+    {
+      "type": "agent",
+      "message": "Thank you for your message. The function for processing this type of request will be improved in future iterations.",
+      "timestamp": "2025-07-14T18:38:18.115443",
+      "session_id": "session_20250714_183818"
+    },
+    {
+      "type": "user",
+      "message": "Здравствуй! Нужна помощь с улучшением системы",
+      "timestamp": "2025-07-14T18:38:18.116351",
+      "context": null,
+      "processing_result": {
+        "success": true,
+        "response": "Спасибо за сообщение. Функция обработки этого типа запросов будет улучшена в следующих итерациях.",
+        "command_info": {
+          "type": "conversation",
+          "action": "general",
+          "intent": "general",
+          "patterns": [],
+          "entities": [],
+          "confidence": 0.7
+        },
+        "analysis": {
+          "message": "Здравствуй! Нужна помощь с улучшением системы",
+          "timestamp": "2025-07-14T18:38:18.115463",
+          "context": {},
+          "language": "ru",
+          "intent": "general",
+          "entities": [],
+          "sentiment": "neutral",
+          "complexity": "medium",
+          "patterns": []
+        },
+        "ai_response": {
+          "response": {
+            "text": "Спасибо за сообщение. Функция обработки этого типа запросов будет улучшена в следующих итерациях.",
+            "confidence": 0.8,
+            "suggestions": [],
+            "actions": []
+          },
+          "confidence": 0.8,
+          "intent": "general",
+          "language": "ru",
+          "generated_at": "2025-07-14T18:38:18.115495"
+        },
+        "suggestions": [],
+        "actions": [],
+        "confidence": 0.8,
+        "processing_mode": "intelligent"
+      }
+    },
+    {
+      "type": "agent",
+      "message": "Спасибо за сообщение. Функция обработки этого типа запросов будет улучшена в следующих итерациях.",
+      "timestamp": "2025-07-14T18:38:18.116353",
+      "session_id": "session_20250714_183818"
+    },
+    {
+      "type": "user",
+      "message": "What is the status of the development?",
+      "timestamp": "2025-07-14T18:38:18.117113",
+      "context": null,
+      "processing_result": {
+        "success": true,
+        "response": "Thank you for your message. The function for processing this type of request will be improved in future iterations.",
+        "command_info": {
+          "type": "information_query",
+          "action": "general",
+          "intent": "question",
+          "patterns": [
+            "question"
+          ],
+          "entities": [],
+          "confidence": 0.7
+        },
+        "analysis": {
+          "message": "What is the status of the development?",
+          "timestamp": "2025-07-14T18:38:18.116372",
+          "context": {},
+          "language": "en",
+          "intent": "question",
+          "entities": [],
+          "sentiment": "neutral",
+          "complexity": "medium",
+          "patterns": [
+            "question"
+          ]
+        },
+        "ai_response": {
+          "response": {
+            "text": "Thank you for your message. The function for processing this type of request will be improved in future iterations.",
+            "confidence": 0.8,
+            "suggestions": [],
+            "actions": []
+          },
+          "confidence": 0.8,
+          "intent": "question",
+          "language": "en",
+          "generated_at": "2025-07-14T18:38:18.116396"
+        },
+        "suggestions": [],
+        "actions": [],
+        "confidence": 0.8,
+        "processing_mode": "intelligent"
+      }
+    },
+    {
+      "type": "agent",
+      "message": "Thank you for your message. The function for processing this type of request will be improved in future iterations.",
+      "timestamp": "2025-07-14T18:38:18.117115",
+      "session_id": "session_20250714_183818"
+    }
+  ],
+  "statistics": {
+    "session_id": "session_20250714_183818",
+    "total_user_messages": 4,
+    "total_agent_responses": 4,
+    "conversation_length": 8,
+    "learning_enabled": true,
+    "session_start": "2025-07-14T18:38:18.114580",
+    "learning_stats": {
+      "total_experiences": 5,
+      "successful_experiences": 5,
+      "success_rate": 1.0,
+      "recent_success_rate": 1.0,
+      "most_common_patterns": [
+        [
+          "successful_action",
+          5
+        ],
+        [
+          "communication_pattern",
+          5
+        ]
+      ],
+      "knowledge_base_size": 1,
+      "interaction_stats": {
+        "total_messages": 4,
+        "successful_responses": 0,
+        "failed_responses": 0,
+        "learning_events": 4
+      },
+      "conversation_patterns_count": 3
+    },
+    "recommendations": [
+      "Активна комунікація - рекомендується покращення шаблонів відповідей"
+    ]
+  }
+}
