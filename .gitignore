@@ -60,3 +60,5 @@ node_modules/
 # Backup files
 *.bak
 *.backup
+
+nimda_project_deep_build
