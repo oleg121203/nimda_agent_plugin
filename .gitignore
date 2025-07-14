@@ -4,6 +4,14 @@ nimda_agent_config.json
 *.tmp
 *.temp
 
+# Codex Monitor files (runtime/temporary)
+.codex_monitor.pid
+.codex_monitor.log
+.codex_monitor_status*
+.codex_session_active
+.last_codex_activity
+.codex_sync_pending
+
 # Python
 __pycache__/
 *.py[cod]
