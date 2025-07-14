@@ -21,6 +21,13 @@ python-dateutil>=2.8.0
 
 # Optional dependencies for extended functionality
 
+# GUI dependencies for PySide6 interface
+PySide6>=6.5.0
+QtAwesome>=1.2.0  # Icons for GUI
+
+# macOS integration (if needed)
+PyObjC>=9.0; sys_platform=="darwin"
+
 # Git operations (if system git is unavailable)
 # GitPython>=3.1.0
 

@@ -1,16 +1,16 @@
 # Focused System Analysis Report
 
-**Generated:** 2025-07-14T13:23:06.368694
+**Generated:** 2025-07-14T13:42:08.843054
 **Project:** /Users/dev/Documents/nimda_agent_plugin
 **Scope:** Project files only (excludes virtual environments and dependencies)
 
 ## Project Structure
 
-- **Total Files:** 168
-- **Total Directories:** 35
-- **Python Files:** 80
+- **Total Files:** 192
+- **Total Directories:** 43
+- **Python Files:** 88
 - **Test Files:** 2
-- **Documentation:** 39
+- **Documentation:** 43
 
 ### Python Files
 - __init__.py
@@ -46,6 +46,14 @@
 - main.py
 - nimda_app.py
 - nimda_cli.py
+- nimda_project_deep_build/adaptive_thinker.py
+- nimda_project_deep_build/chat_agent.py
+- nimda_project_deep_build/learning_module.py
+- nimda_project_deep_build/macos_integration.py
+- nimda_project_deep_build/nimda_app.py
+- nimda_project_deep_build/setup_env.py
+- nimda_project_deep_build/setup_project.py
+- nimda_project_deep_build/worker_agent.py
 - offline_queue.py
 - performance_monitor.py
 - production_workflow.py
@@ -96,10 +104,10 @@
 
 ## Code Metrics
 
-- **Total Lines:** 24183
-- **Total Functions:** 599
-- **Total Classes:** 65
-- **Average Complexity:** 25.03
+- **Total Lines:** 24892
+- **Total Functions:** 617
+- **Total Classes:** 67
+- **Average Complexity:** 24.76
 
 ## Dependencies
 
@@ -112,6 +120,10 @@
 
 - **HIGH:** File has syntax errors (in python311_compliance.py)
 - **HIGH:** File has syntax errors (in ui/__init__.py)
+- **HIGH:** File has syntax errors (in nimda_project_deep_build/learning_module.py)
+- **HIGH:** File has syntax errors (in nimda_project_deep_build/adaptive_thinker.py)
+- **HIGH:** File has syntax errors (in nimda_project_deep_build/worker_agent.py)
+- **HIGH:** File has syntax errors (in nimda_project_deep_build/chat_agent.py)
 - **HIGH:** File has syntax errors (in resources/__init__.py)
 - **HIGH:** File has syntax errors (in docs/__init__.py)
 - **HIGH:** File has syntax errors (in public/__init__.py)
@@ -148,8 +160,13 @@
 - **MEDIUM:** High complexity score: 27 (in agent.py)
 - **MEDIUM:** High complexity score: 47 (in interactive_dev_workflow.py)
 - **MEDIUM:** High complexity score: 52 (in production_workflow.py)
+- **MEDIUM:** High complexity score: 41 (in nimda_project_deep_build/setup_env.py)
 - **LOW:** File appears to be empty or minimal (in python311_compliance.py)
 - **LOW:** File appears to be empty or minimal (in ui/__init__.py)
+- **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/learning_module.py)
+- **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/adaptive_thinker.py)
+- **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/worker_agent.py)
+- **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/chat_agent.py)
 - **LOW:** File appears to be empty or minimal (in resources/__init__.py)
 - **LOW:** File appears to be empty or minimal (in tests/__init__.py)
 - **LOW:** File appears to be empty or minimal (in docs/__init__.py)
@@ -163,7 +180,7 @@
 ## Recommendations
 
 ### Fix Critical Issues (critical)
-Address 9 high-severity issues immediately
+Address 13 high-severity issues immediately
 
 **Actions:**
 - Fix syntax errors
@@ -177,7 +194,7 @@ Large number of functions detected
 - Split large modules
 
 ### Improve Test Coverage (testing)
-Test-to-code ratio is 0.03
+Test-to-code ratio is 0.02
 
 **Actions:**
 - Add unit tests

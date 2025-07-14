@@ -77,6 +77,38 @@
       "severity": "high",
       "status": "pending",
       "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
+    },
+    {
+      "id": "auto_1",
+      "name": "Resolve: File has syntax errors",
+      "type": "auto_generated",
+      "severity": "high",
+      "status": "pending",
+      "source": "system_analysis"
     }
   ],
   "creative_extensions": []
