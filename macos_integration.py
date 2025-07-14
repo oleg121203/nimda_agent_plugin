@@ -7,7 +7,6 @@ import subprocess
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 
-
 class MacOSIntegration:
     """Handle macOS-specific integrations and functionality"""
     
@@ -63,7 +62,6 @@ class MacOSIntegration:
         except Exception as e:
             self.logger.error(f"Failed to open Finder: {e}")
             return False
-
 
 if __name__ == "__main__":
     integration = MacOSIntegration()

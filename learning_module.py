@@ -6,7 +6,6 @@ import logging
 from typing import Dict, List, Any
 from datetime import datetime
 
-
 class LearningModule:
     """System for learning patterns and building knowledge base"""
     
@@ -46,7 +45,6 @@ class LearningModule:
             "successful_experiences": successful,
             "success_rate": successful / total_experiences if total_experiences > 0 else 0
         }
-
 
 if __name__ == "__main__":
     learner = LearningModule()
