@@ -1,16 +1,16 @@
 # Focused System Analysis Report
 
-**Generated:** 2025-07-14T19:19:00.410711
+**Generated:** 2025-07-15T00:23:09.233253
 **Project:** /Users/dev/Documents/nimda_agent_plugin
 **Scope:** Project files only (excludes virtual environments and dependencies)
 
 ## Project Structure
 
-- **Total Files:** 383
-- **Total Directories:** 96
-- **Python Files:** 230
+- **Total Files:** 428
+- **Total Directories:** 114
+- **Python Files:** 253
 - **Test Files:** 3
-- **Documentation:** 60
+- **Documentation:** 63
 
 ### Python Files
 - GUI/__init__.py
@@ -23,61 +23,50 @@
 - adaptive_thinker.py
 - advanced_task_manager.py
 - agent.py
-- agent_system/chat_agent.py
-- agent_system/chat_agent_config.py
-- agent_system/monitoring_agent.py
-- agent_system/monitoring_agent_config.py
-- agent_system/worker_agent.py
-- agent_system/worker_agent_config.py
 - ai_driven_workflow.py
+- ai_task_prioritizer.py
 - assets/__init__.py
 - auto_dev_runner.py
+- auto_documentation_generator.py
 - backup_rotation.py
 - changelog_manager.py
 - chat_agent.py
 - command_processor.py
 - compare_methods.py
-- core_system/config_manager.py
-- core_system/config_manager_config.py
-- core_system/event_dispatcher.py
-- core_system/event_dispatcher_config.py
-- core_system/main_controller.py
-- core_system/main_controller_config.py
+- complete_devplan_executor.py
+- complete_enhanced_executor.py
 - creative_hooks_examples.py
 - data/__init__.py
-- data_layer/cache_engine.py
-- data_layer/cache_engine_config.py
-- data_layer/data_manager.py
-- data_layer/data_manager_config.py
-- data_layer/serialization_handler.py
-- data_layer/serialization_handler_config.py
+- debug_parser.py
 - deep_context_workflow.py
+- deep_dive_executor.py
 - deep_system_analyzer.py
 - demo_deep_results.py
 - dev_plan_manager.py
 - docs/__init__.py
+- enhanced_devplan_executor.py
 - enhanced_interactive_dev.py
 - enhanced_interactive_workflow.py
 - example_usage.py
+- final_demo.py
+- final_integration_test.py
 - final_test_suite.py
 - fix_and_run.py
 - focused_system_analyzer.py
 - git_manager.py
 - health_dashboard.py
 - integration_tests.py
-- integration_tests/api_tests.py
-- integration_tests/api_tests_config.py
-- integration_tests/performance_tests.py
-- integration_tests/performance_tests_config.py
-- integration_tests/system_integration_tests.py
-- integration_tests/system_integration_tests_config.py
 - interactive_dev_workflow.py
 - learning_module.py
 - macos_integration.py
 - main.py
 - nimda_app.py
 - nimda_app_backup.py
+- nimda_app_fixed.py
 - nimda_cli.py
+- nimda_gui/visual_engine/dark_theme_engine.py
+- nimda_gui/visual_engine/neon_effect_engine.py
+- nimda_gui/visual_engine/transparency_manager.py
 - nimda_project_ai_driven_build/agent_system/chat_agent.py
 - nimda_project_ai_driven_build/agent_system/chat_agent_config.py
 - nimda_project_ai_driven_build/agent_system/monitoring_agent.py
@@ -169,7 +158,61 @@
 - nimda_project_deep_build/setup_env.py
 - nimda_project_deep_build/setup_project.py
 - nimda_project_deep_build/worker_agent.py
+- nimda_src/core/phase_8_revolutionary_gui_system_v2.0/hyperglassui.py
+- nimda_src/core/phase_8_revolutionary_gui_system_v2.0/neoneffectengine.py
+- nimda_src/main.py
+- nimda_src_v2/agent_system/chat_agent.py
+- nimda_src_v2/agent_system/chat_agent_config.py
+- nimda_src_v2/agent_system/monitoring_agent.py
+- nimda_src_v2/agent_system/monitoring_agent_config.py
+- nimda_src_v2/agent_system/worker_agent.py
+- nimda_src_v2/agent_system/worker_agent_config.py
+- nimda_src_v2/core_system/config_manager.py
+- nimda_src_v2/core_system/config_manager_config.py
+- nimda_src_v2/core_system/event_dispatcher.py
+- nimda_src_v2/core_system/event_dispatcher_config.py
+- nimda_src_v2/core_system/main_controller.py
+- nimda_src_v2/core_system/main_controller_config.py
+- nimda_src_v2/data_layer/cache_engine.py
+- nimda_src_v2/data_layer/cache_engine_config.py
+- nimda_src_v2/data_layer/data_manager.py
+- nimda_src_v2/data_layer/data_manager_config.py
+- nimda_src_v2/data_layer/serialization_handler.py
+- nimda_src_v2/data_layer/serialization_handler_config.py
+- nimda_src_v2/integration_tests/api_tests.py
+- nimda_src_v2/integration_tests/api_tests_config.py
+- nimda_src_v2/integration_tests/performance_tests.py
+- nimda_src_v2/integration_tests/performance_tests_config.py
+- nimda_src_v2/integration_tests/system_integration_tests.py
+- nimda_src_v2/integration_tests/system_integration_tests_config.py
+- nimda_src_v2/main.py
+- nimda_src_v2/tests/__init__.py
+- nimda_src_v2/tests/test_cache_engine.py
+- nimda_src_v2/tests/test_chat_agent.py
+- nimda_src_v2/tests/test_config_manager.py
+- nimda_src_v2/tests/test_data_manager.py
+- nimda_src_v2/tests/test_event_dispatcher.py
+- nimda_src_v2/tests/test_main_controller.py
+- nimda_src_v2/tests/test_monitoring_agent.py
+- nimda_src_v2/tests/test_result_processor.py
+- nimda_src_v2/tests/test_serialization_handler.py
+- nimda_src_v2/tests/test_task_scheduler.py
+- nimda_src_v2/tests/test_worker_agent.py
+- nimda_src_v2/tests/test_workflow_executor.py
+- nimda_src_v2/unit_tests/agent_tests.py
+- nimda_src_v2/unit_tests/agent_tests_config.py
+- nimda_src_v2/unit_tests/core_tests.py
+- nimda_src_v2/unit_tests/core_tests_config.py
+- nimda_src_v2/unit_tests/workflow_tests.py
+- nimda_src_v2/unit_tests/workflow_tests_config.py
+- nimda_src_v2/workflow_engine/result_processor.py
+- nimda_src_v2/workflow_engine/result_processor_config.py
+- nimda_src_v2/workflow_engine/task_scheduler.py
+- nimda_src_v2/workflow_engine/task_scheduler_config.py
+- nimda_src_v2/workflow_engine/workflow_executor.py
+- nimda_src_v2/workflow_engine/workflow_executor_config.py
 - offline_queue.py
+- organize_files.py
 - performance_monitor.py
 - production_workflow.py
 - project_initializer.py
@@ -178,6 +221,7 @@
 - python311_compliance.py
 - python311_compliance_fixed.py
 - quick_test_workflow.py
+- real_devplan_executor.py
 - real_time_demo.py
 - resources/__init__.py
 - restart_with_python311.py
@@ -196,6 +240,7 @@
 - setup.py
 - setup_env.py
 - setup_project_simple.py
+- smart_error_detector.py
 - src/__init__.py
 - static/__init__.py
 - system_status.py
@@ -213,49 +258,27 @@
 - test_project_creation.py
 - test_task_status.py
 - test_universal_workflow.py
-- tests/__init__.py
-- tests/test_cache_engine.py
-- tests/test_chat_agent.py
-- tests/test_config_manager.py
-- tests/test_data_manager.py
-- tests/test_event_dispatcher.py
-- tests/test_main_controller.py
-- tests/test_monitoring_agent.py
-- tests/test_result_processor.py
-- tests/test_serialization_handler.py
-- tests/test_task_scheduler.py
-- tests/test_worker_agent.py
-- tests/test_workflow_executor.py
 - translate_all.py
 - ui/__init__.py
-- unit_tests/agent_tests.py
-- unit_tests/agent_tests_config.py
-- unit_tests/core_tests.py
-- unit_tests/core_tests_config.py
-- unit_tests/workflow_tests.py
-- unit_tests/workflow_tests_config.py
+- ultimate_interactive_workflow.py
 - universal_creative_workflow.py
+- universal_nimda_executor.py
 - universal_task_manager.py
+- update_dev_plan_status.py
 - worker_agent.py
-- workflow_engine/result_processor.py
-- workflow_engine/result_processor_config.py
-- workflow_engine/task_scheduler.py
-- workflow_engine/task_scheduler_config.py
-- workflow_engine/workflow_executor.py
-- workflow_engine/workflow_executor_config.py
 
 ## Code Metrics
 
-- **Total Lines:** 46051
-- **Total Functions:** 1482
-- **Total Classes:** 225
-- **Average Complexity:** 14.93
+- **Total Lines:** 55404
+- **Total Functions:** 1644
+- **Total Classes:** 243
+- **Average Complexity:** 15.81
 
 ## Dependencies
 
 - **Requirements Files:** 3
-- **External Imports:** 44
-- **Project Imports:** 36
+- **External Imports:** 45
+- **Project Imports:** 43
 - **Missing Imports:** 0
 
 ## Issues Found
@@ -299,14 +322,18 @@
 - **MEDIUM:** High complexity score: 59 (in universal_task_manager.py)
 - **MEDIUM:** High complexity score: 25 (in run_nimda_deep.py)
 - **MEDIUM:** High complexity score: 24 (in python311_compliance_fixed.py)
+- **MEDIUM:** High complexity score: 22 (in complete_enhanced_executor.py)
 - **MEDIUM:** High complexity score: 47 (in offline_queue.py)
+- **MEDIUM:** High complexity score: 56 (in ultimate_interactive_workflow.py)
 - **MEDIUM:** High complexity score: 94 (in nimda_cli.py)
 - **MEDIUM:** High complexity score: 22 (in final_test_suite.py)
 - **MEDIUM:** High complexity score: 30 (in run_nimda_agent.py)
 - **MEDIUM:** High complexity score: 74 (in ai_driven_workflow.py)
 - **MEDIUM:** High complexity score: 32 (in creative_hooks_examples.py)
+- **MEDIUM:** High complexity score: 81 (in smart_error_detector.py)
 - **MEDIUM:** High complexity score: 42 (in changelog_manager.py)
 - **MEDIUM:** High complexity score: 59 (in deep_context_workflow.py)
+- **MEDIUM:** High complexity score: 63 (in auto_documentation_generator.py)
 - **MEDIUM:** High complexity score: 47 (in performance_monitor.py)
 - **MEDIUM:** High complexity score: 50 (in focused_system_analyzer.py)
 - **MEDIUM:** High complexity score: 29 (in health_dashboard.py)
@@ -315,7 +342,9 @@
 - **MEDIUM:** High complexity score: 50 (in git_manager.py)
 - **MEDIUM:** High complexity score: 101 (in dev_plan_manager.py)
 - **MEDIUM:** High complexity score: 22 (in system_status.py)
+- **MEDIUM:** High complexity score: 30 (in enhanced_devplan_executor.py)
 - **MEDIUM:** High complexity score: 110 (in universal_creative_workflow.py)
+- **MEDIUM:** High complexity score: 40 (in real_devplan_executor.py)
 - **MEDIUM:** High complexity score: 43 (in deep_system_analyzer.py)
 - **MEDIUM:** High complexity score: 70 (in backup_rotation.py)
 - **MEDIUM:** High complexity score: 91 (in project_initializer.py)
@@ -323,7 +352,10 @@
 - **MEDIUM:** High complexity score: 44 (in command_processor.py)
 - **MEDIUM:** High complexity score: 41 (in translate_all.py)
 - **MEDIUM:** High complexity score: 27 (in agent.py)
+- **MEDIUM:** High complexity score: 30 (in final_integration_test.py)
+- **MEDIUM:** High complexity score: 42 (in ai_task_prioritizer.py)
 - **MEDIUM:** High complexity score: 47 (in interactive_dev_workflow.py)
+- **MEDIUM:** High complexity score: 60 (in universal_nimda_executor.py)
 - **MEDIUM:** High complexity score: 52 (in production_workflow.py)
 - **MEDIUM:** High complexity score: 41 (in nimda_project_deep_build/setup_env.py)
 - **MEDIUM:** High complexity score: 53 (in nimda_project_ai_driven_build/self_improvement_engine.py)
@@ -337,11 +369,14 @@
 - **MEDIUM:** High complexity score: 36 (in GUI/adaptive_widget.py)
 - **LOW:** File appears to be empty or minimal (in nimda_app_backup.py)
 - **LOW:** File appears to be empty or minimal (in python311_compliance.py)
+- **LOW:** File appears to be empty or minimal (in update_dev_plan_status.py)
+- **LOW:** File appears to be empty or minimal (in nimda_app_fixed.py)
 - **LOW:** File appears to be empty or minimal (in ui/__init__.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/learning_module.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/adaptive_thinker.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/worker_agent.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_deep_build/chat_agent.py)
+- **LOW:** File appears to be empty or minimal (in nimda_src_v2/tests/__init__.py)
 - **LOW:** File appears to be empty or minimal (in resources/__init__.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_ai_driven_build/main_system_interface.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_ai_driven_build/ultimate_error_fixer.py)
@@ -364,7 +399,6 @@
 - **LOW:** File appears to be empty or minimal (in nimda_project_ai_driven_build/workflow_engine/workflow_executor_config.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_ai_driven_build/workflow_engine/result_processor_config.py)
 - **LOW:** File appears to be empty or minimal (in nimda_project_ai_driven_build/workflow_engine/task_scheduler_config.py)
-- **LOW:** File appears to be empty or minimal (in tests/__init__.py)
 - **LOW:** File appears to be empty or minimal (in docs/__init__.py)
 - **LOW:** File appears to be empty or minimal (in public/__init__.py)
 - **LOW:** File appears to be empty or minimal (in static/__init__.py)
