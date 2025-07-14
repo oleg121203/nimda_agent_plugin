@@ -256,7 +256,7 @@ class NIMDAAgent:
                 "message": "Critical development plan execution error",
             }
 
-    def run_full_dev_cycle(self) -> Dict[str, Any]:
+    def run_full_dev_cycle(self, is_codex_mode: bool = False) -> Dict[str, Any]:
         """Full DEV_PLAN execution cycle with automatic GitHub synchronization"""
         try:
             self.logger.info("🔄 Starting full DEV cycle")
@@ -265,9 +265,14 @@ class NIMDAAgent:
 
             plan_result = self.execute_dev_plan()
 
-            commit_result = self.git_manager.commit_changes(
-                "Automatic DEV_PLAN execution"
+            # Use different commit message for CODEX MODE
+            commit_message = (
+                "🤖 NIMDA: 🤖 CODEX MODE: Automatic DEV_PLAN execution in current agent"
+                if is_codex_mode
+                else "🤖 NIMDA: Automatic DEV_PLAN execution"
             )
+
+            commit_result = self.git_manager.commit_changes(commit_message)
 
             push_result = (
                 self.git_manager.push_changes()

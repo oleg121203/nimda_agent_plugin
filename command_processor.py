@@ -480,37 +480,21 @@ class CommandProcessor:
         if not backup_result["success"]:
             self.logger.warning("Failed to create backup")
 
-        # Force execution in current directory (override project creation logic)
+        # Force execution in current directory with CODEX MODE flag
         try:
-            # Directly call execute_full_plan instead of execute_dev_plan to bypass project creation
-            plan_result = self.agent.dev_plan_manager.execute_full_plan()
+            # Use run_full_dev_cycle with codex mode flag
+            cycle_result = self.agent.run_full_dev_cycle(is_codex_mode=True)
 
-            # Handle git operations
-            commit_result = self.agent.git_manager.commit_changes(
-                "🤖 CODEX MODE: Automatic DEV_PLAN execution in current agent"
-            )
+            # Override some fields to indicate CODEX MODE
+            cycle_result["backup_created"] = backup_result["success"]
+            cycle_result["mode"] = "codex_current_agent"
 
-            push_result = (
-                self.agent.git_manager.push_changes()
-                if commit_result.get("success")
-                else None
-            )
+            # Extract plan info for user message
+            plan_info = cycle_result.get("plan", {})
 
-            # Combine results
-            cycle_result = {
-                "success": plan_result.get("success", False)
-                and commit_result.get("success", True)
-                and (push_result.get("success", True) if push_result else True),
-                "plan": plan_result,
-                "commit": commit_result,
-                "push": push_result,
-                "backup_created": backup_result["success"],
-                "mode": "codex_current_agent",
-            }
-
-            if plan_result.get("success"):
-                executed_count = len(plan_result.get("executed_tasks", []))
-                total_count = plan_result.get("total_tasks", 0)
+            if plan_info.get("success"):
+                executed_count = len(plan_info.get("executed_tasks", []))
+                total_count = plan_info.get("total_tasks", 0)
                 cycle_result["user_message"] = (
                     f"✅ CODEX MODE: Plan executed in current agent: {executed_count}/{total_count} tasks"
                 )
