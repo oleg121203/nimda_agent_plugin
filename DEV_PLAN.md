@@ -1,92 +1,120 @@
-# Run English compliance check (from system template)
+# Architectural Modernization Plan for NIMDA v3.2 (macOS-optimized)
 
-## Головні task
+**Status:** Ready for Execution  
+**Last Updated:** 2025-07-14  
+**Primary Goal:** To create an intelligent, autonomous assistant with an advanced "live" interface using Python 3.11 and PySide6, optimized for macOS (M1 Max).
 
-### 0. 1. Pre-Development Validation
+---
 
-### 0. 2. Project-Specific Compliance
+## 0. Fundamental Rules & Validation (Immutable)
 
-### 0. 3. Template Inheritance
+This section is inherited from the system template. **ALWAYS** begin work with validation.
 
-### 1. 1. Project Initialization and Setup (macOS-optimized)
+### 0.1. System Compliance Check
+- **Mandatory:** Before starting, execute `./system_validation.sh` to ensure compliance with system requirements.
+- **Requirement:** All development must be conducted exclusively in English.
 
-### 2. 1. Visual Directory Structure (macOS-optimized)
-- [x] Create src/ directory
-- [x] Create tests/ directory
-- [x] Create docs/ directory
-- [x] Create data/ directory
-- [x] Add __init__.py files
+---
 
-### 3. 1. Agent #1: chat_agent.py (Conversationalist & Interpreter)
-- [x] Create chat_agent.py file
-- [x] Implement conversation interface
-- [x] Add command interpretation logic
-- [x] Test conversation flow
+## 1. Project Initialization and Setup (macOS-optimized)
 
-### 3. 2. Agent #2: worker_agent.py (Technical Executor & UI Orchestrator)
-- [x] Create worker_agent.py file
-- [x] Implement task execution system
-- [x] Add file creation capabilities
-- [x] Test execution workflow
+### Subtasks:
+- [ ] Create and activate a Python 3.11 virtual environment.
+- [ ] Install dependencies from `requirements_nimda_v3.txt` (PySide6, PyObjC, FAISS, etc.).
+- [ ] Create the complete modular directory structure as specified in the architectural diagram.
+- [ ] Configure `.gitignore` for macOS, Python, and PySide6.
+- [ ] Initialize the Git repository and make the initial commit.
 
-### 4. 1. Adaptive Reasoning Engine (adaptive_thinker.py)
-- [x] Create adaptive_thinker.py file
-- [x] Implement reasoning algorithms
-- [x] Add decision making logic
-- [x] Test adaptive behavior
+---
 
-### 4. 2. Learning System (learning_module.py)
-- [x] Create learning_module.py file
-- [x] Implement pattern recognition
-- [x] Add knowledge base system
-- [x] Test learning capabilities
+## 2. Core System and Orchestration
 
-### 5. 1. Native macOS Integration
-- [x] Create macos_integration.py file
-- [x] Implement Speech Framework integration
-- [x] Add notification system
-- [x] Test native features
+### 2.1. `Core/main_controller.py`
+- [ ] Implement the main `MainController` class.
+- [ ] Integrate the logic for starting and stopping all system components.
+- [ ] Create a mechanism to manage data flows between the GUI, agents, and services.
 
-### 5. 2. Voice Service (macOS Speech Framework)
+### 2.2. `Core/agent_manager.py`
+- [ ] Implement the `AgentManager` class.
+- [ ] Add methods to initialize, run, and monitor `ChatAgent` and `WorkerAgent`.
+- [ ] Create a task queue to pass structured commands from `ChatAgent` to `WorkerAgent`.
 
-### 5. 3. GUI Theme (macOS Native)
+### 2.3. `Core/command_engine.py`
+- [ ] Implement CLI command processing for integration with existing plugins.
+- [ ] Ensure that `WorkerAgent` can call this module to perform technical tasks.
 
-### 6. 1. GitHub Actions Workflow (.github/workflows/ci.yml)
+### 2.4. `run_nimda.py`
+- [ ] Create a single entry point for the application.
+- [ ] Implement the launch of `MainController` and the main GUI window.
 
-### 8. 1. Performance (M1 Max)
+---
 
-### 8. 2. User Experience
+## 3. Interaction Model: "Live" Interface and Hierarchical Execution
 
-### 8. 3. Security & Privacy
+This is the **key section** that defines NIMDA's uniqueness.
 
-### 9. 1. YAML Syntax Guidelines for Multi-line Scripts
+### 3.1. Agent #1: `Agents/chat_agent.py` (Conversationalist & Interpreter)
+- [ ] **Free-form Dialogue:** Integrate with an LLM (GPT-4 or equivalent) to conduct natural conversation (jokes, abstract topics).
+- [ ] **Intent Detection:** Implement analysis of the user's language "between the lines" to determine their true goals.
+- [ ] **Task Formulation:** Create logic to convert a user's free-form request into a clear, structured JSON object with tasks for the `WorkerAgent`.
+- [ ] **Quality Control Loop:** Implement a mechanism to review the report from `WorkerAgent`. If the result does not meet the quality level from `app_settings.json` (e.g., `high`), the agent must formulate a new, clarifying task for rework **without involving the user**.
+- [ ] **Communication:** Provide the final, comprehensive result to the user only after successfully passing the quality control loop.
 
-### 9. 2. YAML File Best Practices
+### 3.2. Agent #2: `Agents/worker_agent.py` (Technical Executor)
+- [ ] **Task Reception:** Implement the reception and parsing of JSON objects exclusively from the `AgentManager`.
+- [ ] **Workspace Planning:** Based on the task, the agent must decide how to optimally organize the GUI. It should send commands to create and position dynamic child windows (`adaptive_widget.py`) via `GUI/gui_controller.py`.
+- [ ] **Technical Task Execution:**
+    - Use `Intelligence/adaptive_thinker.py` to build a sequence of CLI commands.
+    - Use `Core/command_engine.py` and the plugin system to execute commands.
+- [ ] **Analysis and Output:** Analyze execution results and display them in the appropriate adaptive windows, adjusting their size accordingly.
+- [ ] **Reporting:** After completing a task, generate a structured execution report and send it back to the `ChatAgent` via the `AgentManager`.
 
-### 9. 3. Example GitHub Actions Workflow for NIMDA v3.2
+---
 
-### 9. 4. Common YAML Errors and Solutions
+## 4. Graphical User Interface (GUI on PySide6)
 
-### 10. 1. System Template Compliance
+### 4.1. `GUI/theme.py`
+- [ ] Create a "hacker" theme: dark colors, green or blue text, terminal-style fonts.
+- [ ] Implement a "digital rain" (Matrix) style background animation.
 
-### 10. 2. NIMDA-Specific Development Process
+### 4.2. `GUI/main_window.py`
+- [ ] Create the main application window using `theme.py`.
+- [ ] Place the main components: main chat window, input field, status panel.
 
-### 10. 3. Quality Standards (NIMDA v3.2 Specific)
+### 4.3. `GUI/adaptive_widget.py`
+- [ ] Create a universal class for dynamic child windows.
+- [ ] Ensure that `WorkerAgent` can create, position, resize, and close these windows.
+- [ ] Each window must support displaying both static text and real-time logs.
 
-### 10. 4. NIMDA v3.2 Compliance Checklist
-- [ ] Project in `~/Projects/NIMDA_v3.2/` directory
-- [ ] English-only code, comments, documentation
-- [ ] Independent Git repository
-- [ ] Virtual environment active
-- [ ] No external project dependencies
-- [ ] macOS-native components use PyObjC
-- [ ] PySide6 GUI follows macOS design guidelines
-- [ ] Async/await patterns properly implemented
-- [ ] Voice services use macOS Speech framework
-- [ ] AI components optimized for M1 Max
+### 4.4. `GUI/gui_controller.py`
+- [ ] **Key Module:** Create an API for precise GUI manipulation.
+- [ ] Implement functions that `WorkerAgent` can call: `create_window(config)`, `resize_window(id, new_size)`, `update_content(id, content)`.
 
-### 10. 5. Integration with System Template
+---
 
-## Метадані
-- **Прогрес**: 17/35 підзадач (48.57%)
-- **Останнє Updating**: 2025-07-14 10:42:37
+## 5. Intellectual Systems and Services
+
+### 5.1. `Intelligence/`
+- [ ] **`adaptive_thinker.py`:** Implement "Chain-of-Thought" reasoning to build complex command sequences.
+- [ ] **`learning_module.py`:** Create a knowledge base (`knowledge_base.json`) to store successful solutions. Integrate vector search (FAISS) for quick retrieval of relevant cases.
+
+### 5.2. `Services/`
+- [ ] **`voice_recognizer.py`:** Integrate native macOS speech recognition capabilities via `pyobjc-framework-Speech`.
+- [ ] **`translator.py`:** Provide reversible translation for processing documentation in various languages.
+- [ ] **`doc_handler.py`:** Implement parsing and vector indexing of CLI documentation for the `universal_adapter.py`.
+
+---
+
+## 6. Finalization, Testing, and Documentation
+
+### 6.1. Testing
+- [ ] Create integration tests that verify the full interaction cycle: from a user's voice command to execution by the `WorkerAgent`.
+- [ ] Write unit tests for `adaptive_thinker` and `gui_controller`.
+
+### 6.2. Configuration and Documentation
+- [ ] `Configs/app_settings.json`: Add a `"quality_threshold": "high" | "medium" | "low"` parameter to be used by the `ChatAgent`.
+- [ ] Update `README.md` with a description of the new architecture and interaction model.
+
+### 6.3. Build and Packaging
+- [ ] Configure `setup.py` and scripts to create an `.app` bundle for macOS using PyInstaller.
+- [ ] Create a DMG image for distribution.
