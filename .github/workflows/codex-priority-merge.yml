@@ -1,312 +1,83 @@
-name: Bulletproof Codex Priority Merge
+name: Codex Priority Merge
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [main, work]
-  push:
-    branches: 
-      - 'codex/**'
-      - 'bgrzdn-codex/**'
+    branches: [main]
 
 jobs:
-  bulletproof-codex-merge:
-    if: contains(github.head_ref, 'codex') || contains(github.head_ref, 'bgrzdn-codex') || contains(github.ref, 'codex')
+  merge_execution:
+    if: contains(github.head_ref, 'codex') || contains(github.head_ref, 'bgrzdn-codex')
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-      actions: write
+      issues: write
+    
+    outputs:
+      success: ${{ steps.merge_execution.outputs.success }}
+      conflicts: ${{ steps.merge_execution.outputs.conflicts }}
+      strategy: ${{ steps.merge_execution.outputs.strategy }}
+      files: ${{ steps.merge_execution.outputs.files }}
     
     steps:
-    - name: Checkout repository with full history
+    - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
-        ref: ${{ github.head_ref || github.ref }}
 
-    - name: Configure Git with bulletproof settings
+    - name: Configure Git
       run: |
-        git config --global user.name "Bulletproof Codex Bot"
-        git config --global user.email "codex-bulletproof@noreply.github.com"
-        git config --global merge.tool "resolve-codex-priority"
-        git config --global merge.resolve-codex-priority.cmd 'echo "Auto-resolving with Codex priority"; git checkout --theirs "$MERGED"; exit 0'
-        git config --global core.autocrlf false
-        git config --global core.safecrlf false
+        git config --global user.name "Codex Priority Bot"
+        git config --global user.email "codex-priority@noreply.github.com"
+        git config merge.ours.driver true
 
-    - name: Analyze repository state and branches
+    - name: Execute Codex Priority Merge
+      id: merge_execution
       run: |
-        echo "🔍 Analyzing repository state..."
-        echo "Current branch: $(git branch --show-current)"
-        echo "Target branch: ${{ github.base_ref || 'main' }}"
-        echo "Source branch: ${{ github.head_ref || github.ref_name }}"
+        echo "Starting Codex priority merge process..."
         
-        # Fetch all branches
-        git fetch origin --all
+        current_branch="${{ github.head_ref }}"
+        target_branch="${{ github.base_ref }}"
         
-        # Check for unmerged changes in all relevant branches
-        echo "📋 Checking for unmerged changes..."
+        git fetch origin "$current_branch"
+        git fetch origin "$target_branch"
+        git checkout "$target_branch"
         
-        for branch in $(git branch -r | grep -E "(origin/main|origin/work|origin/codex)" | sed 's/origin\///g' | tr -d ' '); do
-          if git rev-parse --verify "origin/$branch" >/dev/null 2>&1; then
-            unmerged=$(git rev-list --count main..origin/$branch 2>/dev/null || echo "0")
-            echo "Branch $branch: $unmerged unmerged commits"
-            if [ "$unmerged" -gt 0 ]; then
-              echo "BRANCH_TO_MERGE_$branch=$unmerged" >> $GITHUB_ENV
-            fi
-          fi
-        done
-
-    - name: Create backup and safety branches
-      run: |
-        echo "💾 Creating safety backups..."
+        echo "Attempting merge of $current_branch into $target_branch..."
         
-        # Create backup of main
-        backup_main="backup-main-$(date +%Y%m%d-%H%M%S)"
-        git branch "$backup_main" origin/main
-        echo "BACKUP_MAIN=$backup_main" >> $GITHUB_ENV
-        
-        # Create backup of current state
-        backup_current="backup-current-$(date +%Y%m%d-%H%M%S)"
-        git branch "$backup_current" HEAD
-        echo "BACKUP_CURRENT=$backup_current" >> $GITHUB_ENV
-        
-        echo "✅ Backups created: $backup_main, $backup_current"
-
-    - name: Determine merge strategy and priority
-      run: |
-        echo "🧠 Determining optimal merge strategy..."
-        
-        current_branch="${{ github.head_ref || github.ref_name }}"
-        target_branch="${{ github.base_ref || 'main' }}"
-        
-        # Get commit information
-        source_commit=$(git rev-parse HEAD)
-        target_commit=$(git rev-parse "origin/$target_branch")
-        
-        source_time=$(git log -1 --format="%ct" "$source_commit")
-        target_time=$(git log -1 --format="%ct" "$target_commit")
-        
-        # Check commit authors/messages for automation detection
-        source_author=$(git log -1 --format="%an" "$source_commit")
-        source_msg=$(git log -1 --format="%s" "$source_commit")
-        
-        echo "📊 Source commit: $source_commit at $(date -d @$source_time)"
-        echo "📊 Target commit: $target_commit at $(date -d @$target_time)"
-        echo "📊 Source author: $source_author"
-        
-        # Determine if source is automated or manual
-        if [[ "$source_msg" =~ (Auto-merge|Merge branch|GitHub Actions) ]] || 
-           [[ "$source_author" =~ (Bot|GitHub|Actions|Codex) ]]; then
-          echo "COMMIT_TYPE=automatic" >> $GITHUB_ENV
-          echo "🤖 Detected automatic commit"
+        if git merge "origin/$current_branch" --no-commit --no-ff; then
+          echo "Clean merge successful"
+          git commit -m "Codex Priority Merge: Clean merge of $current_branch"
+          echo "success=true" >> $GITHUB_OUTPUT
+          echo "conflicts=false" >> $GITHUB_OUTPUT
+          echo "strategy=clean" >> $GITHUB_OUTPUT
         else
-          echo "COMMIT_TYPE=manual" >> $GITHUB_ENV
-          echo "👤 Detected manual commit"
-        fi
-        
-        # For Codex branches, always prioritize Codex in automatic mode
-        if [[ "$current_branch" =~ codex ]]; then
-          echo "MERGE_STRATEGY=codex_priority" >> $GITHUB_ENV
-          echo "🎯 Using Codex priority strategy"
-        else
-          echo "MERGE_STRATEGY=standard" >> $GITHUB_ENV
-          echo "📋 Using standard merge strategy"
-        fi
-
-    - name: Execute bulletproof merge with multi-branch support
-      run: |
-        echo "🛡️ Executing bulletproof merge..."
-        
-        target_branch="${{ github.base_ref || 'main' }}"
-        merge_strategy="${MERGE_STRATEGY:-codex_priority}"
-        
-        # Switch to target branch
-        git checkout "origin/$target_branch"
-        git checkout -b "merge-temp-$(date +%s)"
-        
-        # Collect all branches that need merging
-        branches_to_merge=()
-        
-        # Add the main source branch
-        branches_to_merge+=("${{ github.head_ref || github.ref_name }}")
-        
-        # Add other priority branches with unmerged changes
-        priority_order=("codex" "work" "main")
-        
-        for priority in "${priority_order[@]}"; do
-          for branch in $(git branch -r | grep "origin.*$priority" | sed 's/origin\///g' | tr -d ' '); do
-            if [ "$branch" != "${{ github.head_ref || github.ref_name }}" ] && 
-               git rev-parse --verify "origin/$branch" >/dev/null 2>&1; then
-              unmerged=$(git rev-list --count HEAD..origin/$branch 2>/dev/null || echo "0")
-              if [ "$unmerged" -gt 0 ]; then
-                branches_to_merge+=("$branch")
-                echo "➕ Added $branch to merge queue ($unmerged commits)"
-              fi
-            fi
+          echo "Conflicts detected - applying Codex priority resolution"
+          
+          git status --porcelain | grep "^UU" | while read -r line; do
+            file=$(echo "$line" | cut -c4-)
+            echo "Resolving conflict in $file with Codex priority"
+            git checkout --theirs "$file"
+            git add "$file"
           done
-        done
-        
-        echo "🔄 Merging branches in priority order: ${branches_to_merge[*]}"
-        
-        # Execute the merge
-        merge_success=true
-        
-        for branch in "${branches_to_merge[@]}"; do
-          echo "🔄 Merging branch: $branch"
           
-          if [ "$merge_strategy" = "codex_priority" ]; then
-            # Codex priority: prefer incoming changes
-            if ! git merge "origin/$branch" --no-edit -X theirs; then
-              echo "⚠️ Conflicts detected in $branch, resolving with Codex priority..."
-              
-              # Resolve all conflicts in favor of incoming branch
-              git status --porcelain | grep "^UU" | while read -r line; do
-                file=$(echo "$line" | cut -c4-)
-                echo "⚡ Resolving $file with Codex priority"
-                git checkout --theirs "$file"
-                git add "$file"
-              done
-              
-              # Handle add/delete conflicts
-              git status --porcelain | grep -E "^(DU|UD|AU|UA)" | while read -r line; do
-                file=$(echo "$line" | cut -c4-)
-                echo "⚡ Resolving add/delete conflict: $file"
-                git checkout --theirs "$file" 2>/dev/null || git rm "$file" 2>/dev/null || true
-                git add "$file" 2>/dev/null || true
-              done
-              
-              # Commit the resolution
-              if ! git commit --no-edit -m "Auto-resolve: Codex priority merge of $branch"; then
-                echo "❌ Failed to commit resolution for $branch"
-                merge_success=false
-                break
-              fi
-            fi
-          else
-            # Standard merge
-            if ! git merge "origin/$branch" --no-edit; then
-              echo "❌ Standard merge failed for $branch"
-              merge_success=false
-              break
-            fi
-          fi
-          
-          echo "✅ Successfully merged $branch"
-        done
-        
-        if [ "$merge_success" = true ]; then
-          echo "MERGE_SUCCESS=true" >> $GITHUB_ENV
-          echo "FINAL_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          echo "✅ All merges completed successfully"
-        else
-          echo "MERGE_SUCCESS=false" >> $GITHUB_ENV
-          echo "❌ Merge process failed"
+          git commit -m "Codex Priority Merge: Resolved conflicts favoring Codex - $current_branch"
+          echo "success=true" >> $GITHUB_OUTPUT
+          echo "conflicts=true" >> $GITHUB_OUTPUT
+          echo "strategy=codex_priority" >> $GITHUB_OUTPUT
         fi
 
-    - name: Push merged changes and update branches
-      if: env.MERGE_SUCCESS == 'true'
+    - name: Push changes
+      if: steps.merge_execution.outputs.success == 'true'
       run: |
-        echo "🚀 Pushing merged changes..."
-        
-        target_branch="${{ github.base_ref || 'main' }}"
-        
-        # Push to target branch
-        git push origin HEAD:"$target_branch"
-        
-        # Update work branch if it exists and is different from target
-        if [ "$target_branch" != "work" ] && git rev-parse --verify origin/work >/dev/null 2>&1; then
-          echo "🔄 Updating work branch..."
-          git push origin HEAD:work
-        fi
-        
-        echo "✅ All branches updated successfully"
+        git push origin ${{ github.base_ref }}
+        echo "Changes pushed successfully"
 
-    - name: Clean up backup branches
-      if: env.MERGE_SUCCESS == 'true'
-      run: |
-        echo "🧹 Cleaning up backup branches..."
-        
-        # Remove backup branches (keep them for a short time in case of issues)
-        # git branch -D "$BACKUP_MAIN" "$BACKUP_CURRENT" || true
-        
-        echo "ℹ️ Backup branches preserved for safety: $BACKUP_MAIN, $BACKUP_CURRENT"
-
-    - name: Handle merge failure
-      if: env.MERGE_SUCCESS == 'false'
-      run: |
-        echo "❌ Merge failed - initiating recovery procedures..."
-        
-        # Reset to backup state
-        git reset --hard "$BACKUP_CURRENT"
-        
-        # Create issue for manual intervention
-        echo "RECOVERY_NEEDED=true" >> $GITHUB_ENV
-        echo "FAILURE_REASON=Bulletproof merge failed with conflicts" >> $GITHUB_ENV
-
-    - name: Comment on PR with detailed results
+    - name: Close pull request
+      if: steps.merge_execution.outputs.success == 'true'
       uses: actions/github-script@v7
-      if: github.event_name == 'pull_request'
-      with:
-        script: |
-          const mergeSuccess = process.env.MERGE_SUCCESS === 'true';
-          const commitType = process.env.COMMIT_TYPE || 'unknown';
-          const mergeStrategy = process.env.MERGE_STRATEGY || 'standard';
-          const finalCommit = process.env.FINAL_COMMIT || 'unknown';
-          
-          let message;
-          
-          if (mergeSuccess) {
-            message = `🤖 **Bulletproof Codex Merge Completed**
-            
-            ✅ Successfully merged with bulletproof strategy
-            🎯 **Merge Strategy**: ${mergeStrategy}
-            🔍 **Commit Type**: ${commitType}
-            📋 **Target Branch**: \`${{ github.base_ref }}\`
-            🔗 **Final Commit**: \`${finalCommit.substring(0, 8)}\`
-            
-            **Multi-Branch Merge Results:**
-            - ✅ All priority branches merged successfully
-            - ✅ Conflicts resolved with Codex priority
-            - ✅ Repository state synchronized across all branches
-            
-            **Safety Measures Applied:**
-            - 💾 Backup branches created and preserved
-            - �️ Bulletproof conflict resolution
-            - 🔄 Multi-branch synchronization
-            
-            The merge strategy ensures Codex-generated changes take precedence while maintaining system stability.`;
-          } else {
-            message = `❌ **Bulletproof Merge Failed**
-            
-            ⚠️ The automated merge encountered unresolvable conflicts
-            🔄 **Strategy Used**: ${mergeStrategy}
-            🔍 **Commit Type**: ${commitType}
-            
-            **Recovery Actions Taken:**
-            - 💾 Repository state restored from backup
-            - 📝 Manual intervention required
-            - 🛡️ No data loss occurred
-            
-            **Next Steps:**
-            1. Review conflicts manually
-            2. Use \`bulletproof_sync.sh recover\` locally
-            3. Resolve conflicts with appropriate priority
-            
-            Manual merge required - automated systems could not resolve all conflicts safely.`;
-          }
-          
-          await github.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-            body: message
-          });
-
-    - name: Close PR if merge successful
-      uses: actions/github-script@v7
-      if: github.event_name == 'pull_request' && env.MERGE_SUCCESS == 'true'
       with:
         script: |
           await github.rest.pulls.update({
@@ -316,33 +87,37 @@ jobs:
             state: 'closed'
           });
 
-  label-and-track:
+    - name: Add merge comment
+      if: steps.merge_execution.outputs.success == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const conflictStatus = '${{ steps.merge_execution.outputs.conflicts }}' === 'true' ? 
+            'with conflict resolution' : 'without conflicts';
+          
+          const message = 'Codex Priority Merge Completed\n\nBranch ${{ github.head_ref }} has been merged into main ' + conflictStatus + '.\nStrategy: Codex changes take precedence over existing code.\nAll conflicts resolved in favor of Codex implementation.';
+          
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: message
+          });
+
+  label_codex_pr:
     if: contains(github.head_ref, 'codex') || contains(github.head_ref, 'bgrzdn-codex')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-      issues: write
     
     steps:
-    - name: Label PR with detailed tracking
+    - name: Add Codex labels
       uses: actions/github-script@v7
-      if: github.event_name == 'pull_request'
       with:
         script: |
-          const labels = ['codex-priority', 'bulletproof-merge', 'auto-sync'];
-          
-          // Add branch-specific labels
-          const headRef = '${{ github.head_ref }}';
-          if (headRef.includes('codex')) {
-            labels.push('codex-branch');
-          }
-          if (headRef.includes('work')) {
-            labels.push('work-integration');
-          }
-          
           await github.rest.issues.addLabels({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.issue.number,
-            labels: labels
+            labels: ['codex-priority', 'auto-merge', 'priority-resolution']
           });

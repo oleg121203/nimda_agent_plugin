@@ -1,0 +1,60 @@
+# NIMDA v3.2 Requirements - macOS optimized for Mac Studio M1 Max
+# Core GUI framework
+pyside6>=6.5.0
+
+# Async integration with Qt
+qasync>=0.24.0
+
+# macOS native integration
+pyobjc-framework-Cocoa>=9.0
+pyobjc-framework-Speech>=9.0
+pyobjc-framework-AVFoundation>=9.0
+pyobjc-framework-Carbon>=9.0
+
+# Vector database (M1 optimized)
+faiss-cpu>=1.7.4
+
+# Voice processing
+webrtcvad>=2.0.10
+
+# Async file operations
+aiofiles>=23.0.0
+
+# Security
+cryptography>=41.0.0
+
+# System monitoring
+psutil>=5.9.0
+
+# HTTP requests
+requests>=2.28.0
+
+# YAML processing
+PyYAML>=6.0
+
+# JSON validation
+jsonschema>=4.0.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Date/time handling
+python-dateutil>=2.8.0
+
+# Git operations
+GitPython>=3.1.32
+
+# Scientific computing (M1 optimized)
+numpy>=1.24.0
+
+# Development dependencies
+pytest>=7.4.0
+pytest-qt>=4.2.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Optional but recommended
+tqdm>=4.66.0
+colorlog>=6.7.0

@@ -1,0 +1,78 @@
+name: NIMDA v3.2 macOS CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies (M1 compatible)
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements_nimda_v3.txt
+    
+    - name: Lint with flake8
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Test with pytest
+      run: |
+        pytest tests/ -v --tb=short
+    
+    - name: Type check with mypy
+      run: |
+        mypy . --ignore-missing-imports
+
+  build-macos-app:
+    needs: test-macos
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements_nimda_v3.txt
+        pip install pyinstaller
+    
+    - name: Build macOS App Bundle
+      run: |
+        pyinstaller main.py \
+          --onefile \
+          --windowed \
+          --name "NIMDA v3.2" \
+          --add-data "configs:configs" \
+          --add-data "data:data" \
+          --osx-bundle-identifier com.nimda.assistant.v3
+    
+    - name: Create DMG
+      run: |
+        hdiutil create -volname "NIMDA v3.2" -srcfolder dist/ -ov -format UDZO nimda_v3_2_macos.dmg
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: NIMDA-v3.2-macOS
+        path: nimda_v3_2_macos.dmg

@@ -71,13 +71,11 @@ jobs:
             state: 'closed'
           });
           
-          const message = "🤖 **Auto-merged with Codex Priority**\\n\\n✅ This Codex branch has been automatically merged into main.\\n📋 All conflicts were resolved in favor of the Codex implementation.\\n🎯 Branch: \`${{ github.head_ref }}\`\\n\\nThe merge strategy ensures that Codex-generated changes take precedence.";
-          
           await github.rest.issues.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.issue.number,
-            body: message
+            body: '🤖 **Auto-merged with Codex Priority**\n\n✅ This Codex branch has been automatically merged into main.\n📋 All conflicts were resolved in favor of the Codex implementation.\n🎯 Branch: ${{ github.head_ref }}\n\nThe merge strategy ensures that Codex-generated changes take precedence.'
           });
 
   label-codex-pr:

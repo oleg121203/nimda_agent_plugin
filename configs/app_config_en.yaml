@@ -1,0 +1,110 @@
+# NIMDA v3.2 Configuration
+# English version for production use
+
+app_name: "NIMDA Assistant v3.2"
+version: "3.2.0"
+platform: "macOS"
+target_architecture: "Apple Silicon M1 Max"
+
+# Core Settings
+core:
+  language: "en"
+  fallback_language: "uk"
+  log_level: "INFO"
+  debug_mode: false
+
+# Agent Configuration
+agents:
+  chat_agent:
+    enabled: true
+    model: "gpt-4"
+    temperature: 0.7
+    max_tokens: 2048
+  
+  worker_agent:
+    enabled: true
+    model: "gpt-4"
+    temperature: 0.3
+    max_tokens: 4096
+
+# Intelligence Modules
+intelligence:
+  adaptive_thinker:
+    enabled: true
+    chain_of_thought: true
+    max_reasoning_steps: 10
+  
+  learning_module:
+    enabled: true
+    vector_db: "faiss"
+    similarity_threshold: 0.85
+
+# GUI Configuration
+gui:
+  theme: "dark"
+  style: "macos_native"
+  animations: true
+  transparency: true
+
+# Voice Services
+voice:
+  enabled: true
+  engine: "macos_speech_framework"
+  language: "en-US"
+  voice: "Daniel"
+  speech_rate: 0.5
+
+# Services
+services:
+  translator:
+    enabled: true
+    provider: "openai"
+    source_lang: "auto"
+    target_lang: "en"
+  
+  documentation_parser:
+    enabled: true
+    supported_formats: ["pdf", "txt", "md"]
+  
+  vectorizer:
+    enabled: true
+    model: "text-embedding-ada-002"
+
+# Plugin System
+plugins:
+  universal_adapter:
+    enabled: true
+    documentation_cache: "data/cli_docs_cache"
+  
+  providers:
+    macos:
+      enabled: true
+      commands: ["system_profiler", "networksetup", "diskutil"]
+    
+    mikrotik:
+      enabled: true
+      connection_type: "ssh"
+    
+    cisco:
+      enabled: true
+      connection_type: "ssh"
+
+# Data Paths
+data:
+  knowledge_base: "data/knowledge_base"
+  logs: "data/logs"
+  cache: "data/cache"
+  configs: "configs"
+
+# Security
+security:
+  keychain_integration: true
+  sandbox_mode: true
+  api_key_storage: "keychain"
+
+# Performance
+performance:
+  async_enabled: true
+  thread_pool_size: 4
+  memory_limit: "2GB"
+  cache_size: "512MB"

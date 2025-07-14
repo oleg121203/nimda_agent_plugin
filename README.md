@@ -2,27 +2,31 @@
 
 The **NIMDA Agent Plugin** provides an automated development assistant that can be embedded into any project. It reads a `DEV_PLAN.md`, executes tasks, manages Git repositories and keeps a changelog.
 
-## Features
+## 🚀 Features
 
 - **Development plan processing** – read and execute `DEV_PLAN.md` tasks
-- **Git integration** – automatic commits, pushes and pull operations
+- **Git integration** – automatic commits, pushes and pull operations  
 - **Autonomous mode** – run tasks without manual intervention
 - **Automatic fixes** – detect and resolve issues in the project
 - **Retries** – each subtask is executed several times until success
 - **Changelog updates** – keep `CHANGELOG.md` in sync with progress
 - **Codex integration** – remote control using Codex commands
+- **macOS optimized** – Native integration for Mac Studio M1 Max
 
-## Quick start
+## 🛠 Quick Start
 
 ```bash
-# initialize a new project
+# Initialize a new project
 python nimda_agent_plugin/run_nimda_agent.py --init
 
-# execute the full development plan
+# Execute the full development plan
 python nimda_agent_plugin/run_nimda_agent.py --command "run full dev"
 
-# or use the shorter command
+# Or use the shorter command
 python nimda_agent_plugin/run_nimda_agent.py --command "run dev"
+
+# Check system status
+python nimda_agent_plugin/run_nimda_agent.py --command "status"
 ```
 
 You can also send the command **`run dev`** directly in the Codex chat to perform the entire development plan in your mobile app.

@@ -2,16 +2,93 @@
 # Codex Sync Monitor - continuous monitoring and recovery service
 
 # Configuration
-MONITOR_INTERVAL=60  # Check every minute
+MONITOR_INTERVAL=30  # Check every 30 seconds
+CODEX_SESSION_TIMEOUT=60  # 1 minute ti# Main execution
+case "$1" in
+    start)
+        start_monitor
+        ;;
+    stop)
+        stop_monitor
+        ;;
+    restart)
+        stop_monitor
+        sleep 2
+        start_monitor
+        ;;
+    status)
+        show_status
+        ;;
+    mark-active)
+        mark_codex_active
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status|mark-active}"ssion
 SERVICE_NAME="Codex Sync Monitor"
 PID_FILE="./.codex_monitor.pid"
 LOG_FILE="./.codex_monitor.log"
+CODEX_SESSION_FILE="./.codex_session_active"
+LAST_CODEX_ACTIVITY_FILE="./.last_codex_activity"
 
 # Logging function
 log_monitor() {
     local message="$1"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     echo "[$timestamp] [MONITOR] $message" | tee -a "$LOG_FILE"
+}
+
+# Function to check Codex session activity
+check_codex_session() {
+    local current_time=$(date +%s)
+    
+    # Check if Codex session file exists and is recent
+    if [ -f "$CODEX_SESSION_FILE" ]; then
+        local session_time=$(stat -f %m "$CODEX_SESSION_FILE" 2>/dev/null || echo 0)
+        local time_diff=$((current_time - session_time))
+        
+        if [ $time_diff -lt $CODEX_SESSION_TIMEOUT ]; then
+            echo "$current_time" > "$LAST_CODEX_ACTIVITY_FILE"
+            return 0  # Session is active
+        fi
+    fi
+    
+    # Check if there was recent activity
+    if [ -f "$LAST_CODEX_ACTIVITY_FILE" ]; then
+        local last_activity=$(cat "$LAST_CODEX_ACTIVITY_FILE")
+        local time_since_activity=$((current_time - last_activity))
+        
+        if [ $time_since_activity -ge $CODEX_SESSION_TIMEOUT ]; then
+            return 1  # Session timed out
+        fi
+    fi
+    
+    return 2  # No session detected
+}
+
+# Function to mark Codex session as active
+mark_codex_active() {
+    touch "$CODEX_SESSION_FILE"
+    echo "$(date +%s)" > "$LAST_CODEX_ACTIVITY_FILE"
+    log_monitor "Codex session marked as active"
+}
+
+# Function to restart development execution
+restart_dev_execution() {
+    log_monitor "Codex session timeout detected - starting local execution"
+    
+    # Check if there's a dev plan to continue
+    if [ -f "./DEV_PLAN.md" ]; then
+        log_monitor "Attempting to continue DEV_PLAN execution locally..."
+        
+        # Try to run auto dev runner
+        if python3 auto_dev_runner.py . 2>&1 | tee -a "$LOG_FILE"; then
+            log_monitor "Local DEV_PLAN execution completed successfully"
+        else
+            log_monitor "Local DEV_PLAN execution failed"
+        fi
+    else
+        log_monitor "No DEV_PLAN.md found to continue"
+    fi
 }
 
 # Function to check if monitor is already running
@@ -39,6 +116,23 @@ start_monitor() {
     echo $$ > "$PID_FILE"
     
     while true; do
+        # Check Codex session status
+        session_status=$(check_codex_session)
+        case $session_status in
+            0)
+                log_monitor "Codex session is active"
+                ;;
+            1)
+                log_monitor "Codex session timed out - triggering local execution"
+                restart_dev_execution
+                # Reset session tracking after restart
+                rm -f "$CODEX_SESSION_FILE" "$LAST_CODEX_ACTIVITY_FILE"
+                ;;
+            2)
+                log_monitor "No Codex session detected - monitoring..."
+                ;;
+        esac
+        
         # Check for pending sync tasks
         if [ -f "./.codex_sync_pending" ]; then
             log_monitor "Found pending sync task, attempting recovery..."
@@ -79,6 +173,21 @@ stop_monitor() {
 show_status() {
     if is_monitor_running; then
         echo "✅ $SERVICE_NAME is running (PID: $(cat $PID_FILE))"
+        
+        # Check Codex session status
+        session_status=$(check_codex_session)
+        case $session_status in
+            0)
+                echo "🟢 Codex session is active"
+                ;;
+            1)
+                echo "🔴 Codex session timed out"
+                ;;
+            2)
+                echo "🟡 No Codex session detected"
+                ;;
+        esac
+        
         if [ -f "./.codex_sync_pending" ]; then
             echo "⚠️  Pending sync task exists"
         else
@@ -106,13 +215,14 @@ case "$1" in
         show_status
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|status}"
+        echo "Usage: $0 {start|stop|restart|status|mark-active}"
         echo ""
         echo "Commands:"
-        echo "  start   - Start the Codex sync monitor"
-        echo "  stop    - Stop the Codex sync monitor"
-        echo "  restart - Restart the Codex sync monitor"
-        echo "  status  - Show monitor status"
+        echo "  start       - Start the Codex sync monitor"
+        echo "  stop        - Stop the Codex sync monitor"
+        echo "  restart     - Restart the Codex sync monitor"
+        echo "  status      - Show monitor status"
+        echo "  mark-active - Mark Codex session as active (call from Codex)"
         exit 1
         ;;
 esac
