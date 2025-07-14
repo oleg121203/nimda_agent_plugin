@@ -46,11 +46,11 @@ async def main():
 
     # Create and run the AI-driven workflow
     workflow = AIDrivenWorkflowSystem(
-        project_path=str(output_dir),
+        project_path=output_dir,
     )
 
     try:
-        await workflow.execute_workflow()
+        await workflow.execute_enhanced_workflow()
 
         print("\n" + "=" * 80)
         print("🎉 AI-DRIVEN DEEP WORKFLOW COMPLETED SUCCESSFULLY!")

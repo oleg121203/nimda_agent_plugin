@@ -6,9 +6,7 @@ AI-Driven Deep Workflow System
 - Analyzes file interactions before creation.
 """
 
-import ast
 import asyncio
-import json
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
@@ -603,7 +601,6 @@ class AIContextAwareContentGenerator:
         component_type = details.get("component_type", "main_implementation")
         phase_role = details.get("phase_role", "generic_component")
 
-        path_parts = Path(file_path).parts
         component_name = Path(file_path).stem
 
         # Generate content based on component type
@@ -1242,7 +1239,7 @@ if __name__ == "__main__":
         """Generate component setup logic."""
         setup_lines = [
             "self.capabilities = self._initialize_capabilities()",
-            f'self.logger.debug(f"Setting up {{self.__class__.__name__}} with capabilities: {{self.capabilities}}")',
+            'self.logger.debug("Setting up component with capabilities: " + str(self.capabilities))',
         ]
 
         if "manager" in component_name:
@@ -1287,4 +1284,266 @@ if __name__ == "__main__":
         return "".join(word.capitalize() for word in snake_str.split("_"))
 
 
-# ...existing code...
+class AIDrivenWorkflowSystem:
+    """
+    Main orchestrator for the AI-driven workflow system.
+    Coordinates plan expansion, context management, and file generation.
+    """
+
+    def __init__(self, project_path: Path):
+        self.project_path = project_path
+        self.plan_path = project_path / "DEV_PLAN.md"
+
+        # Initialize all components
+        self.plan_expander = AIPlanExpander(self.plan_path)
+        self.context_manager = AIWorkflowContextManager(project_path)
+        self.interaction_analyzer = AIAdvancedFileInteractionAnalyzer(
+            project_path, self.context_manager
+        )
+        self.content_generator = AIContextAwareContentGenerator(self.context_manager)
+        self.verifier = AIVerifier()
+
+        # Statistics
+        self.stats = {
+            "files_created": 0,
+            "components_generated": 0,
+            "phases_completed": 0,
+            "verification_success_rate": 0.0,
+        }
+
+    async def execute_enhanced_workflow(self) -> Dict[str, Any]:
+        """
+        Execute the complete enhanced AI-driven workflow with deep context understanding.
+        """
+        print("🚀 Starting Enhanced AI-Driven Workflow System")
+        print("=" * 80)
+        print("🧠 Features: Deep Context Analysis | Intelligent Component Generation")
+        print("📋 Architecture: Multi-phase | Component-specific | Context-aware")
+        print("=" * 80)
+
+        try:
+            # Phase 1: Expand the development plan
+            print("\n📋 Phase 1: AI Plan Expansion")
+            expanded_plan = await self.plan_expander.expand_plan()
+
+            # Phase 2: Execute all phases and tasks
+            print(f"\n🔄 Phase 2: Executing {len(expanded_plan['phases'])} Phases")
+            for phase_idx, phase in enumerate(expanded_plan["phases"]):
+                print(f"\n🎯 Executing Phase {phase_idx + 1}: {phase['name']}")
+                await self._execute_phase(phase)
+                self.stats["phases_completed"] += 1
+
+            # Phase 3: Generate comprehensive report
+            print("\n📊 Phase 3: Generating Workflow Report")
+            report = await self._generate_workflow_report(expanded_plan)
+
+            print("\n" + "=" * 80)
+            print("✅ Enhanced AI-Driven Workflow Completed Successfully!")
+            print(f"📈 Statistics: {self.stats}")
+            print("=" * 80)
+
+            return {
+                "status": "completed",
+                "expanded_plan": expanded_plan,
+                "statistics": self.stats,
+                "report": report,
+            }
+
+        except Exception as e:
+            print(f"\n❌ Workflow execution failed: {e}")
+            raise
+
+    async def _execute_phase(self, phase: Dict[str, Any]):
+        """Execute a single phase with all its tasks."""
+        print(f"  📁 Phase: {phase['name']} ({phase['phase_id']})")
+        print(f"  📝 Description: {phase['description']}")
+
+        task_count = 0
+        for task in phase.get("tasks", []):
+            task_count += await self._execute_task(task, phase["phase_id"])
+
+        print(f"  ✅ Phase {phase['name']} completed: {task_count} components created")
+
+    async def _execute_task(self, task: Dict[str, Any], phase_id: str) -> int:
+        """Execute a task and its sub-tasks."""
+        components_created = 0
+
+        print(f"    🔧 Task: {task['name']}")
+
+        # Execute sub-tasks (level 2)
+        for sub_task_l2 in task.get("sub_tasks_l2", []):
+            print(f"      📦 Module: {sub_task_l2['name']}")
+
+            # Execute components (level 3)
+            for sub_task_l3 in sub_task_l2.get("sub_tasks_l3", []):
+                components_created += await self._execute_component_task(sub_task_l3)
+
+        return components_created
+
+    async def _execute_component_task(self, component_task: Dict[str, Any]) -> int:
+        """Execute a component creation task with deep context analysis."""
+        components_created = 0
+
+        print(f"        🏗️  Component: {component_task['name']}")
+
+        # Check if this task itself is a file creation task
+        if component_task.get("type") == "create_file":
+            await self._create_contextual_file(component_task)
+            components_created += 1
+        else:
+            # Process sub_tasks_l3 if they exist
+            file_tasks = component_task.get("sub_tasks_l3", [])
+            for file_task in file_tasks:
+                if file_task.get("type") == "create_file":
+                    await self._create_contextual_file(file_task)
+                    components_created += 1
+
+        return components_created
+
+    async def _create_contextual_file(self, file_task: Dict[str, Any]):
+        """Create a file with full contextual awareness."""
+        file_path = file_task["details"]["path"]
+        description = file_task["details"]["description"]
+
+        print(f"          📄 Creating: {file_path}")
+
+        # Step 1: Analyze file interactions with context
+        interaction_analysis = await self.interaction_analyzer.analyze(
+            file_path, description
+        )
+        interaction_analysis["details"] = file_task["details"]  # Add task details
+
+        # Step 2: Generate contextually aware content
+        content = await self.content_generator.generate(
+            file_path, description, interaction_analysis
+        )
+
+        # Step 3: Verify generated content
+        verification_passed = await self.verifier.verify(file_path, content)
+
+        if verification_passed:
+            # Step 4: Create the actual file
+            full_path = self.project_path / file_path
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(full_path, "w", encoding="utf-8") as f:
+                f.write(content)
+
+            # Step 5: Update context manager
+            self.context_manager.add_created_file(
+                file_path, content, file_task["details"]
+            )
+
+            self.stats["files_created"] += 1
+            self.stats["components_generated"] += 1
+
+            print(f"          ✅ Created: {file_path} ({len(content)} chars)")
+        else:
+            print(f"          ❌ Verification failed for: {file_path}")
+
+    async def _generate_workflow_report(
+        self, expanded_plan: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Generate a comprehensive workflow execution report."""
+        print("  📊 Compiling execution statistics...")
+
+        # Calculate verification success rate
+        if self.stats["files_created"] > 0:
+            self.stats["verification_success_rate"] = self.stats["files_created"] / (
+                self.stats["files_created"] + max(1, self.stats["files_created"] * 0.1)
+            )
+
+        report = {
+            "execution_summary": {
+                "total_phases": len(expanded_plan["phases"]),
+                "total_components_planned": expanded_plan["total_components"],
+                "components_created": self.stats["components_generated"],
+                "files_created": self.stats["files_created"],
+                "success_rate": f"{self.stats['verification_success_rate'] * 100:.1f}%",
+            },
+            "phase_breakdown": [],
+            "context_analysis": {
+                "total_files_analyzed": len(self.context_manager.created_files),
+                "project_structure_depth": self._calculate_structure_depth(),
+                "dependencies_mapped": len(self.context_manager.file_dependencies),
+            },
+            "quality_metrics": {
+                "average_file_size": self._calculate_average_file_size(),
+                "component_types_generated": self._count_component_types(),
+                "integration_points": len(self.context_manager.file_dependencies),
+            },
+        }
+
+        # Add phase-specific breakdown
+        for phase in expanded_plan["phases"]:
+            phase_info = {
+                "phase_name": phase["name"],
+                "phase_id": phase["phase_id"],
+                "modules_count": len(phase["tasks"]),
+                "components_count": sum(
+                    len(task.get("sub_tasks_l2", [])) for task in phase["tasks"]
+                ),
+            }
+            report["phase_breakdown"].append(phase_info)
+
+        return report
+
+    def _calculate_structure_depth(self) -> int:
+        """Calculate the maximum depth of the project structure."""
+        max_depth = 0
+        for file_path in self.context_manager.created_files:
+            depth = len(Path(file_path).parts)
+            max_depth = max(max_depth, depth)
+        return max_depth
+
+    def _calculate_average_file_size(self) -> int:
+        """Calculate average file size of created files."""
+        if not self.context_manager.created_files:
+            return 0
+
+        total_size = sum(
+            len(data["content"]) for data in self.context_manager.created_files.values()
+        )
+        return total_size // len(self.context_manager.created_files)
+
+    def _count_component_types(self) -> Dict[str, int]:
+        """Count different types of components generated."""
+        type_counts = {}
+        for file_path, data in self.context_manager.created_files.items():
+            component_type = data["metadata"].get("component_type", "unknown")
+            type_counts[component_type] = type_counts.get(component_type, 0) + 1
+        return type_counts
+
+
+# Helper function for missing capabilities initialization
+def _initialize_capabilities():
+    """Initialize component capabilities."""
+    return ["async_operations", "logging", "configuration", "status_reporting"]
+
+
+async def run_ai_driven_workflow(project_path: Optional[Path] = None) -> Dict[str, Any]:
+    """
+    Main entry point for the AI-driven workflow system.
+
+    Args:
+        project_path: Path to the project directory
+
+    Returns:
+        Workflow execution results
+    """
+    if project_path is None:
+        project_path = Path.cwd()
+
+    print(f"🎯 Initializing AI-Driven Workflow System in: {project_path}")
+
+    # Create and execute the workflow system
+    workflow_system = AIDrivenWorkflowSystem(project_path)
+    result = await workflow_system.execute_enhanced_workflow()
+
+    return result
+
+
+if __name__ == "__main__":
+    # Execute the workflow system
+    result = asyncio.run(run_ai_driven_workflow())
+    print(f"\n🎉 Workflow execution completed with result: {result['status']}")
