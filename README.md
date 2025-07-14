@@ -39,6 +39,12 @@ python nimda_agent_plugin/auto_dev_runner.py /path/to/project
 
 The script initializes the project (if required), runs the full development cycle and executes tests when they are available.
 
+If the process is interrupted for any reason, you can resume execution with:
+
+```bash
+python nimda_agent_plugin/resume_dev_cycle.py
+```
+
 ## Repository structure
 
 ```

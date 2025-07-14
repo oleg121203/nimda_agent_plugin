@@ -9,6 +9,7 @@ PID_FILE="./.codex_monitor.pid"
 LOG_FILE="./.codex_monitor.log"
 CODEX_SESSION_FILE="./.codex_session_active"
 LAST_CODEX_ACTIVITY_FILE="./.last_codex_activity"
+DEV_CYCLE_STATE_FILE="./.dev_cycle_in_progress"
 
 # Logging function
 log_monitor() {
@@ -167,7 +168,13 @@ start_monitor() {
         if ! git status >/dev/null 2>&1; then
             log_monitor "Repository health check failed"
         fi
-        
+
+        # Restart development cycle if state file exists but no runner active
+        if [ -f "$DEV_CYCLE_STATE_FILE" ] && ! pgrep -f auto_dev_runner.py >/dev/null 2>&1; then
+            log_monitor "Detected unfinished development cycle - restarting"
+            python3 auto_dev_runner.py . 2>&1 | tee -a "$LOG_FILE"
+        fi
+
         sleep $MONITOR_INTERVAL
     done
 }
