@@ -9,7 +9,7 @@ import inspect
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Type
 
 from .base_plugin import BasePlugin, PluginResult, PluginStatus
 
@@ -26,15 +26,22 @@ class PluginManager:
     - Інтеграція з GUI
     """
 
-    def __init__(self, plugins_dir: Optional[str] = None, max_workers: int = 4):
+    def __init__(
+        self,
+        plugins_dir: str | None = None,
+        max_workers: int = 4,
+        workspace_path: Path | None = None,
+    ):
         """
         Ініціалізація менеджера плагінів
 
         Args:
             plugins_dir: Шлях до директорії з плагінами
             max_workers: Максимальна кількість робітників для виконання
+            workspace_path: Шлях до робочої директорії
         """
         self.plugins_dir = Path(plugins_dir) if plugins_dir else Path(__file__).parent
+        self.workspace_path = workspace_path or Path.cwd()
         self.max_workers = max_workers
         self.logger = logging.getLogger("PluginManager")
 
@@ -59,6 +66,7 @@ class PluginManager:
     async def load_plugins(self) -> bool:
         """
         Завантаження всіх плагінів з директорії
+        DEV_PLAN Validator завантажується першим для валідації задач
 
         Returns:
             bool: True якщо всі плагіни завантажені успішно
@@ -66,7 +74,23 @@ class PluginManager:
         try:
             plugin_files = list(self.plugins_dir.glob("*_plugin.py"))
 
+            # Сортуємо плагіни: DEV_PLAN Validator першим
+            sorted_plugins = []
+            dev_plan_validator = None
+
             for plugin_file in plugin_files:
+                if "dev_plan_validator" in plugin_file.name:
+                    dev_plan_validator = plugin_file
+                else:
+                    sorted_plugins.append(plugin_file)
+
+            # Завантажуємо DEV_PLAN Validator першим
+            if dev_plan_validator:
+                await self._load_plugin_from_file(dev_plan_validator)
+                self.logger.info("✅ DEV_PLAN Validator завантажено першим")
+
+            # Завантажуємо інші плагіни
+            for plugin_file in sorted_plugins:
                 await self._load_plugin_from_file(plugin_file)
 
             self.logger.info(f"Завантажено {len(self.plugins)} плагінів")
@@ -105,8 +129,16 @@ class PluginManager:
                     and obj != BasePlugin
                 ):
                     self.plugin_classes[name] = obj
-                    # Створюємо екземпляр плагіна з базовою назвою
-                    plugin_instance = obj(name=name)
+
+                    # Спеціальна ініціалізація для DEV_PLAN Validator
+                    if "DevPlanValidatorPlugin" in name:
+                        plugin_instance = obj(
+                            name=name,
+                            workspace_path=self.workspace_path,  # type: ignore
+                        )
+                    else:
+                        # Створюємо екземпляр плагіна з базовою назвою
+                        plugin_instance = obj(name=name)
 
                     # Ініціалізуємо плагін
                     if await plugin_instance.initialize():
@@ -160,7 +192,7 @@ class PluginManager:
             return False
 
     async def execute_task(
-        self, task: Dict[str, Any], context: Optional[Dict] = None
+        self, task: Dict[str, Any], context: Dict | None = None
     ) -> PluginResult:
         """
         Виконання завдання відповідним плагіном
@@ -229,7 +261,71 @@ class PluginManager:
 
             return error_result
 
-    def _find_plugin_for_task(self, task: Dict[str, Any]) -> Optional[BasePlugin]:
+    async def execute_dev_plan_with_validation(
+        self, tasks: List[Dict[str, Any]]
+    ) -> List[PluginResult]:
+        """
+        Виконання DEV_PLAN з попередньою валідацією
+
+        Args:
+            tasks: Список задач з DEV_PLAN
+
+        Returns:
+            List[PluginResult]: Результати виконання всіх задач
+        """
+        results = []
+
+        try:
+            # 1. Спочатку запускаємо DEV_PLAN Validator
+            validator_plugin = self._find_validator_plugin()
+            if validator_plugin:
+                self.logger.info("🔍 Запуск валідації DEV_PLAN...")
+
+                validation_task = {
+                    "type": "dev_plan_validation",
+                    "name": "DEV_PLAN Validation",
+                    "description": "Перевірка та корекція відміток у DEV_PLAN.md",
+                }
+
+                validation_result = await validator_plugin.execute(validation_task)
+                results.append(validation_result)
+
+                if validation_result.success:
+                    updated_count = (
+                        validation_result.data.get("updated_count", 0)
+                        if validation_result.data
+                        else 0
+                    )
+                    self.logger.info(
+                        f"✅ Валідація завершена: {updated_count} оновлень"
+                    )
+                else:
+                    self.logger.warning("⚠️ Валідація завершилася з помилками")
+            else:
+                self.logger.warning("⚠️ DEV_PLAN Validator не знайдено")
+
+            # 2. Виконуємо основні задачі DEV_PLAN
+            for task in tasks:
+                if task.get("type") != "dev_plan_validation":  # Пропускаємо валідацію
+                    result = await self.execute_task(task)
+                    results.append(result)
+
+            return results
+
+        except Exception as e:
+            self.logger.error(f"Помилка виконання DEV_PLAN з валідацією: {e}")
+            return [
+                PluginResult(success=False, message=f"Критична помилка: {e}", error=e)
+            ]
+
+    def _find_validator_plugin(self):
+        """Знаходження плагіна валідатора DEV_PLAN"""
+        for plugin in self.plugins.values():
+            if "validator" in plugin.name.lower() and "dev_plan" in plugin.name.lower():
+                return plugin
+        return None
+
+    def _find_plugin_for_task(self, task: Dict[str, Any]) -> BasePlugin | None:
         """
         Знаходження підходящого плагіна для завдання
 
@@ -245,7 +341,7 @@ class PluginManager:
 
         return None
 
-    def get_plugin(self, name: str) -> Optional[BasePlugin]:
+    def get_plugin(self, name: str) -> BasePlugin | None:
         """
         Отримання плагіна за назвою
 

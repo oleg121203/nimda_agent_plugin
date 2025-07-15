@@ -2,6 +2,7 @@
 Базовий клас для всіх плагінів NIMDA Agent
 """
 
+import asyncio
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
